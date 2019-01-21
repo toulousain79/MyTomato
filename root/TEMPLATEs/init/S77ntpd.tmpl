@@ -1,0 +1,11 @@
+#!/opt/bin/bash
+
+ENABLED=yes
+PROCS=ntpd
+ARGS="-c /opt/etc/ntp.conf -f /opt/var/spool/ntp/ntp.drift -s /opt/var/spool/ntp -k /opt/etc/ntp -l /opt/var/spool/ntp/ntp.log"
+PREARGS=""
+DESC="NTP Server"
+PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export ENABLED PROCS ARGS PREARGS DESC
+# shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
+. /opt/etc/init.d/rc.func

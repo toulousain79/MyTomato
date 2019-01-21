@@ -1,0 +1,11 @@
+#!/opt/bin/bash
+
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENABLED=no
+PROCS=rpcbind
+ARGS="-f -w"
+PREARGS=""
+DESC="RPC Bind"
+export ENABLED PROCS ARGS PREARGS DESC
+# shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
+. /opt/etc/init.d/rc.func

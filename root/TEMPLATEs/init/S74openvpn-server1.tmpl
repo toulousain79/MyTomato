@@ -1,0 +1,11 @@
+#!/opt/bin/bash
+
+ENABLED="$(nvram get vpn_server_eas | grep -q '1' && echo yes || echo no)"
+PROCS=vpnserver1
+ARGS=""
+PREARGS=""
+DESC="OpenVPN Server 1"
+PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export ENABLED PROCS ARGS PREARGS DESC
+# shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
+. /opt/etc/init.d/rc.func

@@ -1,0 +1,85 @@
+#!/opt/bin/bash
+
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENABLED=no
+PROCS=nfs-kernel-server
+ARGS=""
+PREARGS=""
+DESC="NFS Server"
+export ENABLED PROCS ARGS PREARGS DESC
+
+# shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
+[ -n "$LOOP" ] && . /opt/etc/init.d/rc.func
+
+PATH=/opt/bin:/opt/sbin:/sbin:/bin:/usr/sbin:/usr/bin
+
+if [ -z "$(pidof rpcbind)" ]; then
+	#echo 'Error: portmap not started'
+	exit 1
+fi
+
+start() {
+	echo 'Starting NFS server'
+	modprobe nfsd
+	mkdir -p /opt/var/lib/nfs/sm
+	mkdir -p /opt/var/lib/nfs/sm.bak
+	mkdir -p /opt/var/lib/nfs/rpc_pipefs
+	echo -n >/opt/var/lib/nfs/etab
+	echo -n >/opt/var/lib/nfs/rmtab
+	echo -n >/opt/var/lib/nfs/xtab
+	mount -t rpc_pipefs rpc_pipefs /opt/var/lib/nfs/rpc_pipefs
+	mount -t nfsd nfsd /proc/fs/nfsd
+	echo 65536 >/proc/fs/nfsd/max_block_size
+	exportfs -ra
+	rpc.nfsd --no-nfs-version 4 --no-tcp 1
+	rpc.mountd --no-nfs-version 4 --no-tcp
+}
+
+stop() {
+	echo 'Stopping NFS server'
+	killall -q rpc.mountd >/dev/null
+	killall -q -2 nfsd >/dev/null
+	exportfs -ua
+	umount /proc/fs/nfsd 2>/dev/null
+	umount /opt/var/lib/nfs/rpc_pipefs 2>/dev/null
+	rm -f /opt/var/lib/nfs/etab
+}
+
+status() {
+	if [ -n "$(pidof nfsd)" ] && [ -n "$(pidof rpc.mountd)" ]; then
+		echo 'NFS server is running'
+	else
+		echo 'NFS server is stopped'
+	fi
+}
+
+reload() {
+	echo 'Reloading /opt/etc/exports'
+	exportfs -r
+}
+
+case "$1" in
+start)
+	start
+	;;
+stop)
+	stop
+	;;
+restart)
+	stop
+	sleep 2
+	start
+	;;
+status)
+	status
+	;;
+reload)
+	reload
+	;;
+*)
+	echo "Usage: $0 (start|stop|restart|reload|status)"
+	exit 1
+	;;
+esac
+
+exit 0

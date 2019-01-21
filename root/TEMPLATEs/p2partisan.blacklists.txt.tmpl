@@ -1,0 +1,140 @@
+# shellcheck disable=2148,1132,2034
+###########################################################################
+# Generic lists, additional available e.g. at the following providers:
+# https://www.iblocklist.com/lists.php
+# http://iplists.firehol.org/
+# https://www.spamhaus.org/drop/
+###########################################################################
+# The 2 formats supported are:
+# Type A:
+# .gz cointaining ASCII i nthe format "description:SIP-DIP"
+# Type B:
+# ASCII cointainting X.X.X.X or X.X.X.X/YY, any optional trailer define by a
+# semicolon e.g. ";description" is ignored
+#
+# NOTE: enable with caution, with too many lists you might run of RAM on your router!
+#
+
+##################################################################################
+# NOTE: enable with caution, with too many lists you might run of RAM on your router!
+# Every enabled list must honour the format: "name URL"
+##################################################################################
+
+level1 http://list.iblocklist.com/?list=bt_level1&fileformat=p2p&archiveformat=gz
+level2 http://list.iblocklist.com/?list=bt_level2&fileformat=p2p&archiveformat=gz
+#level3 http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz
+edu http://list.iblocklist.com/?list=bt_edu&fileformat=p2p&archiveformat=gz
+spyware http://list.iblocklist.com/?list=bt_spyware&fileformat=p2p&archiveformat=gz
+advertisement http://list.iblocklist.com/?list=bt_ads&fileformat=p2p&archiveformat=gz
+#bogon http://list.iblocklist.com/?list=gihxqmhyunbxhbmgqrla&fileformat=p2p&archiveformat=gz
+hijacked http://list.iblocklist.com/?list=usrcshglbiilevmyfhse&fileformat=p2p&archiveformat=gz
+dshields http://list.iblocklist.com/?list=xpbqleszmajjesnzddhv&fileformat=p2p&archiveformat=gz
+primary-threats http://list.iblocklist.com/?list=ijfqtofzixtwayqovmxn&fileformat=p2p&archiveformat=gz
+rangetest http://list.iblocklist.com/?list=plkehquoahljmyxjixpu&fileformat=p2p&archiveformat=gz
+badpeers http://list.iblocklist.com/?list=cwworuawihqvocglcoss&fileformat=p2p&archiveformat=gz
+spider http://list.iblocklist.com/?list=mcvxsnihddgutbjfbghy&fileformat=p2p&archiveformat=gz
+webexploit http://list.iblocklist.com/?list=ghlzqtqxnzctvvajwwag&fileformat=p2p&archiveformat=gz
+general_gorporate_ganges http://list.iblocklist.com/?list=ecqbsykllnadihkdirsh&fileformat=p2p&archiveformat=gz
+zeus http://list.iblocklist.com/?list=ynkdjqsjyfmilsgbogqf&fileformat=p2p&archiveformat=gz
+atma http://list.iblocklist.com/?list=tzmtqbbsgbtfxainogvm&fileformat=p2p&archiveformat=gz
+#Microsoft http://list.iblocklist.com/?list=xshktygkujudfnjfioro&fileformat=p2p&archiveformat=gz
+proxy http://list.iblocklist.com/?list=xoebmbyexwuiogmbyprb&fileformat=p2p&archiveformat=gz
+Faker http://list.iblocklist.com/?list=dhuwlruzmglnfaneeizx&fileformat=p2p&archiveformat=gz
+Hacker http://list.iblocklist.com/?list=qpuabqfzsykfvglktzkh&fileformat=p2p&archiveformat=gz
+Pedophiles http://list.iblocklist.com/?list=zchgtvitlwnwcjfuxovf&fileformat=p2p&archiveformat=gz
+Spammer http://list.iblocklist.com/?list=falwwczjguruglzisxdr&fileformat=p2p&archiveformat=gz
+Business_ISPs http://list.iblocklist.com/?list=jcjfaxgyyshvdbceroxf&fileformat=p2p&archiveformat=gz
+
+# Country lists available here
+# http://www.iblocklist.com/lists.php?category=country
+# Browse the URL above and pick up the list you want to block (if any)
+# e.g. Aruba
+aruba http://list.iblocklist.com/?list=aw&fileformat=p2p&archiveformat=gz
+Andorra http://list.iblocklist.com/?list=ad&fileformat=p2p&archiveformat=gz
+United_Arab_Emirates http://list.iblocklist.com/?list=ae&fileformat=p2p&archiveformat=gz
+Afghanistan http://list.iblocklist.com/?list=af&fileformat=p2p&archiveformat=gz
+Antigua_and_Barbuda http://list.iblocklist.com/?list=ag&fileformat=p2p&archiveformat=gz
+Anguilla http://list.iblocklist.com/?list=ai&fileformat=p2p&archiveformat=gz
+Albania http://list.iblocklist.com/?list=al&fileformat=p2p&archiveformat=gz
+Armenia http://list.iblocklist.com/?list=am&fileformat=p2p&archiveformat=gz
+Netherlands_Antilles http://list.iblocklist.com/?list=an&fileformat=p2p&archiveformat=gz
+Angola http://list.iblocklist.com/?list=ao&fileformat=p2p&archiveformat=gz
+Non-spec_Asia_Pas_Location http://list.iblocklist.com/?list=ap&fileformat=p2p&archiveformat=gz
+Argentina http://list.iblocklist.com/?list=ar&fileformat=p2p&archiveformat=gz
+American_Samoa http://list.iblocklist.com/?list=as&fileformat=p2p&archiveformat=gz
+Austria http://list.iblocklist.com/?list=at&fileformat=p2p&archiveformat=gz
+Australia http://list.iblocklist.com/?list=au&fileformat=p2p&archiveformat=gz
+Aruba http://list.iblocklist.com/?list=aw&fileformat=p2p&archiveformat=gz
+Aland_Islands http://list.iblocklist.com/?list=ax&fileformat=p2p&archiveformat=gz
+Azerbaijan http://list.iblocklist.com/?list=az&fileformat=p2p&archiveformat=gz
+Bosnia_and_Herzegowina http://list.iblocklist.com/?list=ba&fileformat=p2p&archiveformat=gz
+Barbados http://list.iblocklist.com/?list=bb&fileformat=p2p&archiveformat=gz
+Bangladesh http://list.iblocklist.com/?list=bd&fileformat=p2p&archiveformat=gz
+Belgium http://list.iblocklist.com/?list=be&fileformat=p2p&archiveformat=gz
+Burkina_Faso http://list.iblocklist.com/?list=bf&fileformat=p2p&archiveformat=gz
+Bulgaria http://list.iblocklist.com/?list=bg&fileformat=p2p&archiveformat=gz
+Bahrain http://list.iblocklist.com/?list=bh&fileformat=p2p&archiveformat=gz
+Burundi http://list.iblocklist.com/?list=bi&fileformat=p2p&archiveformat=gz
+Benin http://list.iblocklist.com/?list=bj&fileformat=p2p&archiveformat=gz
+Bermuda http://list.iblocklist.com/?list=bm&fileformat=p2p&archiveformat=gz
+Brunei_Darussalam http://list.iblocklist.com/?list=bn&fileformat=p2p&archiveformat=gz
+Bolivia http://list.iblocklist.com/?list=bo&fileformat=p2p&archiveformat=gz
+Brazil http://list.iblocklist.com/?list=br&fileformat=p2p&archiveformat=gz
+Bahamas http://list.iblocklist.com/?list=bs&fileformat=p2p&archiveformat=gz
+Bhutan http://list.iblocklist.com/?list=bt&fileformat=p2p&archiveformat=gz
+Botswana http://list.iblocklist.com/?list=bw&fileformat=p2p&archiveformat=gz
+Belarus http://list.iblocklist.com/?list=by&fileformat=p2p&archiveformat=gz
+Belize http://list.iblocklist.com/?list=bz&fileformat=p2p&archiveformat=gz
+Canada http://list.iblocklist.com/?list=ca&fileformat=p2p&archiveformat=gz
+DR_Congo http://list.iblocklist.com/?list=cd&fileformat=p2p&archiveformat=gz
+Central_African_Republic http://list.iblocklist.com/?list=cf&fileformat=p2p&archiveformat=gz
+Congo http://list.iblocklist.com/?list=cg&fileformat=p2p&archiveformat=gz
+Switzerland http://list.iblocklist.com/?list=ch&fileformat=p2p&archiveformat=gz
+Cote_Ivoire http://list.iblocklist.com/?list=ci&fileformat=p2p&archiveformat=gz
+Cook_Islands http://list.iblocklist.com/?list=ck&fileformat=p2p&archiveformat=gz
+Chile http://list.iblocklist.com/?list=cl&fileformat=p2p&archiveformat=gz
+Cameroon http://list.iblocklist.com/?list=cm&fileformat=p2p&archiveformat=gz
+China http://list.iblocklist.com/?list=cn&fileformat=p2p&archiveformat=gz
+Colombia http://list.iblocklist.com/?list=co&fileformat=p2p&archiveformat=gz
+Costa_Rica http://list.iblocklist.com/?list=cr&fileformat=p2p&archiveformat=gz
+Serbia_Montenegro http://list.iblocklist.com/?list=cs&fileformat=p2p&archiveformat=gz
+Cuba http://list.iblocklist.com/?list=cu&fileformat=p2p&archiveformat=gz
+Cape_Verde http://list.iblocklist.com/?list=cv&fileformat=p2p&archiveformat=gz
+Cyprus http://list.iblocklist.com/?list=cy&fileformat=p2p&archiveformat=gz
+Czech_Republic http://list.iblocklist.com/?list=cz&fileformat=p2p&archiveformat=gz
+#Germany http://list.iblocklist.com/?list=de&fileformat=p2p&archiveformat=gz
+Djibouti http://list.iblocklist.com/?list=dj&fileformat=p2p&archiveformat=gz
+Denmark http://list.iblocklist.com/?list=dk&fileformat=p2p&archiveformat=gz
+Dominican_Republic http://list.iblocklist.com/?list=do&fileformat=p2p&archiveformat=gz
+Algeria http://list.iblocklist.com/?list=dz&fileformat=p2p&archiveformat=gz
+Ecuador http://list.iblocklist.com/?list=ec&fileformat=p2p&archiveformat=gz
+Estonia http://list.iblocklist.com/?list=ee&fileformat=p2p&archiveformat=gz
+Egypt http://list.iblocklist.com/?list=eg&fileformat=p2p&archiveformat=gz
+Eritrea http://list.iblocklist.com/?list=er&fileformat=p2p&archiveformat=gz
+Spain http://list.iblocklist.com/?list=es&fileformat=p2p&archiveformat=gz
+Ethiopia http://list.iblocklist.com/?list=et&fileformat=p2p&archiveformat=gz
+#European_Union http://list.iblocklist.com/?list=eu&fileformat=p2p&archiveformat=gz
+Finland http://list.iblocklist.com/?list=fi&fileformat=p2p&archiveformat=gz
+Fiji http://list.iblocklist.com/?list=fj&fileformat=p2p&archiveformat=gz
+Federated_States_Micronesia http://list.iblocklist.com/?list=fm&fileformat=p2p&archiveformat=gz
+Faroe_Islands http://list.iblocklist.com/?list=fo&fileformat=p2p&archiveformat=gz
+#France http://list.iblocklist.com/?list=fr&fileformat=p2p&archiveformat=gz
+Gabon http://list.iblocklist.com/?list=ga&fileformat=p2p&archiveformat=gz
+United_Kingdom http://list.iblocklist.com/?list=gb&fileformat=p2p&archiveformat=gz
+Grenada http://list.iblocklist.com/?list=gd&fileformat=p2p&archiveformat=gz
+Georgia http://list.iblocklist.com/?list=ge&fileformat=p2p&archiveformat=gz
+French_Guiana http://list.iblocklist.com/?list=gf&fileformat=p2p&archiveformat=gz
+Guernsey http://list.iblocklist.com/?list=gg&fileformat=p2p&archiveformat=gz
+Ghana http://list.iblocklist.com/?list=gh&fileformat=p2p&archiveformat=gz
+Gibraltar http://list.iblocklist.com/?list=gi&fileformat=p2p&archiveformat=gz
+Greenland http://list.iblocklist.com/?list=gl&fileformat=p2p&archiveformat=gz
+Gambia http://list.iblocklist.com/?list=gm&fileformat=p2p&archiveformat=gz
+Guinea http://list.iblocklist.com/?list=gn&fileformat=p2p&archiveformat=gz
+Guadeloupe http://list.iblocklist.com/?list=gp&fileformat=p2p&archiveformat=gz
+Equatorial_Guinea http://list.iblocklist.com/?list=gq&fileformat=p2p&archiveformat=gz
+Greece http://list.iblocklist.com/?list=gr&fileformat=p2p&archiveformat=gz
+Guatemala http://list.iblocklist.com/?list=gt&fileformat=p2p&archiveformat=gz
+Guam http://list.iblocklist.com/?list=gu&fileformat=p2p&archiveformat=gz
+Guinea_bissau http://list.iblocklist.com/?list=gw&fileformat=p2p&archiveformat=gz
+Guyana http://list.iblocklist.com/?list=gy&fileformat=p2p&archiveformat=gz
+Hong_Kong http://list.iblocklist.com/?list=hk&fileformat=p2p&archiveformat=gz

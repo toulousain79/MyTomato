@@ -1,0 +1,325 @@
+#!/opt/bin/bash
+
+#### Variables declaration
+declare gsScriptName gsDirOverLoad gsDirArmExtras gsDirBackups gsDirTemplates gsWan1_DNS gdDateTime
+declare gbDNScrypt_Enable gbP2Partisan_Enable
+declare gsDirBackups
+
+#### NTP Update
+function gfnNtpUpdate() {
+	ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
+}
+
+#### NVRAM update
+function gfnNvramUpdate() {
+	local sValue sSwith nCommit
+	nCommit=0
+
+	[ -n "${1}" ] && sValue="${1}" || return 1
+	sSwith="${2}"
+
+	case "${sValue}" in
+	'dnsmasq')
+		nvram get dnsmasq_custom >/tmp/dnsmasq_custom
+		(! grep -q 'log-async' /tmp/dnsmasq_custom) && {
+			echo "log-async=20" >>/tmp/dnsmasq_custom
+			nCommit=1
+		}
+		(! grep -q '/etc/dnsmasq-custom.conf' /tmp/dnsmasq_custom) && {
+			echo "conf-file=/etc/dnsmasq-custom.conf" >>/tmp/dnsmasq_custom
+			nCommit=1
+		}
+		if [ "${nCommit}" -eq 1 ]; then
+			logger -p user.notice "| ${gsScriptName} | Set NVram dnsmasq_custom=\"$(cat /tmp/dnsmasq_custom)\""
+			nvram set dnsmasq_custom="$(cat /tmp/dnsmasq_custom)"
+			service dnsmasq restart
+		fi
+		rm -f /tmp/dnsmasq_custom
+		;;
+	'dns_wan1')
+		case "${sSwith}" in
+		'get')
+			# WAN 1 DNS
+			sWan1Dns="$(nvram get wan_dns)"
+			if [ -n "${sWan1Dns}" ] && [ "${sWan1Dns}" != "${gsWan1_DNS}" ]; then
+				# Backup custo vers file
+				[ -f "${gsDirOverLoad}/vars" ] && cp "${gsDirOverLoad}/vars" "${gsDirBackups}/vars.${gdDateTime}"
+				# Replace value in vars file
+				logger -p user.notice "| ${gsScriptName} | Replace gsWan1_DNS FROM \"${gsWan1_DNS}\" to \"${sWan1Dns}\" in \"${gsDirOverLoad}/vars\""
+				nNumLine=$(grep 'gsWan1_DNS' -n -m 1 <"${gsDirOverLoad}/vars" | cut -d ':' -f 1)
+				sed -i "${nNumLine}"s/.*/gsWan1_DNS=\""${sWan1Dns}"\"/ "${gsDirOverLoad}/vars"
+			fi
+			;;
+		*)
+			sWan1Dns="$(nvram get wan_dns)"
+			if [ "${sWan1Dns}" != "${gsWan1_DNS}" ]; then
+				logger -p user.notice "| ${gsScriptName} | Set NVram wan_dns=\"${gsWan1_DNS}\""
+				nCommit=1
+				nvram set wan_dns="${gsWan1_DNS}"
+			fi
+			;;
+		esac
+		;;
+	esac
+
+	[ "${nCommit}" -eq 1 ] && nvram commit
+}
+
+#### Start all Optware services
+function gfnEntwareServices() {
+	local sAction
+	[ -n "${1}" ] && sAction="${1}"
+
+	# NFS
+	# gfnInstallNfsServer
+	# if [ -f /opt/etc/init.d/S57nfs-kernel-server ]; then
+	# 	nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S57nfs-kernel-server | cut -d ':' -f 1)
+	# 	sed -i "${nNumLine}"s/.*/ENABLED="$(echo "${gbNFSserver_Enable}" | sed 's/0/no/g;' | sed 's/1/yes/g;')"/ /opt/etc/init.d/S57nfs-kernel-server
+	# fi
+	# if [ -f /opt/etc/init.d/S19rpcbind ]; then
+	# 	nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S19rpcbind | cut -d ':' -f 1)
+	# 	sed -i "${nNumLine}"s/.*/ENABLED="$(echo "${gbNFSserver_Enable}" | sed 's/0/no/g;' | sed 's/1/yes/g;')"/ /opt/etc/init.d/S19rpcbind
+	# fi
+
+	# DNScrypt-proxy
+	gfnInstallDnscryptProxy "$@"
+	if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
+		nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+		sed -i "${nNumLine}"s/.*/ENABLED="$(echo "${gbDNScrypt_Enable}" | sed 's/0/no/g;' | sed 's/1/yes/g;')"/ /opt/etc/init.d/S09dnscrypt-proxy2
+	fi
+
+	# fake-hwclock
+	sed -i 's/ load$/ load force/g;' /opt/etc/init.d/S01fake-hwclock
+	sed -i '/system clock/d' /opt/etc/init.d/S01fake-hwclock
+
+	# RC.unslung
+	/opt/etc/init.d/rc.unslung "${sAction}"
+}
+
+#### Load Modules
+function gfnLoadModules() (
+	local sMessage
+
+	[ -z "$1" ] && return 1
+
+	function fnLoadModule() {
+		local sKoFile sModuleName
+
+		for sKoFile in ${1}; do
+			sModuleName="${sKoFile//-/_}"
+			sMessage="Load module '${sKoFile}': "
+			if (lsmod | awk '{ print $1 }' | grep "${sModuleName}"); then
+				if insmod "${gsDirArmExtras}/${sKoFile}"; then
+					sMessage="${sMessage} OK"
+				else
+					sMessage="${sMessage} KO"
+				fi
+			else
+				sMessage="${sMessage} Already loaded"
+			fi
+			logger -p user.notice "| ${gsScriptName} | ${sMessage}"
+		done
+	}
+
+	case "${1}" in
+	'usb') fnLoadModule "input-core.ko hid.ko usbhid.ko" ;;
+	'nfs') fnLoadModule "exportfs.ko sunrpc.ko lockd.ko nfsd.ko nfs.ko" ;;
+	*)
+		echo "Module '$1' does no exist !"
+		return 1
+		;;
+	esac
+)
+
+#### Check if is a correct IP
+function gfnValidateIP() {
+	local sIp nReturn nOctet
+	[ -n "${1}" ] && sIp="${1}"
+	nReturn=0
+
+	if [[ ${sIp} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+		sIp=$(echo "${sIp}" | tr "." "\n")
+		for nOctet in $sIp; do
+			[ "${nOctet}" -ge 255 ] && nReturn=1
+		done
+	else
+		nReturn=1
+	fi
+
+	return "${nReturn}"
+}
+
+#### Manager Syslogd
+function gfnStartStopSyslogd() {
+	case "${1}" in
+	'start')
+		if [ "$(nvram get log_file)" -eq 1 ] && [ -z "$(pidof syslogd)" ]; then
+			echo "$(/bin/date '+%a %b %d %T %Y') $(nvram get lan_hostname) user.notice | Start SysLog process" >>/opt/var/log/messages
+			syslogd -L -s "$(nvram get log_file_size)" -O "$(nvram get log_file_path)" -b "$(nvram get log_file_keep)"
+		fi
+		;;
+	'stop')
+		if [ -n "$(pidof syslogd)" ]; then
+			killall syslogd >/dev/null | echo "$(/bin/date '+%a %b %d %T %Y') $(nvram get lan_hostname) user.notice | Stop SysLog process" >>/opt/var/log/messages
+		fi
+		;;
+	*) return 1 ;;
+	esac
+}
+
+#### Install DNScrypt-proxy
+function gfnInstallDnscryptProxy() {
+	#### Install
+	if (! opkg list-installed | grep -q 'dnscrypt-proxy'); then
+		if (opkg list | grep -q 'dnscrypt-proxy2_nohf'); then
+			logger -p user.notice "| ${gsScriptName} | Start DNScrypt-proxy installation"
+			opkg install fake-hwclock whereis
+			opkg install dnscrypt-proxy2_nohf
+			# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
+			if [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
+				cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
+			elif [ -f /opt/etc/dnscrypt-proxy.toml ] && [ -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
+				cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.${gdDateTime}.toml"
+			fi
+			logger -p user.notice "| ${gsScriptName} | End of DNScrypt-proxy installation"
+		fi
+	fi
+
+	# local sUrl sSubDir sTarGz sUpgrade
+	# [ -n "${2}" ] && sUpgrade="${2}"
+	# if [ "${sUpgrade}" == "upgrade" ] || (! type -P /opt/sbin/dnscrypt-proxy >/dev/null); then
+	# 	logger -p user.notice "| ${gsScriptName} | Start DNScrypt-proxy installation"
+	# 	# Download latest release
+	# 	sUrl="https://api.github.com/repos/jedisct1/dnscrypt-proxy/releases/latest"
+	# 	for sFile in $(${binCurl} ${sUrl} |jq -r ".assets[] | select(.name | contains(\"linux_arm-\")) | .browser_download_url"); do
+	# 		if (! grep -q 'minisig' <<< "${sFile}"); then
+	# 			sTarGz="$(basename "${gsDirBackups}/${sFile##*/}")"
+	# 			${binCurl} "${sFile}" -o "${gsDirBackups}/${sTarGz}"
+	# 		fi
+	# 	done
+	# 	# Extract it
+	# 	sSubDir="$(tar -ztf "${gsDirBackups}/${sTarGz}" | cut -d '/' -f 1 | uniq)"
+	# 	tar -zxf "${gsDirBackups}/${sTarGz}" -C /tmp/
+	# 	mv -v "/tmp/$sSubDir/dnscrypt-proxy" /opt/sbin/dnscrypt-proxy
+	# 	chmod +x /opt/sbin/dnscrypt-proxy
+	# 	# Copy back examples files in conf overload dir
+	# 	find "/tmp/$sSubDir/" -name "example*.toml" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirBackups}/$(basename $(echo "$1" | sed "s/example-//g;"))' _ {} \;
+	# 	find "/tmp/$sSubDir/" -name "example*.txt" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirBackups}/$(basename $(echo "$1" | sed "s/example-/dnscrypt./g;"))' _ {} \;
+	# 	logger -p user.notice "| ${gsScriptName} | End of DNScrypt-proxy installation"
+	# fi
+
+	#### Files
+	# Create a backup of original file: /opt/etc/init.d/S09dnscrypt-proxy2
+	{ [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && [ ! -f "${gsDirBackups}/S09dnscrypt-proxy2.original" ]; } &&
+		cp /opt/etc/init.d/S09dnscrypt-proxy2 "${gsDirBackups}/S09dnscrypt-proxy2.original"
+
+	# Replace original init script by the template
+	[ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ] && cp "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" /opt/etc/init.d/S09dnscrypt-proxy2
+
+	# If exist, replace actual init script by cutom
+	[ -f "${gsDirOverLoad}/S09dnscrypt-proxy2" ] && cp "${gsDirOverLoad}/S09dnscrypt-proxy2" /opt/etc/init.d/S09dnscrypt-proxy2
+	chmod +x /opt/etc/init.d/S09dnscrypt-proxy2
+
+	# Create a custom config file: dnscrypt-proxy.toml
+	{ [ -f "${gsDirTemplates}/dnscrypt.config.toml.tmpl" ] && [ ! -f "${gsDirOverLoad}/dnscrypt-proxy.toml" ]; } &&
+		cp "${gsDirTemplates}/dnscrypt.config.toml.tmpl" "${gsDirOverLoad}/dnscrypt-proxy.toml"
+
+	# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
+	if [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
+		cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
+	elif [ -f /opt/etc/dnscrypt-proxy.toml ] && [ -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
+		cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.${gdDateTime}.toml"
+	fi
+
+	# Copy dnscrypt-proxy.toml from templates for next start
+	[ -f "${gsDirTemplates}/dnscrypt-proxy.toml.tmpl" ] && cp "${gsDirTemplates}/dnscrypt-proxy.toml.tmpl" /opt/etc/dnscrypt-proxy.toml
+	# If exist, use a custom dnscrypt-proxy.toml
+	[ -f "${gsDirOverLoad}/dnscrypt-proxy.toml" ] && cp "${gsDirOverLoad}/dnscrypt-proxy.toml" /opt/etc/dnscrypt-proxy.toml
+
+	# Blocklists
+	if (! find "${gsDirOverLoad}/"*dnscrypt.*.txt &>/dev/null); then
+		find "${gsDirTemplates}/" -name "dnscrypt.*.txt.tmpl" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirOverLoad}/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
+	fi
+}
+
+#### Install P2Partisan
+function gfnP2pArtisanStart() {
+
+	if [ "${gbP2Partisan_Enable}" -eq 1 ] && [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]; then
+		#### Files
+		# Copy templates
+		{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklists ]; } &&
+			cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" /opt/MyTomato/P2Partisan/blacklists
+		{ [ -f "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklist-custom ]; } &&
+			cp "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" /opt/MyTomato/P2Partisan/blacklist-custom
+		{ [ -f "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/greylist ]; } &&
+			cp "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" /opt/MyTomato/P2Partisan/greylist
+		{ [ -f "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/whitelist ]; } &&
+			cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" /opt/MyTomato/P2Partisan/whitelist
+
+		# Create custom lists
+		{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan.blacklists" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklists"
+		{ [ -f "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.blacklist-custom" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklist-custom"
+		{ [ -f "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.greylist" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan.greylist"
+		{ [ -f "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.whitelist" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan.whitelist"
+
+		# If exist, replace actual list by cutom
+		[ -f "${gsDirOverLoad}/p2partisan.blacklists" ] && cp "${gsDirOverLoad}/p2partisan.blacklists" /opt/MyTomato/P2Partisan/blacklists
+		[ -f "${gsDirOverLoad}/p2partisan.blacklist-custom" ] && cp "${gsDirOverLoad}/p2partisan.blacklist-custom" /opt/MyTomato/P2Partisan/blacklist-custom
+		[ -f "${gsDirOverLoad}/p2partisan.greylist" ] && cp "${gsDirOverLoad}/p2partisan.greylist" /opt/MyTomato/P2Partisan/greylist
+		[ -f "${gsDirOverLoad}/p2partisan.whitelist" ] && cp "${gsDirOverLoad}/p2partisan.whitelist" /opt/MyTomato/P2Partisan/whitelist
+
+		# Create a symlink to /opt/usr/bin
+		[ ! -h /opt/sbin/p2partisan.sh ] && ln -s /opt/MyTomato/P2Partisan/p2partisan.sh /opt/sbin/p2partisan.sh
+
+		#### Chmod
+		chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
+
+		#### Start
+		/opt/MyTomato/P2Partisan/p2partisan.sh restart
+	fi
+}
+
+#### Install NFS server
+gfnInstallNfsServer() {
+	#### Install
+	if (! opkg list-installed | grep -q 'nfs-kernel-server'); then
+		if (opkg list | grep -q 'nfs-kernel-server'); then
+			logger -p user.notice "| ${gsScriptName} | Start NFS Server installation"
+			opkg install nfs-kernel-server nfs-kernel-server-utils
+			logger -p user.notice "| ${gsScriptName} | End of NFS Server installation"
+		fi
+	fi
+
+	#### Load modules
+	gfnLoadModules 'nfs'
+
+	#### Files
+	# Replace original init script by the template
+	[ -f "${gsDirTemplates}/init/S57nfs-kernel-server.tmpl" ] && cp "${gsDirTemplates}/init/S57nfs-kernel-server.tmpl" /opt/etc/init.d/S57nfs-kernel-server
+
+	# /etc/services
+	sed -i '/nfsd/d' /etc/services
+	if (! grep -q 'nfs 2049/tcp' /etc/services); then
+		nNumLine=$(grep 'upnp 1900/udp' -n -m 1 </etc/services | cut -d ':' -f 1)
+		sed -i "${nNumLine}a\nfs 2049/tcp" /etc/services
+	fi
+	if (! grep -q 'nfs 2049/udp' /etc/services); then
+		nNumLine=$(grep 'nfs 2049/tcp' -n -m 1 </etc/services | cut -d ':' -f 1)
+		sed -i "${nNumLine}a\nfs 2049/udp" /etc/services
+	fi
+}
+
+#### Copy to Syslog
+function gfnCopyToSylog() {
+	[ ! -f /tmp/to_syslog ] && return 0
+
+	while read -r line; do
+		logger -p user.notice "| ${gsScriptName} | ${line}"
+	done </tmp/to_syslog
+	rm -f /tmp/to_syslog
+}

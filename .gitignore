@@ -1,0 +1,4 @@
+*.custom
+.vscode/
+bin/
+bash.exe.stackdump

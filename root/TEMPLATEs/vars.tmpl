@@ -1,0 +1,41 @@
+# shellcheck shell=bash
+
+########################################
+#### USB Disk
+gsUsbFileSystem="ext4"
+gsUsbOptUuid=""
+
+########################################
+#### Global
+# Locales
+gsLocales="en_US"     # ex: "fr_FR", check /opt/usr/share/i18n/locales/
+gsTimezone="Europe/Paris" # https://github.com/Entware/Entware/wiki/Using-time-zones
+
+########################################
+#### Services
+# P2P Artisan
+# https://www.linksysinfo.org/index.php?threads/p2partisan-v5-14-v6-08-mass-ip-blocking-peerblock-peerguardian-for-tomato.69128/
+# - Line 7 in p2partisan.sh should be automatically adjusted to your custom path but double check for your peace of mind
+# - You might want to have a look at the other parameters set at the beginning of the file just to make sure you're happy with them
+# - Edit the whiteports_tcp & whiteports_udp if needed
+# - Edit the greyports_tcp & greyports_udp if needed
+# - Edit the blacklists file if needed
+# - Edit the blacklist-custom if needed
+# - Edit the whitelist file if needed
+gbP2Partisan_Enable=1 # Off = 0 / On = 1
+
+# DNScrypt-proxy
+gbDNScrypt_Enable=1 # Off = 0 / On = 1
+gsWan1_DNS="9.9.9.9 149.112.112.112"
+
+# Upgrade MyTomato from GitHub repository
+gbRepoUpgrade_Enable=1 # Off = 0 / On = 1
+
+########################################
+#### ACKs
+## Orange - DHCP Mode
+gsOrange_FTI="" # Orange username (ex: fti/xxxxxxxx), leave blank to disable patch
+
+#### Export
+export gbP2Partisan_Enable gbDNScrypt_Enable gbRepoUpgrade_Enable
+export gsUsbFileSystem gsUsbOptUuid gsLocales gsTimezone gsWan1_DNS gsOrange_FTI

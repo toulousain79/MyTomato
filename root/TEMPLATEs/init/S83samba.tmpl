@@ -1,0 +1,11 @@
+#!/opt/bin/bash
+
+ENABLED="$(nvram get smbd_enable |sed 's/0/no/g;' |sed 's/1/yes/g;' |sed 's/2/yes/g;')"
+PROCS=smbd
+ARGS=""
+PREARGS=""
+DESC="Samba"
+PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export ENABLED PROCS ARGS PREARGS DESC
+# shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
+. /opt/etc/init.d/rc.func

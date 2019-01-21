@@ -1,0 +1,19 @@
+---
+stages:
+    - check
+
+# #### Project check (merge request)
+Project check:
+    image: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/mysb/project_check/project_check:latest
+    stage: check
+    only:
+      refs:
+        - merge_requests
+        - schedules
+      variables:
+        - $CHECK == "True"
+    script:
+        - |
+            for script in $(echo ${CI_PROJECT_DIR}/ci/scripts/[0-9][0-9]-*.sh); do
+                . ${script} "${CI_PROJECT_DIR}"
+            done

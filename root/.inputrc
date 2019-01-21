@@ -1,0 +1,28 @@
+# https://wiki.archlinux.org/index.php/Readline
+set meta-flag on
+set convert-meta off
+set output-meta on
+# Faster completion
+set show-all-if-unmodified off
+set show-all-if-ambiguous off
+# Color files by types
+set colored-stats On
+# Append char to indicate type
+set visible-stats On
+# Mark symlinked directories
+set mark-symlinked-directories On
+# Color the common prefix
+set colored-completion-prefix On
+# Color the common prefix in menu-complete
+set menu-complete-display-prefix On
+
+"\e[1;5D": backward-word
+"\e[1;5C": forward-word
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[7~": beginning-of-line
+"\e[8~": end-of-line
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+"\e[H": beginning-of-line
+"\e[F": end-of-line

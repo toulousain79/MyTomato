@@ -1,0 +1,32 @@
+#!/opt/bin/bash
+
+PATH=/opt/sbin:/opt/bin:/opt/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENABLED=yes
+PROCS=fake-hwclock
+ARGS=""
+PREARGS=""
+DESC="Fake Hardware Clock"
+export ENABLED PROCS ARGS PREARGS DESC
+
+start() {
+	fake-hwclock load force >/dev/null
+}
+
+stop() {
+	fake-hwclock save
+}
+
+case "$1" in
+start)
+	start
+	;;
+stop)
+	stop
+	;;
+*)
+	echo "Usage: $0 (start|stop)"
+	exit 1
+	;;
+esac
+
+exit 0

@@ -1,0 +1,11 @@
+#!/opt/bin/bash
+
+ENABLED=yes
+PROCS=dnsmasq
+ARGS=""
+PREARGS=""
+DESC="DNSmasq"
+PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export ENABLED PROCS ARGS PREARGS DESC
+# shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
+. /opt/etc/init.d/rc.func
