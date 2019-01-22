@@ -1,8 +1,8 @@
 #!/opt/bin/bash
 
 #### Variables declaration
-declare gsScriptName gsDirOverLoad gsDirArmExtras gsDirBackups gsDirTemplates gsWan1_DNS gdDateTime
-declare gbDNScrypt_Enable gbP2Partisan_Enable
+declare gsScriptName gsDirOverLoad gsDirArmExtras gsDirBackups gsDirTemplates gsWan1_DNS gsDirScripts
+declare gbDNScrypt_Enable gbP2Partisan_Enable gdDateTime
 declare gsDirBackups
 
 #### NTP Update
@@ -169,6 +169,15 @@ function gfnStartStopSyslogd() {
 
 #### Install DNScrypt-proxy
 function gfnInstallDnscryptProxy() {
+	#### AIO version
+	if (! nvram get os_version | grep -q 'AIO'); then
+		nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirScripts}/inc/vars" | cut -d ':' -f 1)
+		sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirScripts}/inc/vars"
+		nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirOverLoad}/vars" | cut -d ':' -f 1)
+		sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirOverLoad}/vars"
+		return 1
+	fi
+
 	#### Install
 	if (! opkg list-installed | grep -q 'dnscrypt-proxy'); then
 		if (opkg list | grep -q 'dnscrypt-proxy2_nohf'); then
@@ -258,14 +267,14 @@ function gfnP2pArtisanStartStop() {
 			cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" /opt/MyTomato/P2Partisan/whitelist
 
 		# Create custom lists
-		{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan.blacklists" ]; } &&
-			cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklists"
-		{ [ -f "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.blacklist-custom" ]; } &&
-			cp "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklist-custom"
-		{ [ -f "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.greylist" ]; } &&
-			cp "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan.greylist"
-		{ [ -f "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.whitelist" ]; } &&
-			cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan.whitelist"
+{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan.blacklists" ]; } &&
+cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklists"
+{ [ -f "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.blacklist-custom" ]; } &&
+cp "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklist-custom"
+{ [ -f "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.greylist" ]; } &&
+cp "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan.greylist"
+{ [ -f "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.whitelist" ]; } &&
+cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan.whitelist"
 
 		# If exist, replace actual list by cutom
 		[ -f "${gsDirOverLoad}/p2partisan.blacklists" ] && cp "${gsDirOverLoad}/p2partisan.blacklists" /opt/MyTomato/P2Partisan/blacklists
@@ -317,7 +326,7 @@ gfnInstallNfsServer() {
 }
 
 #### Copy to Syslog
-function gfnCopyToSylog() {
+function gfnCopyToSyslog() {
 	[ ! -f /tmp/to_syslog ] && return 0
 
 	while read -r line; do

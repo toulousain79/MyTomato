@@ -103,7 +103,7 @@ cat /opt/etc/group >>/tmp/to_syslog
 [ -n "${gsDirBackups}" ] && /opt/bin/find "${gsDirBackups}/" -type f -mtime +30 -exec rm -vf {} \; >>/tmp/to_syslog
 
 #### Copy back local logs to Syslog
-gfnCopyToSylog
+gfnCopyToSyslog
 
 #### Locales
 if [ -n "${gsLocales}" ]; then

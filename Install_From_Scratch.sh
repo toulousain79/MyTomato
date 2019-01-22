@@ -81,8 +81,11 @@ ntpd \
 rsync \
 openssh-sftp-server \
 nfs-kernel-server \
-nfs-kernel-server-utils \
-dnscrypt-proxy2_nohf
+nfs-kernel-server-utils
+
+if (! nvram get os_version | grep -q 'AIO' ); then
+	opkg install dnscrypt-proxy2_nohf
+fi
 
 #### NTP
 ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
@@ -270,6 +273,19 @@ rm -fv /tmp/script_usbumount
 rm -fv /tmp/openvpn_client1
 rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
+if (nvram get os_version | grep -q 'AIO' ); then
+	rm -fv /opt/etc/dnscrypt-proxy.toml
+	rm -fv ${gsDirBackups}/dnscrypt-proxy*
+	rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
+	rm -fv ${gsDirOverLoad}/dnscrypt*
+	rm -fv ${gsDirOverLoad}/*.md
+	rm -fv ${gsDirOverLoad}/*.minisig
+
+	nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/SCRIPTs/inc/vars | cut -d ':' -f 1)
+	sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/SCRIPTs/inc/vars
+	nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
+	sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/ConfigOverload/vars
+fi
 
 #### MLocate
 [ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
