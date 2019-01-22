@@ -23,6 +23,6 @@ gfnStartStopSyslogd 'start'
 gfnEntwareServices "start"
 
 #### P2Partisan
-gfnP2pArtisanStart
+gfnP2pArtisanStartStop
 
 exit 0

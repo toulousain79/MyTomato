@@ -31,8 +31,8 @@ maxloghour=1
 # anything else you think it's relevant.
 # Standard iptables syntax, individual ports divided by "," and ":" to
 # define a range e.g. 80,443,2100:2130. Do not whitelist you P2P client!
-whiteports_tcp=
-whiteports_udp=
+whiteports_tcp=43,80,443
+whiteports_udp=53,123,1194:1196
 #
 # Greyports are port/s you absolutely want to filter against lists.
 # Think of an Internet host that has its P2P client set on port 53 UDP.

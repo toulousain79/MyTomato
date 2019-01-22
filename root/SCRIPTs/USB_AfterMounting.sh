@@ -74,7 +74,7 @@ bash "${gsDirScripts}/Upgrade.sh"
 #### P2Partisan install
 if [ ! -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && [ "${gbP2Partisan_Enable}" -eq 1 ]; then
 	logger -p user.notice "| ${gsScriptName} | Start P2Partisan installation"
-	gfnP2pArtisanStart
+	gfnP2pArtisanStartStop
 	logger -p user.notice "| ${gsScriptName} | End of P2Partisan installation"
 fi
 
