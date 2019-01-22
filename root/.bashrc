@@ -55,19 +55,19 @@ esac
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
+#### MyTomato
+# shellcheck source=root/SCRIPTs/inc/vars
+[ -f /opt/MyTomato/root/SCRIPTs/inc/vars ] && . /opt/MyTomato/root/SCRIPTs/inc/vars
+
+# PATH
+export PATH=/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:/bin:/sbin:/mmc/bin:/mmc/sbin:/mmc/usr/bin:/mmc/usr/sbin:/usr/bin:/usr/sbin:/home/root:/opt/etc/init.d/:${gsDirScripts}
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 # shellcheck source=root/.bash_aliases
 [ -f ~/.bash_aliases ] && . ~/.bash_aliases
-
-#### MyTomato
-# shellcheck source=root/SCRIPTs/inc/vars
-[ -f /opt/MyTomato/root/SCRIPTs/inc/vars ] && . /opt/MyTomato/root/SCRIPTs/inc/vars
-
-# PATH
-export PATH=/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:/bin:/sbin:/mmc/bin:/mmc/sbin:/mmc/usr/bin:/mmc/usr/sbin:/usr/bin:/usr/sbin:/home/root:${gsDirScripts}
 
 # Define localization
 export LANG="${gsLocales}.UTF-8"

@@ -243,7 +243,7 @@ function gfnInstallDnscryptProxy() {
 }
 
 #### Install P2Partisan
-function gfnP2pArtisanStart() {
+function gfnP2pArtisanStartStop() {
 
 	if [ "${gbP2Partisan_Enable}" -eq 1 ] && [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]; then
 		#### Files
@@ -276,11 +276,13 @@ function gfnP2pArtisanStart() {
 		# Create a symlink to /opt/usr/bin
 		[ ! -h /opt/sbin/p2partisan.sh ] && ln -s /opt/MyTomato/P2Partisan/p2partisan.sh /opt/sbin/p2partisan.sh
 
-		#### Chmod
 		chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
-
-		#### Start
 		/opt/MyTomato/P2Partisan/p2partisan.sh restart
+		/opt/MyTomato/P2Partisan/p2partisan.sh autorun-on
+	elif [ "${gbP2Partisan_Enable}" -ne 1 ] && [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]; then
+		chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
+		/opt/MyTomato/P2Partisan/p2partisan.sh stop
+		/opt/MyTomato/P2Partisan/p2partisan.sh autorun-off
 	fi
 }
 

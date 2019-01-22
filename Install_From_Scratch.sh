@@ -211,8 +211,6 @@ echo "{ [ \"$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmou
 echo "sleep 2; service dnsmasq restart"
 } >/tmp/script_usbumount
 nvram set script_usbumount="$(cat /tmp/script_usbumount)"
-rm -f /tmp/script_usbumount
-
 # Administration > Scheduler > Custom 1
 nvram set sch_c1=1,300,127 # Everyday at 5:00 am
 nvram set sch_c1_cmd="bash ${gsDirScripts}/Upgrade.sh"
@@ -261,18 +259,15 @@ nvram set ntp_tdod=1
 	echo "verb 3"
 } >>/tmp/openvpn_client1
 nvram set vpn_client1_custom="$(cat /tmp/openvpn_client1)"
-rm -f /tmp/openvpn_client1
-
-## P2Partisan
-nvram get script_fire >/tmp/script_fire
-echo "/opt/MyTomato/P2Partisan/p2partisan.sh restart" >/tmp/script_fire
-nvram set script_fire="$(cat /tmp/script_fire)"
-rm -f /tmp/script_init
 
 # Commit
 nvram commit
 
 #### Cleaning
+rm -fv /tmp/script_init
+rm -fv /tmp/script_fire
+rm -fv /tmp/script_usbumount
+rm -fv /tmp/openvpn_client1
 rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
 
