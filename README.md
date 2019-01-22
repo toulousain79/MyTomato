@@ -1,6 +1,6 @@
 # MyTomato _(ARMv7 only)_
 
-MyTomato environment for Shibby or FreshTomato **ARM v7** firmwares _(kernel v2.6.36)_.
+TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version _(kernel v2.6.36)_.
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N)
 
@@ -21,7 +21,7 @@ MyTomato environment for Shibby or FreshTomato **ARM v7** firmwares _(kernel v2.
 	  * Countries blocklists
 	  * Usual blocklists
 	  * known addresses of TMG
-  * [DNScrypt-proxy v2](https://github.com/jedisct1/dnscrypt-proxy/blob/master/README.md) _(no DoH)_
+  * [DNScrypt-proxy v2](https://github.com/jedisct1/dnscrypt-proxy/blob/master/README.md) _(no DoH)_ _(disabled for AIO firmwares)_
 	  * DNS query monitoring, with separate log files for regular and suspicious queries
 	  * Filtering: **block ads**, **malware**, and other unwanted content. Compatible with all DNS services
 	  * Time-based filtering, with a flexible weekly schedule
