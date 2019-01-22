@@ -38,5 +38,6 @@ fi
 
 #### SCRIPTs
 chmod +x ${gsDirScripts}/*
+[ -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
 
 exit 0

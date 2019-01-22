@@ -7,12 +7,12 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 ### Features
 
   * Install latest [Entware](https://github.com/Entware/Entware) version _(Merge of Entware-ng-3x and Entware-ng)_
-    * Use of [standard](https://github.com/Entware/Entware/wiki/Alternative-install-vs-standard) installation version _(generic for kernel v2.6.36)_
+	* Use of [standard](https://github.com/Entware/Entware/wiki/Alternative-install-vs-standard) installation version _(generic for kernel v2.6.36)_
   * Prepare an environment for root user
 	  * bash _(prompt, locale, colors, readline, bash on login, ...)_
 	  * aliases for all Entware binaries installed _(dynamically)_
 	  * admin tools
-    * add locales & timezone
+	* add locales & timezone
   * Project auto upgrade _(Entware & GitHub)_
 	  * get patch
 	  * new features
@@ -116,6 +116,25 @@ vim /opt/MyTomato/root/ConfigOverload/vars
 ```
 
 7. Reboot
+
+## Availables commands
+
+All the scripts present in /opt/MyTomato/root/SCRIPTs/ are accessible directly via the PATH.
+
+  * **USB_AfterMounting.**sh**
+	  - executed after USB /opt mounting
+  * **Services_Start.sh**
+	  - executed by USB_AfterMounting.sh
+	  - start all services using _/opt/etc/init.d/rc.unslung_ script
+  * **USB_BeforeUnmounting.sh**
+	  - executed after USB /opt UNmounting
+  * **Services_Stop.sh**
+	  - executed by USB_BeforeUnmounting.sh
+	  - stop all services using _/opt/etc/init.d/rc.unslung_ script
+  * **Upgrade.sh**
+	  - executed periodically every day
+	  - upgrade /opt/MyTomato/ via GitHub
+	  - update & upgrade OPKG packages
 
 # Personalization
 

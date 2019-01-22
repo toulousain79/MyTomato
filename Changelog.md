@@ -2,7 +2,8 @@
 		2019/01/22
 			- disable DNScrypt v2 install for AIO firmware version _(nvram get os_version)_
 			- add port 52 to p2partisan whitelist
-			- add README mention
+			- update README
+			- add chmod after an Upgrade for p2partisan.sh
 
 	v1.0.1
 		2019/01/22
