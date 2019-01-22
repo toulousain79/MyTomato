@@ -10,8 +10,8 @@ Project check:
       refs:
         - merge_requests
         - schedules
-      variables:
-        - $CHECK == "True"
+    #   variables:
+    #     - $CHECK == "True"
     script:
         - |
             for script in $(echo ${CI_PROJECT_DIR}/ci/scripts/[0-9][0-9]-*.sh); do
