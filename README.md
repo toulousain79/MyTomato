@@ -3,13 +3,17 @@
 TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version _(kernel v2.6.36)_.
 
 <p align="center">
-	 <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
-		<img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
+  <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
+    <img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
+  <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
+    <img alt="pipeline status" src="https://gitlab.com/toulousain79/MyTomato/badges/master/pipeline.svg" /></a>
+  <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
+    <img alt="coverage report" src="https://gitlab.com/toulousain79/MyTomato/badges/master/coverage.svg" /></a>
 </p>
 
 <p align="center">
-	 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N">
-		<img src="https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge" /></a>
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N">
+    <img src="https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge" /></a>
 </p>
 
 ### Features
