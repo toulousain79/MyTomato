@@ -6,9 +6,9 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
   <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
     <img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
-    <img alt="pipeline status" src="https://gitlab.com/toulousain79/MyTomato/badges/master/pipeline.svg" /></a>
-  <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
-    <img alt="coverage report" src="https://gitlab.com/toulousain79/MyTomato/badges/master/coverage.svg" /></a>
+    <img alt="pipeline master status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/master.svg?style=flat-square" /></a>
+  <a href="https://gitlab.com/toulousain79/MyTomato/commits/develop">
+    <img alt="pipeline develop status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/develop.svg?style=flat-square" /></a>
 </p>
 
 <p align="center">
