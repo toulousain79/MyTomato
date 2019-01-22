@@ -2,7 +2,15 @@
 
 TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version _(kernel v2.6.36)_.
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N)
+<p align="center">
+	 <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
+		<img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
+</p>
+
+<p align="center">
+	 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N">
+		<img src="https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge" /></a>
+</p>
 
 ### Features
 
@@ -12,7 +20,9 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * bash _(prompt, locale, colors, readline, bash on login, ...)_
 	  * aliases for all Entware binaries installed _(dynamically)_
 	  * admin tools
-	* add locales & timezone
+    * PATCH updated to prioritize binaries in /opt
+    * code review of rc.unslung
+	  * add locales & timezone
   * Project auto upgrade _(Entware & GitHub)_
 	  * get patch
 	  * new features
@@ -32,8 +42,7 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * shutdown script
 	  * USB mount/unmount for /opt
 	  * ...
-  * [Orange FAI patch](https://lafibre.info/remplacer-livebox/tuto-mode-dhcp-sur-firmware-tomato/12/
-) _(WAN DHCP, get full speed)_
+  * [Orange FAI patch](https://lafibre.info/remplacer-livebox/tuto-mode-dhcp-sur-firmware-tomato/12/) _(WAN DHCP, get full speed)_
 
 ### Test on
 
