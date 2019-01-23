@@ -31,8 +31,8 @@ maxloghour=1
 # anything else you think it's relevant.
 # Standard iptables syntax, individual ports divided by "," and ":" to
 # define a range e.g. 80,443,2100:2130. Do not whitelist you P2P client!
-whiteports_tcp=43,52,80,443
-whiteports_udp=52,53,123,1194:1196
+whiteports_tcp=43,80,443
+whiteports_udp=53,123,1194:1196
 #
 # Greyports are port/s you absolutely want to filter against lists.
 # Think of an Internet host that has its P2P client set on port 53 UDP.
@@ -108,10 +108,12 @@ vpnif=$(route | grep -E '^default.*.tun..$|^default.*.ppp.$' | awk '{print $8}')
 # DHCP hardcoded patch
 p1=$(echo $whiteports_udp | grep -Eo '^67[,|:]|[,|:]67[,|:]|,67$' | wc -l)
 p2=$(echo $whiteports_udp | grep -Eo '^68[,|:]|[,|:]68[,|:]|,68$' | wc -l)
-if [ $p1 -eq "0" ]; then
+#if [ $p1 -eq "0" ]; then
+if [ "$p1" == "0" ]; then
 	whiteports_udp=${whiteports_udp},67
 fi
-if [ $p2 -eq "0" ]; then
+#if [ $p2 -eq "0" ]; then
+if [ "$p2" == "0" ]; then
 	whiteports_udp=${whiteports_udp},68
 fi
 
@@ -205,8 +207,10 @@ pforcestop() {
 
 				statusaaa=$(ipset -T $name.bro 1.1.1.1 2>/dev/null && echo "1" || echo "0")
 				statusaa=$(ipset -L $name 2>/dev/null | head -8 | tail -1 | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).*" >/dev/null && echo "1" || echo "0")
-				if [ $statusaa -eq 0 ]; then
-					if [ $statusaaa -eq 1 ]; then
+				#if [ $statusaa -eq 0 ]; then
+				if [ "$statusaa" == "0" ]; then
+					#if [ $statusaaa -eq 1 ]; then
+					if [ "$statusaaa" == "1" ]; then
 						{
 							ipset swap $name $name.bro
 							ipset -F $name.bro
@@ -214,14 +218,16 @@ pforcestop() {
 							ipset -N $name.bro hash:net hashsize 1024 --resize 5 maxelem 4096000
 							deaggregate $name.bro $url 1 "" $name $maxconcurrentlistload $P2Partisandir &
 						} 2>/dev/null
-					elif [ $statusaaa -eq 0 ]; then
+					#elif [ $statusaaa -eq 0 ]; then
+					elif [ "$statusaaa" == "0" ]; then
 						{
 							ipset -F $name
 							ipset -N $name hash:net hashsize 1024 --resize 5 maxelem 4096000
 							deaggregate $name $url 1 "" "" $maxconcurrentlistload $P2Partisandir &
 						} 2>/dev/null
 					fi
-				elif [ $statusaa -eq 1 ]; then
+				#elif [ $statusaa -eq 1 ]; then
+				elif [ "$statusaa" == "1" ]; then
 					{
 						ipset -F $name.bro
 						ipset -X $name.bro
@@ -1258,7 +1264,8 @@ pwhitelist() {
 	ipset -F whitelist
 
 	# VPN - Tinc hosts are IP whitelisted
-	if [ "$(nvram get tinc_wanup)" == "1" ]; then
+	#if [ $(nvram get tinc_wanup) -eq 1 ]; then
+	if [ $(nvram get tinc_wanup) == 1 ]; then
 		for IP in $(nvram get tinc_hosts | grep -Eo '\w*[a-z]\w*(\.\w*[a-z]\w*)+'); do
 			echo "$IP" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && nslookup $IP | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" | {
 				while read IPO; do
@@ -1545,7 +1552,8 @@ iptables -A P2PARTISAN-OUT -m set  --match-set whitelist dst -j RETURN" >>iptabl
 		cat /tmp/iptables-add.tmp >>./iptables-add
 		rm /tmp/iptables-add.tmp >/dev/null 2>&1
 
-		if [ $syslogs -eq "1" ]; then
+		#if [ $syslogs -eq "1" ]; then
+		if [ "$syslogs" == "1" ]; then
 			echo "iptables -A P2PARTISAN-DROP-IN -m limit --limit $maxloghour/hour --limit-burst 1 -j LOG --log-prefix 'P2Partisan Dropped IN - ' --log-level 1
 iptables -A P2PARTISAN-DROP-OUT -m limit --limit $maxloghour/hour  --limit-burst 1 -j LOG --log-prefix 'P2Partisan Rejected OUT - ' --log-level 1" >>iptables-add
 		fi
@@ -1567,7 +1575,8 @@ iptables -A P2PARTISAN-DROP-OUT -j REJECT --reject-with icmp-admin-prohibited" >
 					fi
 					if [ "$(ipset swap $name $name 2>&1 | grep 'does not exist')" != "" ]; then
 						[ -f ./$name.cidr ] && cat ./$name.cidr | cut -d" " -f3 | grep -E "^1.1.1.1$" >/dev/null && complete=1 || complete=0
-						if [ $complete -eq 1 ]; then #.cidr exists and populated, using it
+						#if [ $complete -eq 1 ]; then #.cidr exists and populated, using it
+						if [ "$complete" == "1" ]; then #.cidr exists and populated, using it
 							echo -e "| Async loading [cached] Blacklist_$counter --> \033[1;37m***$name***\033[0;40m"
 							{
 								ipset -F $name
@@ -1608,7 +1617,8 @@ iptables -I wanout $pos -o $wanif -m state --state NEW -j P2PARTISAN-OUT" >>ipta
 		[ ! -z $vpnif ] && echo "iptables -I FORWARD $pos -o $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
 
 		#Add winin/wanout for RMerlin compatibility only
-		if [ $rm -eq 1 ]; then
+		#if [ $rm -eq 1 ]; then
+		if [ "$rm" == "1" ]; then
 			echo "iptables -F wanin
 iptables -X wanin
 iptables -D FORWARD -i $wanif -j wanin
@@ -1629,7 +1639,8 @@ iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
 		echo "+------------------------- Controls ----------------------------+"
 
 		p=$(nvram get dnsmasq_custom | grep log-async | wc -l)
-		if [ $p -eq "1" ]; then
+		#if [ $p -eq "1" ]; then
+		if [ "$p" == "1" ]; then
 			plog "log-async found under dnsmasq -> OK"
 			echo "+---------------------------------------------------------------+"
 		else
@@ -1644,7 +1655,8 @@ iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
 +---------------------------------------------------------------+\033[0;39m"
 		fi
 		p=$(nvram get script_fire | grep "cru a P2Partisan-tutor" | wc -l)
-		if [ $p -eq "0" ]; then
+		#if [ $p -eq "0" ]; then
+		if [ "$p" == "0" ]; then
 			ptutorset
 		fi
 

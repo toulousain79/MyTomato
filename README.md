@@ -4,16 +4,18 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 
 <p align="center">
   <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
-    <img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
+	<img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
-    <img alt="master pipeline status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/master.svg?label=master%20pipeline%20status&style=flat-square" /></a>
+	<img alt="master pipeline status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/master.svg?label=master%20pipeline%20status&style=flat-square" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/develop">
-    <img alt="develop pipeline status" src=https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/develop.svg?label=develop%20pipeline%20status&style=flat-square" /></a>
+	<img alt="develop pipeline status" src=https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/develop.svg?label=develop%20pipeline%20status&style=flat-square" /></a>
 </p>
+
+
 
 <p align="center">
   <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N">
-    <img src="https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge" /></a>
+	<img src="https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge" /></a>
 </p>
 
 ### Features
@@ -24,8 +26,8 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * bash _(prompt, locale, colors, readline, bash on login, ...)_
 	  * aliases for all Entware binaries installed _(dynamically)_
 	  * admin tools
-    * PATCH updated to prioritize binaries in /opt
-    * code review of rc.unslung
+	  * PATCH updated to prioritize binaries in /opt
+	  * code review of rc.unslung
 	  * add locales & timezone
   * Project auto upgrade _(Entware & GitHub)_
 	  * get patch
@@ -134,7 +136,7 @@ vim /opt/MyTomato/root/ConfigOverload/vars
 
 All the scripts present in /opt/MyTomato/root/SCRIPTs/ are accessible directly via the PATH.
 
-  * **USB_AfterMounting.**sh**
+  * **USB_AfterMounting.sh**
 	  - executed after USB /opt mounting
   * **Services_Start.sh**
 	  - executed by USB_AfterMounting.sh
