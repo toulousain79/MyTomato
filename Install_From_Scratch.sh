@@ -73,6 +73,7 @@ coreutils-basename \
 coreutils-install \
 coreutils-df \
 procps-ng-ps \
+procps-ng-pgrep \
 ca-certificates \
 ca-bundle \
 fake-hwclock \
