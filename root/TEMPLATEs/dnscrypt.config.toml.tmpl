@@ -252,7 +252,7 @@ block_ipv6 = false
 ## example.com	 10.1.1.1
 ## www.google.com  forcesafesearch.google.com
 
-cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt.cloaking-rules.txt'
+cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt'
 
 
 
@@ -357,12 +357,12 @@ cache_neg_max_ttl = 600
 
   ## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
 
-  blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt.blacklists.txt'
+  blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt'
 
 
   ## Optional path to a file logging blocked queries
 
-  log_file = '/opt/MyTomato/root/LOGs/dnscrypt.blocked.log'
+  log_file = '/opt/var/log/dnscrypt/blocked.log'
 
 
   ## Optional log format: tsv or ltsv (default: tsv)
@@ -385,12 +385,12 @@ cache_neg_max_ttl = 600
 
   ## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
 
-  blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt.ip_blacklist.txt'
+  blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt'
 
 
   ## Optional path to a file logging blocked queries
 
-  log_file = '/opt/MyTomato/root/LOGs/dnscrypt.ip_blocked.log'
+  log_file = '/opt/var/log/dnscrypt/ip_blocked.log'
 
 
   ## Optional log format: tsv or ltsv (default: tsv)
@@ -413,12 +413,12 @@ cache_neg_max_ttl = 600
 
   ## Path to the file of whitelisting rules (absolute, or relative to the same directory as the executable file)
 
-  whitelist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt.whitelist.txt'
+  whitelist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt'
 
 
   ## Optional path to a file logging whitelisted queries
 
-  log_file = '/opt/MyTomato/root/LOGs/dnscrypt.whitelisted.log'
+  log_file = '/opt/var/log/dnscrypt/whitelisted.log'
 
 
   ## Optional log format: tsv or ltsv (default: tsv)

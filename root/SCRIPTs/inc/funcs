@@ -175,22 +175,36 @@ function gfnInstallDnscryptProxy() {
 		sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirScripts}/inc/vars"
 		nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirOverLoad}/vars" | cut -d ':' -f 1)
 		sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirOverLoad}/vars"
+		nvram set dnscrypt2_enable=0
 		return 1
 	fi
 
+	#### Change NVRAM status
+	nvram set dnscrypt2_enable="${gbDNScrypt_Enable}"
+
 	#### Install
-	if (! opkg list-installed | grep -q 'dnscrypt-proxy'); then
-		if (opkg list | grep -q 'dnscrypt-proxy2_nohf'); then
-			logger -p user.notice "| ${gsScriptName} | Start DNScrypt-proxy installation"
-			opkg install fake-hwclock whereis
-			opkg install dnscrypt-proxy2_nohf
-			# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
-			if [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
-				cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
-			elif [ -f /opt/etc/dnscrypt-proxy.toml ] && [ -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
-				cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.${gdDateTime}.toml"
+	if [ "${gbDNScrypt_Enable}" -eq 1 ]; then
+		if (! opkg list-installed | grep -q 'dnscrypt-proxy'); then
+			if (opkg list | grep -q 'dnscrypt-proxy2_nohf'); then
+				logger -p user.notice "| ${gsScriptName} | Start DNScrypt-proxy installation"
+				opkg install fake-hwclock whereis
+				opkg install dnscrypt-proxy2_nohf
+				# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
+				if [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
+					cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
+				fi
+				logger -p user.notice "| ${gsScriptName} | End of DNScrypt-proxy installation"
 			fi
-			logger -p user.notice "| ${gsScriptName} | End of DNScrypt-proxy installation"
+		fi
+
+		if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
+			nNumLine=$(grep 'ENABLED' -n -m 1 < /opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+			sed -i "${nNumLine}"s/.*/ENABLED=yes/ /opt/etc/init.d/S09dnscrypt-proxy2
+		fi
+	else
+		if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
+			nNumLine=$(grep 'ENABLED' -n -m 1 < /opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+			sed -i "${nNumLine}"s/.*/ENABLED=no/ /opt/etc/init.d/S09dnscrypt-proxy2
 		fi
 	fi
 
@@ -218,6 +232,9 @@ function gfnInstallDnscryptProxy() {
 	# fi
 
 	#### Files
+	# Create logs directory
+	[ ! -d /opt/var/log/dnscrypt ] && mkdir -p /opt/var/log/dnscrypt
+
 	# Create a backup of original file: /opt/etc/init.d/S09dnscrypt-proxy2
 	{ [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && [ ! -f "${gsDirBackups}/S09dnscrypt-proxy2.original" ]; } &&
 		cp /opt/etc/init.d/S09dnscrypt-proxy2 "${gsDirBackups}/S09dnscrypt-proxy2.original"
@@ -256,6 +273,9 @@ function gfnP2pArtisanStartStop() {
 
 	if [ "${gbP2Partisan_Enable}" -eq 1 ] && [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]; then
 		#### Files
+		# Create custom config directory
+		[ ! -d "${gsDirOverLoad}/p2partisan/" ] && mkdir -p "${gsDirOverLoad}/p2partisan/"
+
 		# Copy templates
 		{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklists ]; } &&
 			cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" /opt/MyTomato/P2Partisan/blacklists
@@ -267,20 +287,20 @@ function gfnP2pArtisanStartStop() {
 			cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" /opt/MyTomato/P2Partisan/whitelist
 
 		# Create custom lists
-{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan.blacklists" ]; } &&
-cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklists"
-{ [ -f "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.blacklist-custom" ]; } &&
-cp "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan.blacklist-custom"
-{ [ -f "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.greylist" ]; } &&
-cp "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan.greylist"
-{ [ -f "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.whitelist" ]; } &&
-cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan.whitelist"
+		{ [ -f "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/blacklists" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklists"
+		{ [ -f "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.blacklist-custom" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklist-custom"
+		{ [ -f "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.greylist" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan/greylist"
+		{ [ -f "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan.whitelist" ]; } &&
+			cp "${gsDirTemplates}/p2partisan.whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan/whitelist"
 
 		# If exist, replace actual list by cutom
-		[ -f "${gsDirOverLoad}/p2partisan.blacklists" ] && cp "${gsDirOverLoad}/p2partisan.blacklists" /opt/MyTomato/P2Partisan/blacklists
-		[ -f "${gsDirOverLoad}/p2partisan.blacklist-custom" ] && cp "${gsDirOverLoad}/p2partisan.blacklist-custom" /opt/MyTomato/P2Partisan/blacklist-custom
-		[ -f "${gsDirOverLoad}/p2partisan.greylist" ] && cp "${gsDirOverLoad}/p2partisan.greylist" /opt/MyTomato/P2Partisan/greylist
-		[ -f "${gsDirOverLoad}/p2partisan.whitelist" ] && cp "${gsDirOverLoad}/p2partisan.whitelist" /opt/MyTomato/P2Partisan/whitelist
+		[ -f "${gsDirOverLoad}/p2partisan/blacklists" ] && cp "${gsDirOverLoad}/p2partisan/blacklists" /opt/MyTomato/P2Partisan/blacklists
+		[ -f "${gsDirOverLoad}/p2partisan/blacklist-custom" ] && cp "${gsDirOverLoad}/p2partisan/blacklist-custom" /opt/MyTomato/P2Partisan/blacklist-custom
+		[ -f "${gsDirOverLoad}/p2partisan/greylist" ] && cp "${gsDirOverLoad}/p2partisan/greylist" /opt/MyTomato/P2Partisan/greylist
+		[ -f "${gsDirOverLoad}/p2partisan/whitelist" ] && cp "${gsDirOverLoad}/p2partisan/whitelist" /opt/MyTomato/P2Partisan/whitelist
 
 		# Create a symlink to /opt/usr/bin
 		[ ! -h /opt/sbin/p2partisan.sh ] && ln -s /opt/MyTomato/P2Partisan/p2partisan.sh /opt/sbin/p2partisan.sh

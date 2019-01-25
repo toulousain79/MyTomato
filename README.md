@@ -4,11 +4,11 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 
 <p align="center">
   <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
-	<img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
+	  <img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
-	<img alt="master pipeline status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/master.svg?label=master%20pipeline%20status&style=flat-square" /></a>
+	  <img alt="master pipeline status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/master.svg?label=master%20pipeline%20status&style=flat-square" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/develop">
-	<img alt="develop pipeline status" src=https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/develop.svg?label=develop%20pipeline%20status&style=flat-square" /></a>
+	  <img alt="develop pipeline status" src=https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/develop.svg?label=develop%20pipeline%20status&style=flat-square" /></a>
 </p>
 
 
@@ -163,11 +163,11 @@ Editable files are:
   * /opt/MyTomato/root/ConfigOverload/.bash_aliases
   * /opt/MyTomato/root/ConfigOverload/.bashrc
   * /opt/MyTomato/root/ConfigOverload/dnscrypt-proxy.toml _(DNScrypt config file)_
-  * /opt/MyTomato/root/ConfigOverload/dnscrypt.blacklists.txt
-  * /opt/MyTomato/root/ConfigOverload/dnscrypt.ip_blacklist.txt
-  * /opt/MyTomato/root/ConfigOverload/dnscrypt.whitelist.txt
-  * /opt/MyTomato/root/ConfigOverload/dnscrypt.cloaking-rules.txt
-  * /opt/MyTomato/root/ConfigOverload/dnscrypt.forwarding-rules.txt
+  * /opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt
+  * /opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt
+  * /opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt
+  * /opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt
+  * /opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt
   * /opt/MyTomato/root/ConfigOverload/p2partisan.blacklists
   * /opt/MyTomato/root/ConfigOverload/p2partisan.blacklists-custom
   * /opt/MyTomato/root/ConfigOverload/p2partisan.greylist
@@ -204,7 +204,7 @@ vim /opt/MyTomato/root/ConfigOverload/dnscrypt-proxy.toml
 
 _**NB:** Default values are acceptable_
 
-## Orange ISP patch
+## Orange ISP patch _(DHCP mode with ONT)_
 
 If you have a fiber connection and no longer use your Livebox, you will need to use an Optical Network Termination _(ONT)_.
 

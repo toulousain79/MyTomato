@@ -263,6 +263,10 @@ nvram set ntp_tdod=1
 	echo "verb 3"
 } >>/tmp/openvpn_client1
 nvram set vpn_client1_custom="$(cat /tmp/openvpn_client1)"
+#### NVRAM config save
+logger -p user.notice "| ${gsScriptName} | NVRAM config save to ${gsDirBackups}/MyTomato_${gdDateTime}.cfg"
+nvram set mytomato_config_save="${gdDateTime}"
+nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" > /dev/null 2>&1
 
 # Commit
 nvram commit

@@ -40,4 +40,7 @@ fi
 chmod +x ${gsDirScripts}/*
 [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
 
+#### Nvram config save
+
+
 exit 0
