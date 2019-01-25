@@ -3,11 +3,11 @@
  - add auto restore NVRAM configuration file after mount /opt
  - change the location of custom configuration files for DNScrypt-proxy and P2Partisan
  - bug fix for Orange_ISP.sh
-   - create method for /sbin/udhcpc
-   - nvram set script_init
-   - orange_ack_script_fire.sh
-   - variables backslashes
-   - some mistakes
+  - create method for /sbin/udhcpc
+  - nvram set script_init
+  - orange_ack_script_fire.sh
+  - variables backslashes
+  - some mistakes
  - p2partisan.sh, correct some shellcheck errors codes _(SC2164, SC2034, SC2046, SC2154, SC2181, SC2162, SC2116, SC2016)_
 
 **v1.0.2** - _2019/01/22_
