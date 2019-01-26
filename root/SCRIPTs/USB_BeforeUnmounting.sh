@@ -34,5 +34,9 @@ for sPid in $(pidof bash); do kill -9 "${sPid}"; done
 (/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -v /tmp/home/root
 (/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -vf /tmp/home/root
 (/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -vl /tmp/home/root
+# /opt
+(/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -v /opt
+(/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vf /opt
+(/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vl /opt
 
 ##############################

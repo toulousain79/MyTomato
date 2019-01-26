@@ -24,7 +24,7 @@ declare gsScriptName gsDirOverLoad gsOrange_FTI
 	exit 1
 }
 
-#### Orange - DHCP Mode (thx to zethis ;-)
+#### Orange - DHCP Mode
 # https://lafibre.info/remplacer-livebox/tuto-mode-dhcp-sur-firmware-tomato/12/
 
 ## Install neeeded tools
@@ -53,7 +53,7 @@ nvram set vlan2vid=832
 nvram set vlan2tag=1
 
 ## Advanced -> DHCP/DNS -> DHCP Client (WAN)
-nvram set dhcpc_custom="~u2014retries=2 ~u2014timeout=5 ~u2014tryagain=310"
+#nvram set dhcpc_custom="~u2014retries=2 ~u2014timeout=5 ~u2014tryagain=310"
 
 ## Adminsitration > Script > Init
 nvram get script_init >/tmp/script_init
@@ -64,7 +64,7 @@ sed -i '/udhcpc/d' /tmp/script_init
 	echo "# Orange DHCP Mode"
 	echo "cp -R /sbin/ /tmp/sbin"
 	echo "rm /tmp/sbin/udhcpc"
-	echo "echo 'exec busybox udhcpc -O 0x4d -O 0x5a -x 0x4d:2b46535644534c5f6c697665626f782e496e7465726e65742e736f66746174686f6d652e4c697665626f7833 -x 0x5a:00000000000000000000001a0900000558010341010d6674692f${HEXA} \"\$*\"' >/tmp/sbin/udhcpc"
+	echo "echo 'exec busybox udhcpc -O 0x4d -O 0x5a -x 0x4d:2b46535644534c5f6c697665626f782e496e7465726e65742e736f66746174686f6d652e4c697665626f7834 -x 0x5a:00000000000000000000001a0900000558010341010d6674692f${HEXA} \"\$*\"' >/tmp/sbin/udhcpc"
 	echo "chmod +x /tmp/sbin/udhcpc"
 	echo "mount --bind /tmp/sbin/ /sbin"
 } >>/tmp/script_init

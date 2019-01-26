@@ -1,7 +1,7 @@
 #!/bin/sh
 # shellcheck disable=SC1083,SC2086,SC2002,SC2009,SC2003,SC2012,SC2004,SC2126,SC2236,SC2059,SC2031,SC2030,SC2039
 #
-# p2partisan v6.08 (13/06/2017)
+# p2partisan v6.09 (2019/01/26)
 #
 # Official page - http://www.linksysinfo.org/index.php?posts/235301/
 #
@@ -72,8 +72,8 @@ testip=google.com
 
 # DNScrypt-proxy
 if [ "$(nvram get dnscrypt2_enable)" == "1" ]; then
-        whiteports_tcp=${whiteports_tcp},52
-        whiteports_udp=${whiteports_udp},52
+		whiteports_tcp=${whiteports_tcp},52
+		whiteports_udp=${whiteports_udp},52
 fi
 # [ -n "$(nvram get http_wanport)" ] && whiteports_tcp=${whiteports_tcp},$(nvram get http_wanport)
 # [ -n "$(nvram get http_lanport)" ] && whiteports_tcp=${whiteports_udp},$(nvram get http_lanport)
@@ -98,7 +98,7 @@ pidfile="/var/run/p2partisan.pid"
 logfile=$(nvram get log_file_path) || logfile=$(/var/log/messages)
 [ -n "$P2Partisandir" ] && cd $P2Partisandir || exit 1
 [ ! -d ./cidr/ ] && mkdir -p ./cidr/
-version=$(head -3 ./p2partisan.sh | tail -1 | cut -f 3- -d " ")
+version=$(grep 'p2partisan v' ./p2partisan.sh | head -1 | awk '{print $3}')
 alias ipset='/bin/nice -n10 /usr/sbin/ipset'
 alias sed='/bin/sed'
 alias iptables='/usr/sbin/iptables'
@@ -187,7 +187,7 @@ pforcestop() {
 |                                     |__|
 |
 +---------------------------------------------------------------+
-|            background updating list: \033[1;35m$1\033[0;40m
+|			background updating list: \033[1;35m$1\033[0;40m
 +---------------------------------------------------------------+\033[0;39m"
 			cat blacklists | grep -Ev "^$" | tr -d "\r" | grep -E "^#( .*|)$name http*." >/dev/null 2>&1 && {
 				echo -e "\033[0;40m| Warning: \033[1;33mthe list reference exists but is currently disabled in the blacklists\033[0;40m
@@ -238,7 +238,7 @@ pforcestop() {
 					} 2>/dev/null
 				fi
 			else
-				echo -e "|                    \033[1;31mError: list not found\033[0;40m
+				echo -e "|					\033[1;31mError: list not found\033[0;40m
 +---------------------------------------------------------------+\033[0;39m"
 			fi
 			exit
@@ -334,7 +334,7 @@ pstatus() {
 | |_______|__||_____||____|      |_______|____|___._||____|_____|_____|
 |
 +---------------------------------------------------------------+
-|                    list name: \033[1;33m$1\033[0;40m
+|					list name: \033[1;33m$1\033[0;40m
 +---------------------------------------------------------------+"
 
 		cat blacklists | grep -Ev "^$" | tr -d "\r" | grep -E "^#( .*|)$name http*." >/dev/null 2>&1 && {
@@ -423,23 +423,23 @@ pstatus() {
 | Secondary lists are used for updates only, so empty when unused
 | cidr file are created after a list update and allow quick startup
 +---------------------------------------------------------------+
-|           Name: $name
-|            URL: $(cat blacklists | grep -Ev "^#|^$" | tr -d "\r" | grep $name | awk '{print $2}')
+|		   Name: $name
+|			URL: $(cat blacklists | grep -Ev "^#|^$" | tr -d "\r" | grep $name | awk '{print $2}')
 +---------------------------------------------------------------+
 |  ipset primary: $a
-|          items: $(ipset -L $name 2>/dev/null | tail -n +8 | wc -l || echo 0)
-|    size in RAM: $sizem KB
+|		  items: $(ipset -L $name 2>/dev/null | tail -n +8 | wc -l || echo 0)
+|	size in RAM: $sizem KB
 +---------------------------------------------------------------+
 | ipset seconday: $b
-|          items: $(ipset -L $name.bro 2>/dev/null | tail -n +8 | wc -l || echo 0)
-|    size in RAM: $sizemm KB
+|		  items: $(ipset -L $name.bro 2>/dev/null | tail -n +8 | wc -l || echo 0)
+|	size in RAM: $sizemm KB
 +---------------------------------------------------------------+
-|      cidr file: $c
-|          items: $(cat ./cidr/$name.cidr 2>/dev/null | tail -n +2 | wc -l || echo 0)
+|	  cidr file: $c
+|		  items: $(cat ./cidr/$name.cidr 2>/dev/null | tail -n +2 | wc -l || echo 0)
 |   size on disk: $(ls -lh ./cidr/$name.cidr 2>/dev/null | awk '{print $5}' || echo 0)
 |   Last updated: $(date -r ./cidr/$name.cidr '+%H:%M:%S %d/%b/%y' 2>/dev/null) | \033[1;37m$age\033[0;40m ago
 +---------------------------------------------------------------+
-|       iptables: $d
+|	   iptables: $d
 $(cat ./iptables-add | grep $name)
 $(iptables -L | grep $name)
 +---------------------------------------------------------------+\033[0;39m
@@ -537,18 +537,18 @@ $(iptables -L | grep $name)
 |
 | Release version:  \033[1;40m$version\033[0;40m
 +---------------------------------------------------------------+
-|         Running:  $running8
-|         Autorun:  $running5
-|           Tutor:  $running9 / \033[1;37m$runningB\033[0;40m problems in the last 24h
-|        Debugger:  $runningF
+|		 Running:  $running8
+|		 Autorun:  $running5
+|		   Tutor:  $running9 / \033[1;37m$runningB\033[0;40m problems in the last 24h
+|		Debugger:  $runningF
 | Partisan uptime:  \033[1;37m$runtime\033[0;40m
-|    Startup time:  \033[1;37m$runningD\033[0;40m seconds
-|      Dropped in:  \033[1;37m$drop_packet_count_in\033[0;40m
-|    Rejected out:  \033[1;37m$drop_packet_count_out\033[0;40m
+|	Startup time:  \033[1;37m$runningD\033[0;40m seconds
+|	  Dropped in:  \033[1;37m$drop_packet_count_in\033[0;40m
+|	Rejected out:  \033[1;37m$drop_packet_count_out\033[0;40m
 +---------------------------------------------------------------+"
-	echo -e "|       Black IPs:  \033[1;37m$blackip\033[0;40m"
-	echo -e "|        Grey IPs:  \033[1;37m$greyip\033[0;40m"
-	echo -e "|       White IPs:  \033[1;37m$whiteip $whiteextra\033[0;40m"
+	echo -e "|	   Black IPs:  \033[1;37m$blackip\033[0;40m"
+	echo -e "|		Grey IPs:  \033[1;37m$greyip\033[0;40m"
+	echo -e "|	   White IPs:  \033[1;37m$whiteip $whiteextra\033[0;40m"
 	transmissionenable=$(nvram get bt_enable)
 	if [ -z $transmissionenable ]; then
 		echo "|  TransmissionBT:  Not available"
@@ -666,14 +666,14 @@ $(iptables -L | grep $name)
 					c="\033[1;37me\033[0;40m"
 				fi
 
-				echo -e "|    Blacklist_$counter:  [$a] [$b] [$c] [$i] - $sizem KB - \033[1;37m$name\033[0;40m"
+				echo -e "|	Blacklist_$counter:  [$a] [$b] [$c] [$i] - $sizem KB - \033[1;37m$name\033[0;40m"
 
 				sizeram=$((sizeram + sizeb + sizebb))
 			done
 			sizeram=$((sizeram / 1024))
-			echo "|                    ^   ^   ^   ^"
-			echo -e "|      maxload: \033[1;37m$maxconcurrentlistload\033[0;40m - \e[1;37;100mpri sec cid ipt\033[0;40m - [\033[1;37me\033[0;40m]mpty [\033[1;37ml\033[0;40m]oading l[\033[1;37mo\033[0;40m]aded [\033[1;37mp\033[0;40m]artial [\033[1;37mq\033[0;40m]ueued"
-			echo -e "|    Consumed RAM:  \033[1;37m$sizeram\033[0;40m KB"
+			echo "|					^   ^   ^   ^"
+			echo -e "|	  maxload: \033[1;37m$maxconcurrentlistload\033[0;40m - \e[1;37;100mpri sec cid ipt\033[0;40m - [\033[1;37me\033[0;40m]mpty [\033[1;37ml\033[0;40m]oading l[\033[1;37mo\033[0;40m]aded [\033[1;37mp\033[0;40m]artial [\033[1;37mq\033[0;40m]ueued"
+			echo -e "|	Consumed RAM:  \033[1;37m$sizeram\033[0;40m KB"
 		)
 
 	echo -e "+----------------------- Logs max($maxloghour/hour) ----------------------+
@@ -773,11 +773,11 @@ You're alread -ry running the latest version of P2Partisan
 +---------------------------------------------------------------+
 | There's a new P2Partisan update available. Do you want to upgrade?
 |
-|                  current = $current
+|				  current = $current
 |
-|                          to
+|						  to
 |
-|                   latest = $latest
+|				   latest = $latest
 |
 | y/n"
 		read -r answer
@@ -986,11 +986,11 @@ ptest() {
 			echo $checklist | tr " " "\n" |
 				(
 					while read -r LIST; do
-						ipset -T $LIST $1 >/dev/null 2>&1 && if [ $LIST = "whitelist" ]; then echo -e "| \033[1;32m$1 found in        $LIST\033[0;40m"; else echo -e "| \033[1;31m$1 found in        $LIST\033[0;40m"; fi || echo -e "| $1 not found in    $LIST"
+						ipset -T $LIST $1 >/dev/null 2>&1 && if [ $LIST = "whitelist" ]; then echo -e "| \033[1;32m$1 found in		$LIST\033[0;40m"; else echo -e "| \033[1;31m$1 found in		$LIST\033[0;40m"; fi || echo -e "| $1 not found in	$LIST"
 					done
 				)
 			echo -e "+---------------------------------------------------------------+
-|        in case of multiple match the first prevails
+|		in case of multiple match the first prevails
 +---------------------------------------------------------------+\033[0;39m"
 		elif [[ $test -eq 0 ]]; then
 			echo -e "| Invalid input. Please specify a valid IP address.
@@ -1012,15 +1012,15 @@ pdebug() {
 | Debug allows to fully log the P2Partisan interventions given a LAN IP
 | Maximum 1 debug at the time / Debug automatically times out or can be forced off manually
 +---------------------------------------------------------------+
-| p2partisan.sh debug <LAN IP> <minutes>    Syntax
-| p2partisan.sh debug                       Displays debug status and this help text
+| p2partisan.sh debug <LAN IP> <minutes>	Syntax
+| p2partisan.sh debug					   Displays debug status and this help text
 | p2partisan.sh debug 192.168.0.3 <1-120>   Enables debug for the given LAN IP for N min (15 default)
-| p2partisan.sh debug 192.168.0.3 9         Enables debug for the given LAN IP for 9 min
-| p2partisan.sh debug reverse <1-120>       Enables debug for all the LAN IPs excluding greyports_tcp/udp
-| p2partisan.sh debug off                   Disable debug without waiting for the timer to timeout
-| p2partisan.sh debug-display <in|out>      Display logs Syntax
-| p2partisan.sh debug-display               Displays in&out debug logs + guide
-| p2partisan.sh debug-display out           Same as above but displays outbound records only
+| p2partisan.sh debug 192.168.0.3 9		 Enables debug for the given LAN IP for 9 min
+| p2partisan.sh debug reverse <1-120>	   Enables debug for all the LAN IPs excluding greyports_tcp/udp
+| p2partisan.sh debug off				   Disable debug without waiting for the timer to timeout
+| p2partisan.sh debug-display <in|out>	  Display logs Syntax
+| p2partisan.sh debug-display			   Displays in&out debug logs + guide
+| p2partisan.sh debug-display out		   Same as above but displays outbound records only
 +-------------------------- Activity ---------------------------+"
 	echo "$1" | grep -Eo "([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])" >/dev/null 2>&1 && q=0 || q=1
 	echo "$1" | grep "reverse" >/dev/null 2>&1 && q=2
@@ -1181,9 +1181,9 @@ _____         __                          __ __               __
                          |_____|                      |__|             |_____|
 
 +---------------------------------------------------------------+
-| p2partisan.sh debug-display               Displays in & outbound debug logs
-| p2partisan.sh debug-display in            Displays inbound debug logs only
-| p2partisan.sh debug-display out           Displays outbound debug logs only
+| p2partisan.sh debug-display			   Displays in & outbound debug logs
+| p2partisan.sh debug-display in			Displays inbound debug logs only
+| p2partisan.sh debug-display out		   Displays outbound debug logs only
 +-------------------------- Drop Logs --------------------------+"
 
 	dfrom=$(head -1 ./iptables-debug 2>/dev/null | awk '{print $2}')
@@ -1671,7 +1671,7 @@ iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
 | Is this is not what you expected? Try:
 | \033[1;33m./p2partisan.sh update\033[0;40m
 +---------------------------------------------------------------+
-                \033[0;39m"
+				\033[0;39m"
 	fi
 }
 
@@ -1788,31 +1788,31 @@ for p in $1; do
      |___|  |______|___|   |___._|__|  |____|__||_____|___._|__|__| $version
 \e[39m\e[49m\033[0;40m
 
-       help                    Display this text
-       \e[97mstart                   Starts the process (this runs also if no option is provided)
-       stop                    Stops P2Partisan
-       restart                 Soft restart, updates whiteports & whitelist only
-       pause                   Soft stop P2Partisan allowing for quick start
-       update                  Hard restart, slow removes p2partisan, updates
-                               the lists and does a fresh start
-       update <list|fix>       Updated the selected list only | remove cidr a start from scratch\e[39m
-       status                  Display P2Partisan running status + extra information
-       status <list>           Display P2Partisan detailed list information
-       \e[93mtest <IP>               Verify existence of the given IP against lists
-       debug                   Shows a guide on how to operate debug
-       debug-display <in|out>  Shows all the logs relevant to the last debug only
-       detective               Determines highest impact IPs:ports (number of sessions)
-       \e[36mautorun-on              Sets P2Partisan to boot with the router
-       autorun-off             Sets P2Partisan not to boot with the router
-       upgrade                 Download and install the latest P2Partisan
+	   help					Display this text
+	   \e[97mstart				   Starts the process (this runs also if no option is provided)
+	   stop					Stops P2Partisan
+	   restart				 Soft restart, updates whiteports & whitelist only
+	   pause				   Soft stop P2Partisan allowing for quick start
+	   update				  Hard restart, slow removes p2partisan, updates
+							   the lists and does a fresh start
+	   update <list|fix>	   Updated the selected list only | remove cidr a start from scratch\e[39m
+	   status				  Display P2Partisan running status + extra information
+	   status <list>		   Display P2Partisan detailed list information
+	   \e[93mtest <IP>			   Verify existence of the given IP against lists
+	   debug				   Shows a guide on how to operate debug
+	   debug-display <in|out>  Shows all the logs relevant to the last debug only
+	   detective			   Determines highest impact IPs:ports (number of sessions)
+	   \e[36mautorun-on			  Sets P2Partisan to boot with the router
+	   autorun-off			 Sets P2Partisan not to boot with the router
+	   upgrade				 Download and install the latest P2Partisan
 \033[0;39m"
 		exit
 		;;
 	*)
 		echo -e "\033[0;40mparameter not valid. please run:
 
-       p2partisan.sh help
-       \033[0;39m"
+	   p2partisan.sh help
+	   \033[0;39m"
 		exit
 		;;
 
