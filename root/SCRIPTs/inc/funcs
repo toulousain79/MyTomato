@@ -182,6 +182,7 @@ function gfnInstallDnscryptProxy() {
 			sed -i "${nNumLine}"s/.*/ENABLED=no/ "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl"
 		fi
 		nvram set dnscrypt2_enable=0
+		nvram commit
 		return 1
 	fi
 
@@ -205,12 +206,12 @@ function gfnInstallDnscryptProxy() {
 		fi
 
 		if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
-			nNumLine=$(grep 'ENABLED' -n -m 1 < /opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+			nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
 			sed -i "${nNumLine}"s/.*/ENABLED=yes/ /opt/etc/init.d/S09dnscrypt-proxy2
 		fi
 	else
 		if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
-			nNumLine=$(grep 'ENABLED' -n -m 1 < /opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+			nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
 			sed -i "${nNumLine}"s/.*/ENABLED=no/ /opt/etc/init.d/S09dnscrypt-proxy2
 		fi
 	fi
