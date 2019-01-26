@@ -63,7 +63,7 @@ gfnStart() {
 		gfnMessage 'INFO' 'log' "$DESC is already running !"
 		nReturn=0
 	else
-		${PROCS} -config ${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml >/dev/null 2>&1 &
+		${PROCS} -config /opt/etc/dnscrypt-proxy.toml >/dev/null 2>&1 &
 		sleep 1
 
 		if [ -n "$(pidof $PROCS)" ]; then
