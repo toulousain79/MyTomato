@@ -269,9 +269,6 @@ logger -p user.notice "| ${gsScriptName} | NVRAM config save to ${gsDirBackups}/
 nvram set mytomato_config_save="${gdDateTime}"
 nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" > /dev/null 2>&1
 
-# Commit
-nvram commit
-
 #### Cleaning
 rm -fv /tmp/script_init
 rm -fv /tmp/script_fire
@@ -287,11 +284,24 @@ if (nvram get os_version | grep -q 'AIO' ); then
 	rm -fv ${gsDirOverLoad}/*.md
 	rm -fv ${gsDirOverLoad}/*.minisig
 
-	nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/SCRIPTs/inc/vars | cut -d ':' -f 1)
-	sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/SCRIPTs/inc/vars
 	nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
 	sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/ConfigOverload/vars
+	if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
+		nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+		sed -i "${nNumLine}"s/.*/ENABLED=no/ /opt/etc/init.d/S09dnscrypt-proxy2
+	fi
+	if [ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ]; then
+		nNumLine=$(grep 'ENABLED' -n -m 1 <"${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" | cut -d ':' -f 1)
+		sed -i "${nNumLine}"s/.*/ENABLED=no/ "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl"
+	fi
+
+	nvram set dnscrypt2_enable=0
+else
+	nvram set dnscrypt2_enable=1
 fi
+
+# Commit
+nvram commit
 
 #### MLocate
 [ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
