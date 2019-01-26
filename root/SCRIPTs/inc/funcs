@@ -1,7 +1,7 @@
 #!/opt/bin/bash
 
 #### Variables declaration
-declare gsScriptName gsDirOverLoad gsDirArmExtras gsDirBackups gsDirTemplates gsWan1_DNS gsDirScripts
+declare gsScriptName gsDirOverLoad gsDirArmExtras gsDirBackups gsDirTemplates gsWan1_DNS
 declare gbDNScrypt_Enable gbP2Partisan_Enable gdDateTime
 declare gsDirBackups
 
