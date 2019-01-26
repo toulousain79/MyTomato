@@ -84,7 +84,7 @@ openssh-sftp-server \
 nfs-kernel-server \
 nfs-kernel-server-utils
 
-if (! nvram get os_version | grep -q 'AIO' ); then
+if (! nvram get os_version | grep -q 'AIO'); then
 	opkg install dnscrypt-proxy2_nohf
 fi
 
@@ -200,8 +200,8 @@ chmod +x /opt/etc/init.d/*
 # Create empty file
 touch /etc/dnsmasq-custom.conf
 touch ${gsDirOverLoad}/.bash_aliases
-/opt/bin/find "${gsDirTemplates}/" -name "p2partisan.*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/.txt.tmpl//g;"))' _ {} \;
-/opt/bin/find "${gsDirTemplates}/" -name "dnscrypt.*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
+/opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/.txt.tmpl//g;"))' _ {} \;
+/opt/bin/find "${gsDirTemplates}/dnscrypt/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
 
 #### NVRAM settings
 # Administration > Scripts > Init
@@ -212,8 +212,8 @@ touch /etc/dnsmasq-custom.conf"
 nvram set script_usbmount="{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\""
 # USB and NAS > USB Support>Run before unmounting
 {
-echo "{ [ \"$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\""
-echo "sleep 2; service dnsmasq restart"
+	echo "{ [ \"$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\""
+	echo "sleep 2; service dnsmasq restart"
 } >/tmp/script_usbumount
 nvram set script_usbumount="$(cat /tmp/script_usbumount)"
 # Administration > Scheduler > Custom 1
@@ -267,7 +267,7 @@ nvram set vpn_client1_custom="$(cat /tmp/openvpn_client1)"
 #### NVRAM config save
 logger -p user.notice "| ${gsScriptName} | NVRAM config save to ${gsDirBackups}/MyTomato_${gdDateTime}.cfg"
 nvram set mytomato_config_save="${gdDateTime}"
-nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" > /dev/null 2>&1
+nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" >/dev/null 2>&1
 
 #### Cleaning
 rm -fv /tmp/script_init
@@ -276,7 +276,7 @@ rm -fv /tmp/script_usbumount
 rm -fv /tmp/openvpn_client1
 rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
-if (nvram get os_version | grep -q 'AIO' ); then
+if (nvram get os_version | grep -q 'AIO'); then
 	rm -fv /opt/etc/dnscrypt-proxy.toml
 	rm -fv ${gsDirBackups}/dnscrypt-proxy*
 	rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
