@@ -170,17 +170,24 @@ function gfnStartStopSyslogd() {
 #### Install DNScrypt-proxy
 function gfnInstallDnscryptProxy() {
 	#### AIO version
-	if (! nvram get os_version | grep -q 'AIO'); then
-		nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirScripts}/inc/vars" | cut -d ':' -f 1)
-		sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirScripts}/inc/vars"
+	if (nvram get os_version | grep -q 'AIO'); then
 		nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirOverLoad}/vars" | cut -d ':' -f 1)
 		sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirOverLoad}/vars"
+		if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
+			nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+			sed -i "${nNumLine}"s/.*/ENABLED=no/ /opt/etc/init.d/S09dnscrypt-proxy2
+		fi
+		if [ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ]; then
+			nNumLine=$(grep 'ENABLED' -n -m 1 <"${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" | cut -d ':' -f 1)
+			sed -i "${nNumLine}"s/.*/ENABLED=no/ "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl"
+		fi
 		nvram set dnscrypt2_enable=0
 		return 1
 	fi
 
 	#### Change NVRAM status
 	nvram set dnscrypt2_enable="${gbDNScrypt_Enable}"
+	nvram commit
 
 	#### Install
 	if [ "${gbDNScrypt_Enable}" -eq 1 ]; then
