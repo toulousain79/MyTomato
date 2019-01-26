@@ -193,10 +193,8 @@ function gfnInstallDnscryptProxy() {
 				logger -p user.notice "| ${gsScriptName} | Start DNScrypt-proxy installation"
 				opkg install fake-hwclock whereis
 				opkg install dnscrypt-proxy2_nohf
-				# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
-				if [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
-					cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
-				fi
+				# Removef original file: /opt/etc/dnscrypt-proxy.toml
+				[ -f /opt/etc/dnscrypt-proxy.toml ] && rm /opt/etc/dnscrypt-proxy.toml
 				logger -p user.notice "| ${gsScriptName} | End of DNScrypt-proxy installation"
 			fi
 		fi
@@ -257,16 +255,13 @@ function gfnInstallDnscryptProxy() {
 		cp "${gsDirTemplates}/dnscrypt/dnscrypt-proxy.toml.tmpl" "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml"
 
 	# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
-	if [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
+	{ [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; } &&
 		cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
-	elif [ -f /opt/etc/dnscrypt-proxy.toml ] && [ -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; then
-		cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.${gdDateTime}.toml"
-	fi
 
 	# Copy dnscrypt-proxy.toml from templates for next start
 	[ -f "${gsDirTemplates}/dnscrypt/dnscrypt-proxy.toml.tmpl" ] && cp "${gsDirTemplates}/dnscrypt/dnscrypt-proxy.toml.tmpl" /opt/etc/dnscrypt-proxy.toml
 	# If exist, use a custom dnscrypt-proxy.toml
-	[ -f "${gsDirOverLoad}/dnscrypt-proxy.toml" ] && cp "${gsDirOverLoad}/dnscrypt-proxy.toml" /opt/etc/dnscrypt-proxy.toml
+	[ -f "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml" ] && cp "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml" /opt/etc/dnscrypt-proxy.toml
 
 	# Blocklists
 	if (! find "${gsDirOverLoad}/dnscrypt/"*.txt &>/dev/null); then
