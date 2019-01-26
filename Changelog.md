@@ -2,6 +2,7 @@
  - remove Orange ISP patch
  - change the location of custom configuration files for DNScrypt-proxy and P2Partisan
  - p2partisan.sh version code review
+ - DNScrypt-proxy detect AIO firmware
 
 **v1.0.3** - _2019/01/25_
  - remove backup of DNScrypt-config.toml by date
