@@ -48,7 +48,6 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * shutdown script
 	  * USB mount/unmount for /opt
 	  * ...
-  * [Orange FAI patch](https://lafibre.info/remplacer-livebox/tuto-mode-dhcp-sur-firmware-tomato/12/) _(WAN DHCP, get full speed)_
 
 ### Test on
 
@@ -162,16 +161,16 @@ Editable files are:
   * /opt/MyTomato/root/ConfigOverload/vars
   * /opt/MyTomato/root/ConfigOverload/.bash_aliases
   * /opt/MyTomato/root/ConfigOverload/.bashrc
-  * /opt/MyTomato/root/ConfigOverload/dnscrypt-proxy.toml _(DNScrypt config file)_
+  * /opt/MyTomato/root/ConfigOverload/dnscrypt/dnscrypt-proxy.toml _(DNScrypt config file)_
   * /opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt
   * /opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt
   * /opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt
   * /opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt
   * /opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.blacklists
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.blacklists-custom
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.greylist
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.whitelist
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/blacklists
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/blacklists-custom
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/greylist
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/whitelist
 
 # Additional services
 
@@ -187,10 +186,10 @@ _**NB:** Default values are acceptable_
 
 #### Blocklists
 
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.whitelist
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.greylist
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.blacklists
-  * /opt/MyTomato/root/ConfigOverload/p2partisan.blacklist-custom
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/whitelist
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/greylist
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/blacklists
+  * /opt/MyTomato/root/ConfigOverload/p2partisan/blacklist-custom
 
 _**NB:** Default values are acceptable_
 
@@ -199,33 +198,10 @@ _**NB:** Default values are acceptable_
 ### Config file
 
 ```bash
-vim /opt/MyTomato/root/ConfigOverload/dnscrypt-proxy.toml
+vim /opt/MyTomato/root/ConfigOverload/dnscrypt/dnscrypt-proxy.toml
 ```
 
 _**NB:** Default values are acceptable_
-
-## Orange ISP patch _(DHCP mode with ONT)_
-
-If you have a fiber connection and no longer use your Livebox, you will need to use an Optical Network Termination _(ONT)_.
-
-You pass your IP address directly to your router.
-
-But it is likely that your downstream flow is limited _(100MB instead of 300?)_.
-
-Some have found the solution to remedy this problem.
-
-To apply the patch:
-
-1. add your Orange login _(fti/xxxxx)_ in **/opt/MyTomato/root/ConfigOverload/var**s _(gsOrange_FTI)_
-2. Login in SSH
-3. Run the Orange_ISP.sh script
-4. Reboot ;-)
-
-```bash
-vim /opt/MyTomato/root/ConfigOverload/var
-bash /opt/MyTomato/root/PATCHs/Orange_ISP.sh
-reboot
-```
 
 # Links
 

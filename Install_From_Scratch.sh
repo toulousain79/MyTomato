@@ -187,6 +187,8 @@ chmod +x ${gsDirScripts}/*
 # Creating directories
 mkdir -pv "${gsDirBackups}"
 mkdir -pv "${gsDirArmExtras}"
+mkdir -pv "${gsDirOverLoad}/p2partisan"
+mkdir -pv "${gsDirOverLoad}/dnscrypt"
 
 # Copy back all existing init files
 /opt/bin/find /opt/etc/init.d/ -type f -name "*" -exec bash -c 'i="$1"; cp -v "${i}" "${gsDirBackups}/$(basename ${i}).original"' _ {} \;
@@ -198,9 +200,8 @@ chmod +x /opt/etc/init.d/*
 # Create empty file
 touch /etc/dnsmasq-custom.conf
 touch ${gsDirOverLoad}/.bash_aliases
-/opt/bin/find "${gsDirTemplates}/" -name "p2partisan.*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/$(basename $(echo "$1" | sed "s/.txt.tmpl//g;"))' _ {} \;
-/opt/bin/find "${gsDirTemplates}/" -name "dnscrypt.*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
-
+/opt/bin/find "${gsDirTemplates}/" -name "p2partisan.*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/.txt.tmpl//g;"))' _ {} \;
+/opt/bin/find "${gsDirTemplates}/" -name "dnscrypt.*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
 
 #### NVRAM settings
 # Administration > Scripts > Init
