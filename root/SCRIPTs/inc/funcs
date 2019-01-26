@@ -240,7 +240,7 @@ function gfnInstallDnscryptProxy() {
 	[ ! -d "${gsDirOverLoad}/dnscrypt/" ] && mkdir -p "${gsDirOverLoad}/dnscrypt/"
 
 	# Create a backup of original file: /opt/etc/init.d/S09dnscrypt-proxy2
-	{ [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && [ ! -f "${gsDirBackups}/S09dnscrypt-proxy2.original" ]; } &&
+	{ [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && [ ! -f "${gsDirBackups}/S09dnscrypt-proxy2.original" ]; } && \
 		cp /opt/etc/init.d/S09dnscrypt-proxy2 "${gsDirBackups}/S09dnscrypt-proxy2.original"
 
 	# Replace original init script by the template
@@ -251,11 +251,11 @@ function gfnInstallDnscryptProxy() {
 	chmod +x /opt/etc/init.d/S09dnscrypt-proxy2
 
 	# Create a custom config file: dnscrypt-proxy.toml
-	{ [ -f "${gsDirTemplates}/dnscrypt/dnscrypt-proxy.toml.tmpl" ] && [ ! -f "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml.tmpl" ]; } &&
+	{ [ -f "${gsDirTemplates}/dnscrypt/dnscrypt-proxy.toml.tmpl" ] && [ ! -f "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml" ]; } && \
 		cp "${gsDirTemplates}/dnscrypt/dnscrypt-proxy.toml.tmpl" "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml"
 
 	# Create a backup of original file: /opt/etc/dnscrypt-proxy.toml
-	{ [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; } &&
+	{ [ -f /opt/etc/dnscrypt-proxy.toml ] && [ ! -f "${gsDirBackups}/dnscrypt-proxy.toml.original" ]; } && \
 		cp /opt/etc/dnscrypt-proxy.toml "${gsDirBackups}/dnscrypt-proxy.toml.original"
 
 	# Copy dnscrypt-proxy.toml from templates for next start
@@ -278,23 +278,23 @@ function gfnP2pArtisanStartStop() {
 		[ ! -d "${gsDirOverLoad}/p2partisan/" ] && mkdir -p "${gsDirOverLoad}/p2partisan/"
 
 		# Copy templates
-		{ [ -f "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklists ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklists ]; } && \
 			cp "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" /opt/MyTomato/P2Partisan/blacklists
-		{ [ -f "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklist-custom ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/blacklist-custom ]; } && \
 			cp "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" /opt/MyTomato/P2Partisan/blacklist-custom
-		{ [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/greylist ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/greylist ]; } && \
 			cp "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" /opt/MyTomato/P2Partisan/greylist
-		{ [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/whitelist ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f /opt/MyTomato/P2Partisan/whitelist ]; } && \
 			cp "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" /opt/MyTomato/P2Partisan/whitelist
 
 		# Create custom lists
-		{ [ -f "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/blacklists" ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/blacklists" ]; } && \
 			cp "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklists"
-		{ [ -f "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/blacklist-custom" ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/blacklist-custom" ]; } && \
 			cp "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklist-custom"
-		{ [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/greylist" ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/greylist" ]; } && \
 			cp "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan/greylist"
-		{ [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/whitelist" ]; } &&
+		{ [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/whitelist" ]; } && \
 			cp "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan/whitelist"
 
 		# If exist, replace actual list by cutom
