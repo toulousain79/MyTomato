@@ -10,8 +10,6 @@
 ##
 ## Online documentation is available here: https://dnscrypt.info/doc
 
-
-
 ##################################
 #		 Global settings		#
 ##################################
@@ -29,17 +27,14 @@
 
 # server_names = ['scaleway-fr', 'google', 'yandex', 'cloudflare']
 
-
 ## List of local addresses and ports to listen to. Can be IPv4 and/or IPv6.
 ## Note: When using systemd socket activation, choose an empty set (i.e. [] ).
 
 listen_addresses = ['127.0.0.1:52', '[::1]:52']
 
-
 ## Maximum number of simultaneous client connections to accept
 
 max_clients = 250
-
 
 ## Switch to a different system user after listening sockets have been created.
 ## Note (1): this feature is currently unsupported on Windows.
@@ -47,7 +42,6 @@ max_clients = 250
 ## Note (3): when using -pidfile, the PID file directory must be writable by the new user
 
 # user_name = 'nobody'
-
 
 ## Require servers (from static + remote sources) to satisfy specific properties
 
@@ -63,7 +57,6 @@ dnscrypt_servers = true
 # Use servers implementing the DNS-over-HTTPS protocol
 doh_servers = true
 
-
 ## Require servers defined by remote sources to satisfy specific properties
 
 # Server must support DNS security extensions (DNSSEC)
@@ -75,7 +68,6 @@ require_nolog = true
 # Server must not enforce its own blacklist (for parental control, ads blocking...)
 require_nofilter = true
 
-
 ## Always use TCP to connect to upstream servers.
 ## This can be useful if you need to route everything through Tor.
 ## Otherwise, leave this to `false`, as it doesn't improve security
@@ -84,54 +76,44 @@ require_nofilter = true
 
 force_tcp = false
 
-
 ## SOCKS proxy
 ## Uncomment the following line to route all TCP connections to a local Tor node
 ## Tor doesn't support UDP, so set `force_tcp` to `true` as well.
 
 # proxy = "socks5://127.0.0.1:9050"
 
-
 ## HTTP/HTTPS proxy
 ## Only for DoH servers
 
 # http_proxy = "http://127.0.0.1:8888"
 
-
 ## How long a DNS query will wait for a response, in milliseconds
 
 timeout = 2500
-
 
 ## Keepalive for HTTP (HTTPS, HTTP/2) queries, in seconds
 
 keepalive = 30
 
-
 ## Load-balancing strategy: 'p2' (default), 'ph', 'fastest' or 'random'
 
 lb_strategy = 'p2'
-
 
 ## Log level (0-6, default: 2 - 0 is very verbose, 6 only contains fatal errors)
 
 log_level = 2
 
-
 ## log file for the application
 
 # log_file = 'dnscrypt-proxy.log'
-
 
 ## Use the system logger (syslog on Unix, Event Log on Windows)
 
 use_syslog = true
 
-
 ## Delay, in minutes, after which certificates are reloaded
 
 cert_refresh_delay = 240
-
 
 ## DNSCrypt: Create a new, unique key for every single DNS query
 ## This may improve privacy but can also have a significant impact on CPU usage
@@ -140,11 +122,9 @@ cert_refresh_delay = 240
 # dnscrypt_ephemeral_keys = false
 dnscrypt_ephemeral_keys = true
 
-
 ## DoH: Disable TLS session tickets - increases privacy but also latency
 
 tls_disable_session_tickets = false
-
 
 ## DoH: Use a specific cipher suite instead of the server preference
 ## 49199 = TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
@@ -160,7 +140,6 @@ tls_disable_session_tickets = false
 ## connecting to some DoH servers. Google and Cloudflare are fine with it.
 
 # tls_cipher_suite = [52392, 49199]
-
 
 ## Fallback resolver
 ## This is a normal, non-encrypted DNS resolver, that will be only used
@@ -178,12 +157,10 @@ tls_disable_session_tickets = false
 
 fallback_resolver = '9.9.9.9:53'
 
-
 ## Never let dnscrypt-proxy try to use the system DNS settings;
 ## unconditionally use the fallback resolver.
 
 ignore_system_dns = true
-
 
 ## Maximum time (in seconds) to wait for network connectivity before
 ## initializing the proxy.
@@ -193,13 +170,11 @@ ignore_system_dns = true
 
 netprobe_timeout = 60
 
-
 ## Offline mode - Do not use any remote encrypted servers.
 ## The proxy will remain fully functional to respond to queries that
 ## plugins can handle directly (forwarding, cloaking, ...)
 
 # offline_mode = false
-
 
 ## Automatic log files rotation
 
@@ -211,8 +186,6 @@ log_files_max_age = 7
 
 # Maximum log files backups to keep (or 0 to keep all backups)
 log_files_max_backups = 1
-
-
 
 #########################
 #		Filters		#
@@ -226,8 +199,6 @@ log_files_max_backups = 1
 
 block_ipv6 = false
 
-
-
 ##################################################################################
 #		Route queries for specific domains to a dedicated set of servers		#
 ##################################################################################
@@ -236,9 +207,7 @@ block_ipv6 = false
 ## example.com 9.9.9.9
 ## example.net 9.9.9.9,8.8.8.8,1.1.1.1
 
-# forwarding_rules = 'forwarding-rules.txt'
-
-
+forwarding_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt'
 
 ###############################
 #		Cloaking rules	   #
@@ -254,8 +223,6 @@ block_ipv6 = false
 
 cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt'
 
-
-
 ###########################
 #		DNS cache		#
 ###########################
@@ -264,32 +231,25 @@ cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt'
 
 cache = true
 
-
 ## Cache size
 
 cache_size = 512
-
 
 ## Minimum TTL for cached entries
 
 cache_min_ttl = 600
 
-
 ## Maximum TTL for cached entries
 
 cache_max_ttl = 86400
-
 
 ## Minimum TTL for negatively cached entries
 
 cache_neg_min_ttl = 60
 
-
 ## Maximum TTL for negatively cached entries
 
 cache_neg_max_ttl = 600
-
-
 
 ###############################
 #		Query logging		#
@@ -299,21 +259,17 @@ cache_neg_max_ttl = 600
 
 [query_log]
 
-  ## Path to the query log file (absolute, or relative to the same directory as the executable file)
+## Path to the query log file (absolute, or relative to the same directory as the executable file)
 
-  # file = 'query.log'
+# file = 'query.log'
 
+## Query log format (currently supported: tsv and ltsv)
 
-  ## Query log format (currently supported: tsv and ltsv)
+format = 'tsv'
 
-  format = 'tsv'
+## Do not log these query types, to reduce verbosity. Keep empty to log everything.
 
-
-  ## Do not log these query types, to reduce verbosity. Keep empty to log everything.
-
-  ignored_qtypes = ['DNSKEY', 'NS']
-
-
+ignored_qtypes = ['DNSKEY', 'NS']
 
 ############################################
 #		Suspicious queries logging		#
@@ -325,16 +281,13 @@ cache_neg_max_ttl = 600
 
 [nx_log]
 
-  ## Path to the query log file (absolute, or relative to the same directory as the executable file)
+## Path to the query log file (absolute, or relative to the same directory as the executable file)
 
-  # file = 'nx.log'
+# file = 'nx.log'
 
+## Query log format (currently supported: tsv and ltsv)
 
-  ## Query log format (currently supported: tsv and ltsv)
-
-  format = 'tsv'
-
-
+format = 'tsv'
 
 ######################################################
 #		Pattern-based blocking (blacklists)		#
@@ -355,21 +308,17 @@ cache_neg_max_ttl = 600
 
 [blacklist]
 
-  ## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
+## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
 
-  blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt'
+blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt'
 
+## Optional path to a file logging blocked queries
 
-  ## Optional path to a file logging blocked queries
+log_file = '/opt/var/log/dnscrypt/blocked.log'
 
-  log_file = '/opt/var/log/dnscrypt/blocked.log'
+## Optional log format: tsv or ltsv (default: tsv)
 
-
-  ## Optional log format: tsv or ltsv (default: tsv)
-
-  # log_format = 'tsv'
-
-
+# log_format = 'tsv'
 
 ###########################################################
 #		Pattern-based IP blocking (IP blacklists)		#
@@ -383,21 +332,17 @@ cache_neg_max_ttl = 600
 
 [ip_blacklist]
 
-  ## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
+## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
 
-  blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt'
+blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt'
 
+## Optional path to a file logging blocked queries
 
-  ## Optional path to a file logging blocked queries
+log_file = '/opt/var/log/dnscrypt/ip_blocked.log'
 
-  log_file = '/opt/var/log/dnscrypt/ip_blocked.log'
+## Optional log format: tsv or ltsv (default: tsv)
 
-
-  ## Optional log format: tsv or ltsv (default: tsv)
-
-  # log_format = 'tsv'
-
-
+# log_format = 'tsv'
 
 ######################################################
 #   Pattern-based whitelisting (blacklists bypass)   #
@@ -411,21 +356,17 @@ cache_neg_max_ttl = 600
 
 [whitelist]
 
-  ## Path to the file of whitelisting rules (absolute, or relative to the same directory as the executable file)
+## Path to the file of whitelisting rules (absolute, or relative to the same directory as the executable file)
 
-  whitelist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt'
+whitelist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt'
 
+## Optional path to a file logging whitelisted queries
 
-  ## Optional path to a file logging whitelisted queries
+log_file = '/opt/var/log/dnscrypt/whitelisted.log'
 
-  log_file = '/opt/var/log/dnscrypt/whitelisted.log'
+## Optional log format: tsv or ltsv (default: tsv)
 
-
-  ## Optional log format: tsv or ltsv (default: tsv)
-
-  # log_format = 'tsv'
-
-
+# log_format = 'tsv'
 
 ##########################################
 #		Time access restrictions		#
@@ -445,23 +386,21 @@ cache_neg_max_ttl = 600
 
 [schedules]
 
-  # [schedules.'time-to-sleep']
-  # mon = [{after='21:00', before='7:00'}]
-  # tue = [{after='21:00', before='7:00'}]
-  # wed = [{after='21:00', before='7:00'}]
-  # thu = [{after='21:00', before='7:00'}]
-  # fri = [{after='23:00', before='7:00'}]
-  # sat = [{after='23:00', before='7:00'}]
-  # sun = [{after='21:00', before='7:00'}]
+# [schedules.'time-to-sleep']
+# mon = [{after='21:00', before='7:00'}]
+# tue = [{after='21:00', before='7:00'}]
+# wed = [{after='21:00', before='7:00'}]
+# thu = [{after='21:00', before='7:00'}]
+# fri = [{after='23:00', before='7:00'}]
+# sat = [{after='23:00', before='7:00'}]
+# sun = [{after='21:00', before='7:00'}]
 
-  # [schedules.'work']
-  # mon = [{after='9:00', before='18:00'}]
-  # tue = [{after='9:00', before='18:00'}]
-  # wed = [{after='9:00', before='18:00'}]
-  # thu = [{after='9:00', before='18:00'}]
-  # fri = [{after='9:00', before='17:00'}]
-
-
+# [schedules.'work']
+# mon = [{after='9:00', before='18:00'}]
+# tue = [{after='9:00', before='18:00'}]
+# wed = [{after='9:00', before='18:00'}]
+# thu = [{after='9:00', before='18:00'}]
+# fri = [{after='9:00', before='17:00'}]
 
 #########################
 #		Servers		#
@@ -484,38 +423,36 @@ cache_neg_max_ttl = 600
 
 [sources]
 
-  ## An example of a remote source from https://github.com/DNSCrypt/dnscrypt-resolvers
+## An example of a remote source from https://github.com/DNSCrypt/dnscrypt-resolvers
 
-  [sources.'public-resolvers']
-  urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/public-resolvers.md', 'https://download.dnscrypt.info/resolvers-list/v2/public-resolvers.md']
-  cache_file = 'public-resolvers.md'
-  minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
-  refresh_delay = 72
-  prefix = 'public-'
+[sources.'public-resolvers']
+urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/public-resolvers.md', 'https://download.dnscrypt.info/resolvers-list/v2/public-resolvers.md']
+cache_file = 'public-resolvers.md'
+minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+refresh_delay = 72
+prefix = 'public-'
 
-  ## Quad9 over DNSCrypt - https://quad9.net/
+## Quad9 over DNSCrypt - https://quad9.net/
 
-  [sources.quad9-resolvers]
-  urls = ["https://www.quad9.net/quad9-resolvers.md"]
-  minisign_key = "RWQBphd2+f6eiAqBsvDZEBXBGHQBJfeG6G+wJPPKxCZMoEQYpmoysKUN"
-  cache_file = "quad9-resolvers.md"
-  refresh_delay = 72
-  prefix = "quad9-"
+[sources.quad9-resolvers]
+urls = ["https://www.quad9.net/quad9-resolvers.md"]
+minisign_key = "RWQBphd2+f6eiAqBsvDZEBXBGHQBJfeG6G+wJPPKxCZMoEQYpmoysKUN"
+cache_file = "quad9-resolvers.md"
+refresh_delay = 72
+prefix = "quad9-"
 
-  ## Another example source, with resolvers censoring some websites not appropriate for children
-  ## This is a subset of the `public-resolvers` list, so enabling both is useless
+## Another example source, with resolvers censoring some websites not appropriate for children
+## This is a subset of the `public-resolvers` list, so enabling both is useless
 
-  #  [sources.'parental-control']
-  #  urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/parental-control.md', 'https://download.dnscrypt.info/resolvers-list/v2/parental-control.md']
-  #  cache_file = 'parental-control.md'
-  #  minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
-
-
+#  [sources.'parental-control']
+#  urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/parental-control.md', 'https://download.dnscrypt.info/resolvers-list/v2/parental-control.md']
+#  cache_file = 'parental-control.md'
+#  minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
 
 ## Optional, local, static list of additional servers
 ## Mostly useful for testing your own servers.
 
 [static]
 
-  # [static.'google']
-  # stamp = 'sdns://AgUAAAAAAAAAAAAOZG5zLmdvb2dsZS5jb20NL2V4cGVyaW1lbnRhbA'
+# [static.'google']
+# stamp = 'sdns://AgUAAAAAAAAAAAAOZG5zLmdvb2dsZS5jb20NL2V4cGVyaW1lbnRhbA'
