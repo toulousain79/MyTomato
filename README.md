@@ -24,7 +24,7 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * bash _(prompt, locale, colors, readline, bash on login, ...)_
 	  * aliases for all Entware binaries installed _(dynamically)_
 	  * admin tools
-	  * PATCH updated to prioritize binaries in /opt
+	  * PATH updated to prioritize binaries in /opt
 	  * code review of rc.unslung
 	  * add locales & timezone
   * Project auto upgrade _(Entware & GitHub)_
@@ -32,9 +32,10 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * new features
 	  * ARM-Extras modules downloaded automatically
   * [P2Partisan v6.08](https://www.linksysinfo.org/index.php?threads/p2partisan-v5-14-v6-08-mass-ip-blocking-peerblock-peerguardian-for-tomato.69128/)
-	  * Countries blocklists
-	  * Usual blocklists
+	  * countries blocklists
+	  * usual blocklists
 	  * known addresses of TMG
+    * code review
   * [DNScrypt-proxy v2](https://github.com/jedisct1/dnscrypt-proxy/blob/master/README.md) _(no DoH)_ _(disabled for AIO firmwares)_
 	  * DNS query monitoring, with separate log files for regular and suspicious queries
 	  * Filtering: **block ads**, **malware**, and other unwanted content. Compatible with all DNS services
