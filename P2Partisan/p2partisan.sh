@@ -32,7 +32,7 @@ maxloghour=1
 # Standard iptables syntax, individual ports divided by "," and ":" to
 # define a range e.g. 80,443,2100:2130. Do not whitelist you P2P client!
 whiteports_tcp=43,80,443
-whiteports_udp=53,123,1194:1196
+whiteports_udp=53,123
 #
 # Greyports are port/s you absolutely want to filter against lists.
 # Think of an Internet host that has its P2P client set on port 53 UDP.
@@ -70,13 +70,46 @@ autorun_availability_check=1
 testip=google.com
 # </CONFIGURATION> ###########################################
 
+#### Includes
+# shellcheck source=root/SCRIPTs/inc/vars
+. /opt/MyTomato/root/SCRIPTs/inc/vars
+# shellcheck source=root/SCRIPTs/inc/vars
+[ -f "${gsDirOverLoad}/vars" ] && . "${gsDirOverLoad}/vars"
+
 # DNScrypt-proxy
 if [ "$(nvram get dnscrypt2_enable)" == "1" ]; then
-		whiteports_tcp=${whiteports_tcp},52
-		whiteports_udp=${whiteports_udp},52
+	whiteports_tcp=${whiteports_tcp},52
+	whiteports_udp=${whiteports_udp},52
 fi
-# [ -n "$(nvram get http_wanport)" ] && whiteports_tcp=${whiteports_tcp},$(nvram get http_wanport)
-# [ -n "$(nvram get http_lanport)" ] && whiteports_tcp=${whiteports_udp},$(nvram get http_lanport)
+# Get all others ports in NVRAM
+for result in $(nvram show 2>/dev/null | grep 'port='); do
+	service=$(echo "${result}" | cut -f1 -d '=')
+	port=$(echo "${result}" | cut -f2 -d '=')
+	[ "${port}" -eq 0 ] && continue
+
+	if (echo "${service}" | grep -q -e 'radius' -e 'snmp' -e 'log' -e 'udpxy'); then
+		whiteports_udp=${whiteports_udp},${port}
+	elif (echo "${service}" | grep -q -e 'wan' -e 'lan' -e 'ssh' -e 'ftp' -e 'telnet'); then
+		whiteports_tcp=${whiteports_tcp},${port}
+	elif (echo "${service}" | grep -q 'vpn_client'); then
+		if (nvram get vpn_client_eas | grep -q "${service//[^0-9]/}"); then
+			case "$(nvram get "${service//_port/_proto}")" in
+			'udp') whiteports_udp=${whiteports_udp},${port} ;;
+			'tcp') whiteports_tcp=${whiteports_tcp},${port} ;;
+			esac
+		fi
+	elif (echo "${service}" | grep -q 'vpn_server'); then
+		if (nvram get vpn_server_eas | grep -q "${service//[^0-9]/}"); then
+			case "$(nvram get "${service//_port/_proto}")" in
+			'udp') whiteports_udp=${whiteports_udp},${port} ;;
+			'tcp') whiteports_tcp=${whiteports_tcp},${port} ;;
+			esac
+		fi
+	fi
+done
+# Sort results
+whiteports_udp=$(echo "${whiteports_udp},${gsP2Partisan_UdpPorts}" | tr "," "\n" | sort -nu | tr "\n" "," | sed 's/,$//g;')
+whiteports_tcp=$(echo "${whiteports_tcp},${gsP2Partisan_TcpPorts}" | tr "," "\n" | sort -nu | tr "\n" "," | sed 's/,$//g;')
 
 ipsetversion=$(ipset -V | grep ipset | awk '{print $2}' | cut -c2) #4=old 6=new
 if [ $ipsetversion != 6 ]; then

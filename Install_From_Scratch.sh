@@ -257,7 +257,6 @@ nvram set ntp_tdod=1
 {
 	echo "ca /opt/MyTomato/root/OpenVPN/client1/ca_example.crt"
 	echo "cert /opt/MyTomato/root/OpenVPN/client1/demo_example.crt"
-	echo "cert /opt/MyTomato/root/OpenVPN/client1/demo_example.crt"
 	echo "key /opt/MyTomato/root/OpenVPN/client1/demo_example.key"
 	echo "tls-auth /opt/MyTomato/root/OpenVPN/client1/ta_example.key 1"
 	echo "log /opt/MyTomato/root/OpenVPN/client1/client1.log"
