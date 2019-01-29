@@ -1,3 +1,7 @@
+**v1.0.6** - _2019/01/29_
+ - add .autorun to /opt _(permit to restore last NVRAM config file after a reset)_
+ - add more NVRAM save _(after mounting, before unmounting, during upgrade)_
+
 **v1.0.5** - _2019/01/28_
  - p2partisan.sh
   - dynamic addition of all ports of system services _(nvram show 2>/dev/null | grep 'port=')_

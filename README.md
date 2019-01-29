@@ -27,6 +27,7 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * PATH updated to prioritize binaries in /opt
 	  * code review of rc.unslung
 	  * add locales & timezone
+    * auto restore the last NVRAM config saved on /opt
   * Project auto upgrade _(Entware & GitHub)_
 	  * get patch
 	  * new features
@@ -35,7 +36,7 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * countries blocklists
 	  * usual blocklists
 	  * known addresses of TMG
-    * code review
+	* code review
   * [DNScrypt-proxy v2](https://github.com/jedisct1/dnscrypt-proxy/blob/master/README.md) _(no DoH)_ _(disabled for AIO firmwares)_
 	  * DNS query monitoring, with separate log files for regular and suspicious queries
 	  * Filtering: **block ads**, **malware**, and other unwanted content. Compatible with all DNS services

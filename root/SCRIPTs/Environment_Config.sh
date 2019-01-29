@@ -15,6 +15,9 @@ declare gsScriptName gsDirOverLoad gsLocales gsDirLogs gsDirBackups gsDirTemplat
 
 #### TAG '/opt' and '/opt/var/log' with UUID to avoid deleting
 if [ -n "${gsUsbOptUuid}" ]; then
+	if [ ! -f /opt/.uuid ] || [ "$(cat /opt/.uuid)" != "${gsUsbOptUuid}" ]; then
+		echo "${gsUsbOptUuid}" >/opt/.uuid
+	fi
 	if [ ! -f /opt/root/.uuid ] || [ "$(cat /opt/root/.uuid)" != "${gsUsbOptUuid}" ]; then
 		echo "${gsUsbOptUuid}" >/opt/root/.uuid
 	fi
@@ -52,6 +55,12 @@ if (! /opt/bin/mount -l | grep -q '/tmp/home/root'); then
 	fi
 	logger -p user.notice "| ${gsScriptName} | Mount /opt/MyTomato/root to /tmp/home/root"
 	/opt/bin/mount --bind /opt/MyTomato/root /tmp/home/root
+fi
+
+#### Create /opt/.autorun script
+if [ ! -f /opt/.autorun ]; then
+	cp -v "${gsDirTemplates}"/.autorun.tmpl /opt/.autorun
+	chmod +x /opt/.autorun
 fi
 
 #### rc.unslung / rc.func

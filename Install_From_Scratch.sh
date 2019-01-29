@@ -34,55 +34,55 @@ rm -rf /tmp/i18n
 
 opkg update
 opkg install \
-bash \
-wget \
-curl \
-bzip2 \
-less \
-lsof \
-perl \
-tar \
-unzip \
-sed \
-vim \
-vim-runtime \
-tcpdump \
-htop \
-gawk \
-bind-dig \
-file \
-strace \
-whereis \
-mlocate \
-git \
-jq \
-xxd \
-logrotate \
-mount-utils \
-coreutils-ln \
-coreutils-uniq \
-coreutils-kill \
-coreutils-dircolors \
-coreutils-dirname \
-coreutils-cp \
-coreutils-mv \
-coreutils-chown \
-coreutils-chmod \
-coreutils-cat \
-coreutils-basename \
-coreutils-install \
-coreutils-df \
-procps-ng-ps \
-procps-ng-pgrep \
-ca-certificates \
-ca-bundle \
-fake-hwclock \
-ntpdate \
-ntpd \
-rsync \
-openssh-sftp-server \
-nfs-kernel-server \
-nfs-kernel-server-utils
+	bash \
+	wget \
+	curl \
+	bzip2 \
+	less \
+	lsof \
+	perl \
+	tar \
+	unzip \
+	sed \
+	vim \
+	vim-runtime \
+	tcpdump \
+	htop \
+	gawk \
+	bind-dig \
+	file \
+	strace \
+	whereis \
+	mlocate \
+	git \
+	jq \
+	xxd \
+	logrotate \
+	mount-utils \
+	coreutils-ln \
+	coreutils-uniq \
+	coreutils-kill \
+	coreutils-dircolors \
+	coreutils-dirname \
+	coreutils-cp \
+	coreutils-mv \
+	coreutils-chown \
+	coreutils-chmod \
+	coreutils-cat \
+	coreutils-basename \
+	coreutils-install \
+	coreutils-df \
+	procps-ng-ps \
+	procps-ng-pgrep \
+	ca-certificates \
+	ca-bundle \
+	fake-hwclock \
+	ntpdate \
+	ntpd \
+	rsync \
+	openssh-sftp-server \
+	nfs-kernel-server \
+	nfs-kernel-server-utils
 
 if (! nvram get os_version | grep -q 'AIO'); then
 	opkg install dnscrypt-proxy2_nohf
@@ -151,6 +151,9 @@ cat /opt/etc/shells
 
 #### TAG '/opt' and '/opt/var/log' with UUID to avoid deleting
 if [ -n "${gsUsbOptUuid}" ]; then
+	if [ ! -f /opt/.uuid ] || [ "$(cat /opt/.uuid)" != "${gsUsbOptUuid}" ]; then
+		echo "${gsUsbOptUuid}" >/opt/.uuid
+	fi
 	if [ ! -f /opt/root/.uuid ] || [ "$(cat /opt/root/.uuid)" != "${gsUsbOptUuid}" ]; then
 		echo "${gsUsbOptUuid}" >/opt/root/.uuid
 	fi
@@ -263,10 +266,6 @@ nvram set ntp_tdod=1
 	echo "verb 3"
 } >>/tmp/openvpn_client1
 nvram set vpn_client1_custom="$(cat /tmp/openvpn_client1)"
-#### NVRAM config save
-logger -p user.notice "| ${gsScriptName} | NVRAM config save to ${gsDirBackups}/MyTomato_${gdDateTime}.cfg"
-nvram set mytomato_config_save="${gdDateTime}"
-nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" >/dev/null 2>&1
 
 #### Cleaning
 rm -fv /tmp/script_init
@@ -302,10 +301,19 @@ fi
 # Commit
 nvram commit
 
+#### Create /opt/.autorun script
+if [ ! -f /opt/.autorun ]; then
+	cp -v /opt/MyTomato/root/TEMPLATEs/.autorun.tmpl /opt/.autorun
+	chmod +x /opt/.autorun
+fi
+
 #### MLocate
 [ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
 cat /opt/etc/group
 updatedb -v
+
+#### NVRAM config save
+gfnNvramSave
 
 #### Reboot needed
 echo
