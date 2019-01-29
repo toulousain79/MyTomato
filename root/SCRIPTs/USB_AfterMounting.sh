@@ -45,7 +45,7 @@ gfnNvramUpdate 'dns_wan1'
 bash "${gsDirScripts}/Environment_Config.sh"
 
 #### Entware Update
-bash "${gsDirScripts}/Upgrade.sh"
+#bash "${gsDirScripts}/Upgrade.sh"
 
 #### P2Partisan install
 if [ ! -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && [ "${gbP2Partisan_Enable}" -eq 1 ]; then

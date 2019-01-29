@@ -27,7 +27,7 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 	  * PATH updated to prioritize binaries in /opt
 	  * code review of rc.unslung
 	  * add locales & timezone
-    * auto restore the last NVRAM config saved on /opt
+	* auto restore the last NVRAM config saved on /opt
   * Project auto upgrade _(Entware & GitHub)_
 	  * get patch
 	  * new features
