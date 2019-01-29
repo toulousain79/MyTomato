@@ -19,7 +19,6 @@ project_check_develop:
     stage: check_develop
     only:
       refs:
-        - develop
         - merge_requests
     allow_failure: false
     <<: *tmpl_check
