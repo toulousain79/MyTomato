@@ -10,6 +10,14 @@ function gfnNtpUpdate() {
 	ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
 }
 
+#### NVRAM save
+function gfnNvramSave() {
+	logger -p user.notice "| ${gsScriptName} | NVRAM config save to ${gsDirBackups}/MyTomato_${gdDateTime}.cfg"
+	nvram set mytomato_config_save="${gdDateTime}"
+	nvram commit
+	nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" >/dev/null 2>&1
+}
+
 #### NVRAM update
 function gfnNvramUpdate() {
 	local sValue sSwith nCommit
@@ -19,6 +27,23 @@ function gfnNvramUpdate() {
 	sSwith="${2}"
 
 	case "${sValue}" in
+	'fstab')
+		nvram get script_init >/tmp/script_init
+		(! grep -q 'LABEL=ENTWARE' /tmp/script_init) && {
+			echo "echo \"LABEL=ENTWARE /opt ${FILESYSTEM} defaults,data=writeback,noatime,nodiratime 0 0\" >> /etc/fstab" >>/tmp/script_init
+			nCommit=1
+		}
+		(! grep -q 'LABEL=SWAP' /tmp/script_init) && {
+			echo "echo \"LABEL=SWAP none swap sw 0 0\" > /etc/fstab" >>/tmp/script_init
+			nCommit=1
+		}
+		(! grep -q 'dnsmasq-custom.conf' /tmp/script_init) && {
+			echo "touch /etc/dnsmasq-custom.conf" >>/tmp/script_init
+			nCommit=1
+		}
+		[ "${nCommit}" -eq 1 ] && nvram set script_init="$(cat /tmp/script_init)"
+		rm -f /tmp/script_init
+		;;
 	'dnsmasq')
 		nvram get dnsmasq_custom >/tmp/dnsmasq_custom
 		(! grep -q 'log-async' /tmp/dnsmasq_custom) && {

@@ -22,11 +22,14 @@ fi
 #### Restore config if needed
 if [ -z "$(nvram get mytomato_config_save)" ]; then
 	sLastConfig="$(find ${gsDirBackups}/ -type f -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
-	if [ -n "${sLastConfig}" ]; then
+	if [ -n "${sLastConfig}" ] && [ -f "${sLastConfig}" ]; then
 		nvram restore "${sLastConfig}"
 		sleep 2
 		nvram set mytomato_config_save="${gdDateTime}"
+		nvram commit
 		nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" >/dev/null 2>&1
 		reboot
 	fi
 fi
+
+exit 0

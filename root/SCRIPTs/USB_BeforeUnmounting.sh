@@ -22,6 +22,9 @@ bash "${gsDirScripts}/Services_Stop.sh"
 #### Keep date time
 fake-hwclock save
 
+#### NVRAM save
+gfnNvramSave
+
 #### Kill bash sessions
 for sPid in $(pidof bash); do kill -9 "${sPid}"; done
 
