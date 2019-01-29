@@ -221,7 +221,7 @@ And, simply execute this:
 ```bash
 Upgrade.sh
 . /opt/MyTomato/root/SCRIPTs/inc/vars
-cp -f ${gsDirDnscryptGen:?}/blocklist.txt ${gsDirOverLoad}/dnscrypt/blacklists.txt
+cp -f ${gsDirDnscryptGen:?}/blacklists.txt ${gsDirOverLoad}/dnscrypt/blacklists.txt
 /opt/etc/init.d/S09dnscrypt-proxy2 restart
 ```
 

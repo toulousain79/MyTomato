@@ -31,6 +31,7 @@ opkg list-installed | awk '{ print $1 }' >"${gsDirLogs}/opkg_list-installed_${gd
 #### MyTomato repo
 if [ "${gbRepoUpgrade_Enable:?}" -eq 1 ]; then
 	[ -d "/opt/MyTomato" ] && cd "/opt/MyTomato" || exit 1
+	logger -p user.notice "| ${gsScriptName} | Update /opt/MyTomato via GitHub"
 	git fetch origin
 	git reset --hard origin/master
 	git pull origin master
@@ -38,22 +39,27 @@ fi
 
 #### DNScrypt-proxy v2
 if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
+	logger -p user.notice "| ${gsScriptName} | Git clone https://github.com/jedisct1/dnscrypt-proxy.git"
 	git clone git://github.com/jedisct1/dnscrypt-proxy.git "${gsDirDnscrypt:?}"
 else
 	cd "${gsDirDnscrypt:?}" || exit 1
+	logger -p user.notice "| ${gsScriptName} | Update ${gsDirDnscrypt} via GitHub"
 	git fetch origin
 	git reset --hard origin/master
 	git pull origin master
 fi
-s
 if [ -f "${gsDirDnscryptGen:?}"/generate-domains-blacklist.py ]; then
 	cd "${gsDirDnscryptGen}"/ || exit 1
 	chmod +x generate-domains-blacklist.py
+	logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
 	python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+	[ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ] && cp "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" /opt/etc/init.d/S09dnscrypt-proxy2
 fi
 
 #### SCRIPTs
+logger -p user.notice "| ${gsScriptName} | Chmod +x to ${gsDirScripts}/*"
 chmod +x ${gsDirScripts}/*
+logger -p user.notice "| ${gsScriptName} | Chmod +x to /opt/MyTomato/P2Partisan/p2partisan.sh"
 [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
 
 #### NVRAM save
