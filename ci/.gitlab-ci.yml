@@ -1,19 +1,36 @@
 ---
 stages:
-    - check
+    - check_develop
+    - check_master
 
-# #### Project check (merge request)
-Project check:
+# #### Templates - BoF
+.tmpl_check: &tmpl_check
     image: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/mysb/project_check/project_check:latest
-    stage: check
-    only:
-      refs:
-        - merge_requests
-        - schedules
-    #   variables:
-    #     - $CHECK == "True"
     script:
         - |
             for script in $(echo ${CI_PROJECT_DIR}/ci/scripts/[0-9][0-9]-*.sh); do
                 . ${script} "${CI_PROJECT_DIR}"
             done
+# #### Templates - EoF
+
+
+# #### Project check (merge request)
+project_check_develop:
+    stage: check_develop
+    only:
+      refs:
+        - develop
+        - merge_requests
+    <<: *tmpl_check
+    after: project_check_master
+    allow_failure: false
+
+
+# #### Project check for master branch (after merge request & schedules)
+project_check_master:
+    stage: check_master
+    only:
+      refs:
+        - master
+        - schedules
+    <<: *tmpl_check
