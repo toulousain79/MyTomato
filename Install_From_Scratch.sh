@@ -34,55 +34,55 @@ rm -rf /tmp/i18n
 
 opkg update
 opkg install \
-bash \
-wget \
-curl \
-bzip2 \
-less \
-lsof \
-perl \
-tar \
-unzip \
-sed \
-vim \
-vim-runtime \
-tcpdump \
-htop \
-gawk \
-bind-dig \
-file \
-strace \
-whereis \
-mlocate \
-git \
-jq \
-xxd \
-logrotate \
-mount-utils \
-coreutils-ln \
-coreutils-uniq \
-coreutils-kill \
-coreutils-dircolors \
-coreutils-dirname \
-coreutils-cp \
-coreutils-mv \
-coreutils-chown \
-coreutils-chmod \
-coreutils-cat \
-coreutils-basename \
-coreutils-install \
-coreutils-df \
-procps-ng-ps \
-procps-ng-pgrep \
-ca-certificates \
-ca-bundle \
-fake-hwclock \
-ntpdate \
-ntpd \
-rsync \
-openssh-sftp-server \
-nfs-kernel-server \
-nfs-kernel-server-utils
+	bash \
+	wget \
+	curl \
+	bzip2 \
+	less \
+	lsof \
+	perl \
+	tar \
+	unzip \
+	sed \
+	vim \
+	vim-runtime \
+	tcpdump \
+	htop \
+	gawk \
+	bind-dig \
+	file \
+	strace \
+	whereis \
+	mlocate \
+	git \
+	jq \
+	xxd \
+	logrotate \
+	mount-utils \
+	coreutils-ln \
+	coreutils-uniq \
+	coreutils-kill \
+	coreutils-dircolors \
+	coreutils-dirname \
+	coreutils-cp \
+	coreutils-mv \
+	coreutils-chown \
+	coreutils-chmod \
+	coreutils-cat \
+	coreutils-basename \
+	coreutils-install \
+	coreutils-df \
+	procps-ng-ps \
+	procps-ng-pgrep \
+	ca-certificates \
+	ca-bundle \
+	fake-hwclock \
+	ntpdate \
+	ntpd \
+	rsync \
+	openssh-sftp-server \
+	nfs-kernel-server \
+	nfs-kernel-server-utils
 
 if (! nvram get os_version | grep -q 'AIO'); then
 	opkg install dnscrypt-proxy2_nohf
@@ -151,6 +151,9 @@ cat /opt/etc/shells
 
 #### TAG '/opt' and '/opt/var/log' with UUID to avoid deleting
 if [ -n "${gsUsbOptUuid}" ]; then
+	if [ ! -f /opt/.uuid ] || [ "$(cat /opt/.uuid)" != "${gsUsbOptUuid}" ]; then
+		echo "${gsUsbOptUuid}" >/opt/.uuid
+	fi
 	if [ ! -f /opt/root/.uuid ] || [ "$(cat /opt/root/.uuid)" != "${gsUsbOptUuid}" ]; then
 		echo "${gsUsbOptUuid}" >/opt/root/.uuid
 	fi
@@ -200,7 +203,7 @@ chmod +x /opt/etc/init.d/*
 # Create empty file
 touch /etc/dnsmasq-custom.conf
 touch ${gsDirOverLoad}/.bash_aliases
-/opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/.txt.tmpl//g;"))' _ {} \;
+/opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/p2partisan.//g;" | sed "s/.txt.tmpl//g;"))' _ {} \;
 /opt/bin/find "${gsDirTemplates}/dnscrypt/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
 
 #### NVRAM settings
@@ -301,6 +304,12 @@ fi
 
 # Commit
 nvram commit
+
+#### Create /opt/.autorun script
+if [ ! -f /opt/.autorun ]; then
+	cp -v /opt/MyTomato/root/TEMPLATEs/.autorun.tmpl /opt/.autorun
+	chmod +x /opt/.autorun
+fi
 
 #### MLocate
 [ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
