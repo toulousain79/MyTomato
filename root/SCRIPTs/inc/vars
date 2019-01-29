@@ -32,7 +32,7 @@ gsDirTemplates="/opt/MyTomato/root/TEMPLATEs"
 gsDirOverLoad="/opt/MyTomato/root/ConfigOverload"
 # DNScrypt-proxy local repo dir
 gsDirDnscrypt="/opt/usr/local/dnscrypt-proxy"
-gsDirDnscryptGen="${gsDirDnscrypt}/utils/generate-domains-blacklists/"
+gsDirDnscryptGen="${gsDirDnscrypt}/utils/generate-domains-blacklists"
 
 ########################################
 #### USB Disk
