@@ -7,6 +7,8 @@
  - included DNScrypt-proxy repo update _(get latest DNScrypt-proxy utils)_
  - add comment in README about DNScrypt-proxy utils
  - add loading custom config files directly into S09dnscrypt-proxy2.tmpl
+ - P2Partisan, remove native autorun
+ - disable Upgrade.sh after USB mounting
 
 **v1.0.5** - _2019/01/28_
  - p2partisan.sh
