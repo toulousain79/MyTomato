@@ -32,5 +32,6 @@ project_check_master:
       refs:
         - master
         - schedules
+        - merge_requests
     when: on_success
     <<: *tmpl_check
