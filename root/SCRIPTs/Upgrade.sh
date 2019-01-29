@@ -29,11 +29,27 @@ logger -p user.notice "| ${gsScriptName} | EntWare generate pakages installed li
 opkg list-installed | awk '{ print $1 }' >"${gsDirLogs}/opkg_list-installed_${gdDateTime}.txt"
 
 #### MyTomato repo
-if [ "${gbRepoUpgrade_Enable}" -eq 1 ]; then
+if [ "${gbRepoUpgrade_Enable:?}" -eq 1 ]; then
 	[ -d "/opt/MyTomato" ] && cd "/opt/MyTomato" || exit 1
 	git fetch origin
 	git reset --hard origin/master
 	git pull origin master
+fi
+
+#### DNScrypt-proxy v2
+if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
+	git clone git://github.com/jedisct1/dnscrypt-proxy.git "${gsDirDnscrypt:?}"
+else
+	cd "${gsDirDnscrypt:?}" || exit 1
+	git fetch origin
+	git reset --hard origin/master
+	git pull origin master
+fi
+s
+if [ -f "${gsDirDnscryptGen:?}"/generate-domains-blacklist.py ]; then
+	cd "${gsDirDnscryptGen}"/ || exit 1
+	chmod +x generate-domains-blacklist.py
+	python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
 fi
 
 #### SCRIPTs

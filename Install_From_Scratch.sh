@@ -82,11 +82,9 @@ opkg install \
 	rsync \
 	openssh-sftp-server \
 	nfs-kernel-server \
-	nfs-kernel-server-utils
-
-if (! nvram get os_version | grep -q 'AIO'); then
-	opkg install dnscrypt-proxy2_nohf
-fi
+	nfs-kernel-server-utils \
+	python \
+	python3
 
 #### NTP
 ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
@@ -99,6 +97,24 @@ else
 	git fetch origin
 	git reset --hard origin/master
 	git pull origin master
+fi
+
+#### DNScrypt-proxy v2
+if (! nvram get os_version | grep -q 'AIO'); then
+	if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
+		git clone git://github.com/jedisct1/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
+	else
+		cd /opt/usr/local/dnscrypt-proxy || exit 1
+		git fetch origin
+		git reset --hard origin/master
+		git pull origin master
+	fi
+	if [ -f /opt/usr/local/dnscrypt-proxy/generate-domains-blacklist.py ]; then
+		chmod +x /opt/usr/local/dnscrypt-proxy/generate-domains-blacklist.py
+		python /opt/usr/local/dnscrypt-proxy/generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp list
+	fi
+
+	gfnInstallDnscryptProxy "$@"
 fi
 
 # Add /opt UUID to "/opt/MyTomato/root/ConfigOverload/vars"

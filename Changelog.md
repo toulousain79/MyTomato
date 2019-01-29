@@ -1,6 +1,12 @@
 **v1.0.6** - _2019/01/29_
  - add .autorun to /opt _(permit to restore last NVRAM config file after a reset)_
  - add more NVRAM save _(after mounting, before unmounting, during upgrade)_
+ - add Python 2 & 3 packages
+ - update DNScrypt-proxy blacklists.txt from [Public Blacklists](https://github.com/jedisct1/dnscrypt-proxy/wiki/Public-blacklists)
+ - add [DNScrypt-proxy utils](https://github.com/jedisct1/dnscrypt-proxy/tree/master/utils/generate-domains-blacklists)
+ - included DNScrypt-proxy repo update _(get latest DNScrypt-proxy utils)_
+ - add comment in README about DNScrypt-proxy utils
+ - add loading custom config files directly into S09dnscrypt-proxy2.tmpl
 
 **v1.0.5** - _2019/01/28_
  - p2partisan.sh

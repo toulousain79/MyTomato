@@ -63,6 +63,8 @@ gfnStart() {
 		gfnMessage 'INFO' 'log' "$DESC is already running !"
 		nReturn=0
 	else
+		gfnInstallDnscryptProxy
+
 		${PROCS} -config /opt/etc/dnscrypt-proxy.toml >/dev/null 2>&1 &
 		sleep 1
 

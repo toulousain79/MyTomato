@@ -205,6 +205,26 @@ _**NB:** Default values are acceptable_
 vim /opt/MyTomato/root/ConfigOverload/dnscrypt/dnscrypt-proxy.toml
 ```
 
+You can configure your own **blocklist.txt** with in **/opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/**.
+
+Please, check [Public Blacklists](https://github.com/jedisct1/dnscrypt-proxy/wiki/Public-blacklists ;-)
+
+Edit following files like you want to generate your final **blocklist.txt**:
+
+  * /opt/usr/local/dnscrypt-proxy/**domains-blacklist.conf**
+  * /opt/usr/local/dnscrypt-proxy/**domains-whitelist.txt**
+  * /opt/usr/local/dnscrypt-proxy/**domains-time-restricted.txt**
+  * /opt/usr/local/dnscrypt-proxy/**domains-blacklist-local-additions.txt**
+
+And, simply execute this:
+
+```bash
+Upgrade.sh
+. /opt/MyTomato/root/SCRIPTs/inc/vars
+cp -f ${gsDirDnscryptGen:?}/blocklist.txt ${gsDirOverLoad}/dnscrypt/blacklists.txt
+/opt/etc/init.d/S09dnscrypt-proxy2 restart
+```
+
 _**NB:** Default values are acceptable_
 
 # Links
@@ -213,5 +233,6 @@ _**NB:** Default values are acceptable_
   * [Tomato by Shibby](http://tomato.groov.pl/)
   * [Entware - WiKi](https://github.com/Entware/Entware/wiki)
   * [DNScrypt - WiKi](https://github.com/jedisct1/dnscrypt-proxy/wiki)
+  * [DNScrypt - Public Blacklists](https://github.com/jedisct1/dnscrypt-proxy/wiki/Public-blacklists)
   * [P2Partisan](https://www.linksysinfo.org/index.php?threads/p2partisan-v5-14-v6-08-mass-ip-blocking-peerblock-peerguardian-for-tomato.69128/)
   * [armv7sf-k3.2 - installer](http://bin.entware.net/armv7sf-k3.2/installer/)
