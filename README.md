@@ -207,7 +207,7 @@ vim /opt/MyTomato/root/ConfigOverload/dnscrypt/dnscrypt-proxy.toml
 
 You can configure your own **blocklist.txt** with in **/opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/**.
 
-Please, check [Public Blacklists](https://github.com/jedisct1/dnscrypt-proxy/wiki/Public-blacklists ;-)
+Please, check [Public Blacklists](https://github.com/jedisct1/dnscrypt-proxy/wiki/Public-blacklists)
 
 Edit following files like you want to generate your final **blocklist.txt**:
 
