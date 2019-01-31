@@ -1,25 +1,15 @@
 #!/bin/sh
 
-sUsbFileSystem="$(df -Th | grep '/opt' | awk '{ print $2 }')"
 gdDateTime="$(date +%Y%m%d_%H%M)"
-gsDirBackups="/opt/MyTomato/root/BACKUPs"
-
-# set nvram script_init
-if (! nvram get script_init | grep -q 'LABEL=ENTWARE'); then
-	nvram set script_init="echo \"LABEL=SWAP none swap sw 0 0\" > /etc/fstab
-	echo \"LABEL=ENTWARE /opt ${sUsbFileSystem} defaults,data=writeback,noatime,nodiratime 0 0\" >> /etc/fstab
-	touch /etc/dnsmasq-custom.conf"
-fi
 
 #### Restore config if needed
 if [ -z "$(nvram get mytomato_config_save)" ]; then
-	sLastConfig="$(find ${gsDirBackups}/ -type f -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
+	sLastConfig="$(find /mnt/ -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
 	if [ -n "${sLastConfig}" ] && [ -f "${sLastConfig}" ]; then
 		nvram restore "${sLastConfig}"
 		sleep 2
-		nvram set mytomato_config_save="${gdDateTime}"
+		nvram set mytomato_config_save="${gdDateTime:?}"
 		nvram commit
-		nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" >/dev/null 2>&1
 		reboot
 	fi
 fi
