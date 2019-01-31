@@ -326,10 +326,8 @@ fi
 nvram commit
 
 #### Create /opt/.autorun script
-if [ ! -f /opt/.autorun ]; then
-	cp -v /opt/MyTomato/root/TEMPLATEs/.autorun.tmpl /opt/.autorun
-	chmod +x /opt/.autorun
-fi
+cp -v /opt/MyTomato/root/TEMPLATEs/.autorun.tmpl /opt/.autorun
+chmod +x /opt/.autorun
 
 #### MLocate
 [ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
