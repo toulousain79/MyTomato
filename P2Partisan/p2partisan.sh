@@ -1794,24 +1794,24 @@ for p in $1; do
 		pforcestop $2
 		echo "| Now updating..."
 		;;
-		# "autorun-on")
-		# 	pautorunset
-		# 	exit
-		# 	;;
-		# "autorun-off")
-		# 	pautorununset
-		# 	exit
-		# 	;;
+	# "autorun-on")
+	# 	pautorunset
+	# 	exit
+	# 	;;
+	# "autorun-off")
+	# 	pautorununset
+	# 	exit
+	# 	;;
 	"tutor")
 		ptutor
 		exit
 		;;
-	"upgrade")
-		pupgrade
-		;;
-	"upgrade-beta")
-		pupgradebeta
-		;;
+	# "upgrade")
+	# 	pupgrade
+	# 	;;
+	# "upgrade-beta")
+	# 	pupgradebeta
+	# 	;;
 	"help")
 
 		echo -e "\033[48;5;89m
@@ -1835,9 +1835,6 @@ for p in $1; do
 	   debug				   Shows a guide on how to operate debug
 	   debug-display <in|out>  Shows all the logs relevant to the last debug only
 	   detective			   Determines highest impact IPs:ports (number of sessions)
-	   \e[36mautorun-on			  Sets P2Partisan to boot with the router
-	   autorun-off			 Sets P2Partisan not to boot with the router
-	   upgrade				 Download and install the latest P2Partisan
 \033[0;39m"
 		exit
 		;;
