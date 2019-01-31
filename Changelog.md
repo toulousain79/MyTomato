@@ -1,6 +1,7 @@
 **v1.0.7** - _2019/01/31_
  - mount /tmp to /opt/tmp to avoid overloading NVRAM
  - increase /tmp to 256MB
+ - update DNScrypt-proxy blacklists.txt
 
 **v1.0.6** - _2019/01/29_
  - add .autorun to /opt _(permit to restore last NVRAM config file after a reset)_

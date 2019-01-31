@@ -109,12 +109,11 @@ if (! nvram get os_version | grep -q 'AIO'); then
 		git reset --hard origin/master
 		git pull origin master
 	fi
-	if [ -f /opt/usr/local/dnscrypt-proxy/generate-domains-blacklist.py ]; then
-		chmod +x /opt/usr/local/dnscrypt-proxy/generate-domains-blacklist.py
-		python /opt/usr/local/dnscrypt-proxy/generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp list
+	if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/generate-domains-blacklist.py ]; then
+		cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/ || exit
+		chmod +x generate-domains-blacklist.py
+		python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
 	fi
-
-	gfnInstallDnscryptProxy "$@"
 fi
 
 # Add /opt UUID to "/opt/MyTomato/root/ConfigOverload/vars"
@@ -335,7 +334,7 @@ fi
 #### MLocate
 [ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
 cat /opt/etc/group
-updatedb -v
+updatedb
 
 #### NVRAM config save
 gfnNvramSave
