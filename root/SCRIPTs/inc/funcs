@@ -332,11 +332,9 @@ function gfnP2pArtisanStartStop() {
 
 		chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
 		/opt/MyTomato/P2Partisan/p2partisan.sh restart
-		#/opt/MyTomato/P2Partisan/p2partisan.sh autorun-on
 	elif [ "${gbP2Partisan_Enable}" -ne 1 ] && [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]; then
 		chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
 		/opt/MyTomato/P2Partisan/p2partisan.sh stop
-		#/opt/MyTomato/P2Partisan/p2partisan.sh autorun-off
 	fi
 }
 
