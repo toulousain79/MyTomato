@@ -44,8 +44,8 @@ if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
 else
 	cd "${gsDirDnscrypt:?}" || exit 1
 	logger -p user.notice "| ${gsScriptName} | Update ${gsDirDnscrypt} via GitHub"
-	git fetch origin
-	git reset --hard origin/master
+	# git fetch origin
+	# git reset --hard origin/master
 	git pull origin master
 fi
 if [ -f "${gsDirDnscryptGen:?}"/generate-domains-blacklist.py ]; then
