@@ -27,6 +27,14 @@ if [ -n "${gsUsbOptUuid}" ]; then
 fi
 
 #### Prepare some files and directories ####
+# /opt/tmp
+if (! /opt/bin/mount -l | grep -q '/tmp'); then
+	mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
+	cp -af /tmp/* /opt/tmp/
+	rm -rRf /tmp/* && rm -rRf /tmp/.??*
+	/opt/bin/mount --bind /opt/tmp /tmp
+fi
+
 # /opt/var/log
 if (! /opt/bin/mount -l | grep -q '/tmp/var/log'); then
 	if [ -f /tmp/var/log/messages ]; then

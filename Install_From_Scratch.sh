@@ -179,8 +179,16 @@ if [ -n "${gsUsbOptUuid}" ]; then
 fi
 
 #### Prepare some files and directories ####
+# /opt/tmp
+if (! mount -l | grep -q '/tmp'); then
+	mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
+	cp -af /tmp/* /opt/tmp/
+	rm -rRf /tmp/* && rm -rRf /tmp/.??*
+	mount -v --bind /opt/tmp /tmp
+fi
+
 # /opt/var/log
-if ! (df | grep -q '/tmp/var/log'); then
+if (! mount -l | grep -q '/tmp/var/log'); then
 	if [ -f /tmp/var/log/messages ]; then
 		cat /tmp/var/log/messages >>/opt/var/log/messages
 		if [ ! -f /tmp/var/log/.uuid ]; then
@@ -191,7 +199,7 @@ if ! (df | grep -q '/tmp/var/log'); then
 fi
 
 # /opt/root
-if ! (df | grep -q '/tmp/home/root'); then
+if (! mount -l | grep -q '/tmp/home/root'); then
 	if [ ! -f /tmp/home/root/.uuid ]; then
 		rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
 		rm -rf /opt/root
@@ -227,6 +235,7 @@ touch ${gsDirOverLoad}/.bash_aliases
 nvram set script_init="echo \"LABEL=SWAP none swap sw 0 0\" > /etc/fstab
 echo \"LABEL=ENTWARE /opt ${FILESYSTEM} defaults,data=writeback,noatime,nodiratime 0 0\" >> /etc/fstab
 touch /etc/dnsmasq-custom.conf"
+
 # USB and NAS > USB Support>Run after mounting
 nvram set script_usbmount="{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\""
 # USB and NAS > USB Support>Run before unmounting
