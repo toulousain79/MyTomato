@@ -11,14 +11,6 @@ if (! nvram get script_init | grep -q 'LABEL=ENTWARE'); then
 	touch /etc/dnsmasq-custom.conf"
 fi
 
-# create /etc/fstab
-if (! grep -q 'LABEL=ENTWARE' /etc/fstab) && [ -n "${sUsbFileSystem}" ]; then
-	{
-		echo "LABEL=SWAP none swap sw 0 0"
-		echo "LABEL=ENTWARE /opt ${sUsbFileSystem} defaults,data=writeback,noatime,nodiratime 0 0"
-	} >>/etc/fstab
-fi
-
 #### Restore config if needed
 if [ -z "$(nvram get mytomato_config_save)" ]; then
 	sLastConfig="$(find ${gsDirBackups}/ -type f -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"

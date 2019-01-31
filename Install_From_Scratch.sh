@@ -112,7 +112,7 @@ if (! nvram get os_version | grep -q 'AIO'); then
 	if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/generate-domains-blacklist.py ]; then
 		cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/ || exit
 		chmod +x generate-domains-blacklist.py
-		python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+		# python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
 	fi
 fi
 
@@ -337,7 +337,9 @@ cat /opt/etc/group
 updatedb
 
 #### NVRAM config save
-gfnNvramSave
+nvram set mytomato_config_save="${gdDateTime}"
+nvram commit
+nvram save "${gsDirBackups}/MyTomato_${gdDateTime}.cfg" >/dev/null 2>&1
 
 #### Reboot needed
 echo
