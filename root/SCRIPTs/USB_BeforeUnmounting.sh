@@ -13,6 +13,9 @@ declare gsDirOverLoad
 
 ##############################
 
+#### Lock file
+[ ! -f /tmp/${gsScriptName} ] && touch ${gsScriptName} || exit 0
+
 #### NVRAM settings
 gfnNvramUpdate 'dns_wan1' 'get'
 
@@ -24,9 +27,6 @@ fake-hwclock save
 
 #### NVRAM save
 gfnNvramSave
-
-#### Kill bash sessions
-for sPid in $(pidof bash); do kill -9 "${sPid}"; done
 
 #### Umount if possible
 # /tmp/var/log
@@ -45,5 +45,11 @@ for sPid in $(pidof bash); do kill -9 "${sPid}"; done
 (/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -v /opt
 (/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vf /opt
 (/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vl /opt
+
+#### Lock file
+[ -f /tmp/${gsScriptName} ] && rm ${gsScriptName}
+
+#### Kill bash sessions
+for sPid in $(pidof bash); do kill -9 "${sPid}"; done
 
 ##############################

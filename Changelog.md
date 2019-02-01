@@ -5,6 +5,7 @@
  - P2Partisan disable upgrade & autorun functions
  - bug fix Install_From_Scratch.sh
  - code review for .autorun script
+ - add lock file for USB_AfterMounting.sh & USB_BeforeUnmounting.sh
 
 **v1.0.6** - _2019/01/29_
  - add .autorun to /opt _(permit to restore last NVRAM config file after a reset)_
