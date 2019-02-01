@@ -17,6 +17,9 @@ declare gbP2Partisan_Enable gsUsbOptUuid gsUsbFileSystem gsScriptName
 
 ##############################
 
+#### Lock file
+[ ! -f /tmp/${gsScriptName} ] && touch ${gsScriptName} || exit 0
+
 #### Sync time
 gfnNtpUpdate
 
@@ -44,9 +47,6 @@ gfnNvramUpdate 'dns_wan1'
 #### Environment Config (/opt/root, /opt/var/log, ...)
 bash "${gsDirScripts}/Environment_Config.sh"
 
-#### Entware Update
-#bash "${gsDirScripts}/Upgrade.sh"
-
 #### P2Partisan install
 if [ ! -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && [ "${gbP2Partisan_Enable}" -eq 1 ]; then
 	logger -p user.notice "| ${gsScriptName} | Start P2Partisan installation"
@@ -65,5 +65,8 @@ bash "${gsDirScripts}/Services_Start.sh"
 
 #### NVRAM config save
 gfnNvramSave
+
+#### Lock file
+[ -f /tmp/${gsScriptName} ] && rm ${gsScriptName}
 
 exit 0
