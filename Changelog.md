@@ -3,6 +3,7 @@
  - increase /tmp to 256MB
  - update DNScrypt-proxy blacklists.txt
  - P2Partisan disable upgrade & autorun functions
+ - P2Partisan disable tutor on firewall script, add it to custom schedule 1 at 05:00
  - bug fix Install_From_Scratch.sh
  - code review for .autorun script
  - add lock file for USB_AfterMounting.sh & USB_BeforeUnmounting.sh

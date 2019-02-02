@@ -961,17 +961,24 @@ ptutorset() {
 |
 +-------------------------- Scheduler --------------------------+"
 	cru d P2Partisan-tutor
-	ab=$(tr -cd 0-5 </dev/urandom | head -c 1)
-	a=$(tr -cd 0-9 </dev/urandom | head -c 1)
-	a="$ab$a"
-	scheduleme="$a * * * *"
-	cru a P2Partisan-tutor "$scheduleme $P2Partisandir/p2partisan.sh tutor"
-	p=$(nvram get script_fire | grep "cru a P2Partisan-tutor" | wc -l)
+	# ab=$(tr -cd 0-5 </dev/urandom | head -c 1)
+	# a=$(tr -cd 0-9 </dev/urandom | head -c 1)
+	# a="$ab$a"
+	# scheduleme="$a * * * *"
+	# cru a P2Partisan-tutor "$scheduleme $P2Partisandir/p2partisan.sh tutor"
+	# p=$(nvram get script_fire | grep "cru a P2Partisan-tutor" | wc -l)
+	# if [ $p -eq "0" ]; then
+	# 	t=$(nvram get script_fire)
+	# 	t=$(printf "$t\ncru a P2Partisan-tutor \"$scheduleme $P2Partisandir/p2partisan.sh tutor\"\n")
+	# 	nvram set "script_fire=$t"
+	# fi
+	p=$(nvram get sch_c1_cmd | grep "p2partisan.sh tutor" | wc -l)
 	if [ $p -eq "0" ]; then
-		t=$(nvram get script_fire)
-		t=$(printf "$t\ncru a P2Partisan-tutor \"$scheduleme $P2Partisandir/p2partisan.sh tutor\"\n")
-		nvram set "script_fire=$t"
+		t=$(nvram get sch_c1_cmd)
+		t=$(printf "$t\n$P2Partisandir/p2partisan.sh tutor\n")
+		nvram set "sch_c1_cmd=$t"
 	fi
+
 	plog "P2Partisan tutor is ON"
 	echo -e "+---------------------------------------------------------------+\033[0;39m"
 	nvram commit
@@ -987,11 +994,11 @@ ptutorunset() {
 |
 +-------------------------- Scheduler --------------------------+"
 	cru d P2Partisan-tutor
-	p=$(nvram get script_fire | grep "cru a P2Partisan-tutor" | wc -l)
+	p=$(nvram get sch_c1_cmd | grep "p2partisan.sh tutor" | wc -l)
 	if [ $p -eq "1" ]; then
-		t=$(nvram get script_fire)
-		t=$(printf "$t\ncru a P2Partisan-tutor \"$scheduleme $P2Partisandir/p2partisan.sh tutor\"\n" | grep -v "cru a P2Partisan-tutor")
-		nvram set "script_fire=$t"
+		t=$(nvram get sch_c1_cmd)
+		t=$(printf "$t\n$P2Partisandir/p2partisan.sh tutor\n" | grep -v "p2partisan.sh tutor")
+		nvram set "sch_c1_cmd=$t"
 	fi
 	plog "P2Partisan tutor is OFF"
 	echo -e "+---------------------------------------------------------------+\033[0;39m"
@@ -1794,24 +1801,24 @@ for p in $1; do
 		pforcestop $2
 		echo "| Now updating..."
 		;;
-	# "autorun-on")
-	# 	pautorunset
-	# 	exit
-	# 	;;
-	# "autorun-off")
-	# 	pautorununset
-	# 	exit
-	# 	;;
+		# "autorun-on")
+		# 	pautorunset
+		# 	exit
+		# 	;;
+		# "autorun-off")
+		# 	pautorununset
+		# 	exit
+		# 	;;
 	"tutor")
 		ptutor
 		exit
 		;;
-	# "upgrade")
-	# 	pupgrade
-	# 	;;
-	# "upgrade-beta")
-	# 	pupgradebeta
-	# 	;;
+		# "upgrade")
+		# 	pupgrade
+		# 	;;
+		# "upgrade-beta")
+		# 	pupgradebeta
+		# 	;;
 	"help")
 
 		echo -e "\033[48;5;89m
