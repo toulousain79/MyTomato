@@ -54,6 +54,7 @@ if [ -f "${gsDirDnscryptGen:?}"/generate-domains-blacklist.py ]; then
 	logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
 	python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
 	[ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ] && cp "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" /opt/etc/init.d/S09dnscrypt-proxy2
+	[ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && chmod +x /opt/etc/init.d/S09dnscrypt-proxy2
 fi
 
 #### SCRIPTs
