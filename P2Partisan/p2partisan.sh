@@ -961,10 +961,10 @@ ptutorset() {
 |
 +-------------------------- Scheduler --------------------------+"
 	cru d P2Partisan-tutor
-	ab=$(tr -cd 0-5 </dev/urandom | head -c 1)
-	a=$(tr -cd 0-9 </dev/urandom | head -c 1)
-	a="$ab$a"
-	scheduleme="$a * * * *"
+	# ab=$(tr -cd 0-5 </dev/urandom | head -c 1)
+	# a=$(tr -cd 0-9 </dev/urandom | head -c 1)
+	# a="$ab$a"
+	# scheduleme="$a * * * *"
 	# cru a P2Partisan-tutor "$scheduleme $P2Partisandir/p2partisan.sh tutor"
 	# p=$(nvram get script_fire | grep "cru a P2Partisan-tutor" | wc -l)
 	# if [ $p -eq "0" ]; then
