@@ -38,9 +38,15 @@ gfnNvramSave
 (/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -vf /tmp/home/root
 (/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -vl /tmp/home/root
 # /opt/tmp
-(/opt/bin/mount -l | grep -q '/tmp') && /opt/bin/umount -v /tmp
-(/opt/bin/mount -l | grep -q '/tmp') && /opt/bin/umount -vf /tmp
-(/opt/bin/mount -l | grep -q '/tmp') && /opt/bin/umount -vl /tmp
+if (/opt/bin/mount -l | grep -q '/opt/tmp'); then
+    [ ! -d /opt/temp ] && mkdir /opt/temp
+    cp -af /tmp/* /opt/temp/
+    /opt/bin/umount -v /tmp
+    /opt/bin/umount -vf /tmp
+    /opt/bin/umount -vl /tmp
+    cp -af /opt/temp/* /tmp/
+    [ -d /opt/temp ] && rm -rf /opt/temp
+fi
 # /opt
 (/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -v /opt
 (/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vf /opt
