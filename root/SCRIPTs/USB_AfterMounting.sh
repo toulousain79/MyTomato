@@ -18,7 +18,7 @@ declare gbP2Partisan_Enable gsUsbOptUuid gsUsbFileSystem gsScriptName
 ##############################
 
 #### Lock file
-[ ! -f /tmp/${gsScriptName} ] && touch ${gsScriptName} || exit 0
+[ ! -f /tmp/${gsScriptName}.lock ] && touch ${gsScriptName}.lock || exit 0
 
 #### Sync time
 gfnNtpUpdate
@@ -67,6 +67,6 @@ bash "${gsDirScripts}/Services_Start.sh"
 gfnNvramSave
 
 #### Lock file
-[ -f /tmp/${gsScriptName} ] && rm ${gsScriptName}
+[ -f /tmp/${gsScriptName}.lock ] && rm ${gsScriptName}.lock
 
 exit 0
