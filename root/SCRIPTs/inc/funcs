@@ -150,24 +150,6 @@ gfnLoadModules() (
     esac
 )
 
-#### Check if is a correct IP
-gfnValidateIP() {
-    local sIp nReturn nOctet
-    [ -n "${1}" ] && sIp="${1}"
-    nReturn=0
-
-    if [[ ${sIp} =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-        sIp=$(echo "${sIp}" | tr "." "\n")
-        for nOctet in $sIp; do
-            [ "${nOctet}" -ge 255 ] && nReturn=1
-        done
-    else
-        nReturn=1
-    fi
-
-    return "${nReturn}"
-}
-
 #### Manager Syslogd
 gfnStartStopSyslogd() {
     case "${1}" in
