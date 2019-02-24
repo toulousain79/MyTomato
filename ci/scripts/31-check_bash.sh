@@ -55,7 +55,7 @@ for sFile in ${sFilesList}; do
     fi
 done
 
-sFuncsList="$(grep -R -h -E "^[A-Za-z]+[A-Za-z0-9]*(\(\)\ \{)" "${sDirToScan}/root/SCRIPTs/inc/" | cut -d '(' -f 1 | sort)"
+sFuncsList="$(grep -R -h -E "^[A-Za-z]+[A-Za-z0-9]*(\(\)\ \{)" "${sDirToScan}/" | cut -d '(' -f 1 | sort)"
 if [ -n "${sFuncsList}" ]; then
     echo && echo -e "${CBLUE}*** Check for orphan functions ***${CEND}"
     for func in ${sFuncsList}; do

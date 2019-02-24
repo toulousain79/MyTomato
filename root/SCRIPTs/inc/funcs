@@ -1,12 +1,12 @@
 #!/opt/bin/bash
 
 #### NTP Update
-function gfnNtpUpdate() {
+gfnNtpUpdate() {
     ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
 }
 
 #### NVRAM save
-function gfnNvramSave() {
+gfnNvramSave() {
     logger -p user.notice "| ${gsScriptName} | NVRAM config save to ${gsDirBackups}/MyTomato_${gdDateTime}.cfg"
     nvram set mytomato_config_save="${gdDateTime}"
     nvram commit
@@ -14,7 +14,7 @@ function gfnNvramSave() {
 }
 
 #### NVRAM update
-function gfnNvramUpdate() {
+gfnNvramUpdate() {
     local sValue sSwith nCommit
     nCommit=0
 
@@ -86,7 +86,7 @@ function gfnNvramUpdate() {
 }
 
 #### Start all Optware services
-function gfnEntwareServices() {
+gfnEntwareServices() {
     local sAction
     [ -n "${1}" ] && sAction="${1}"
 
@@ -116,12 +116,12 @@ function gfnEntwareServices() {
 }
 
 #### Load Modules
-function gfnLoadModules() (
+gfnLoadModules() (
     local sMessage
 
     [ -z "$1" ] && return 1
 
-    function fnLoadModule() {
+    fnLoadModule() {
         local sKoFile sModuleName
 
         for sKoFile in ${1}; do
@@ -151,7 +151,7 @@ function gfnLoadModules() (
 )
 
 #### Check if is a correct IP
-function gfnValidateIP() {
+gfnValidateIP() {
     local sIp nReturn nOctet
     [ -n "${1}" ] && sIp="${1}"
     nReturn=0
@@ -169,7 +169,7 @@ function gfnValidateIP() {
 }
 
 #### Manager Syslogd
-function gfnStartStopSyslogd() {
+gfnStartStopSyslogd() {
     case "${1}" in
         'start')
             if [ "$(nvram get log_file)" -eq 1 ] && [ -z "$(pidof syslogd)" ]; then
@@ -187,7 +187,7 @@ function gfnStartStopSyslogd() {
 }
 
 #### Install DNScrypt-proxy
-function gfnInstallDnscryptProxy() {
+gfnInstallDnscryptProxy() {
     #### AIO version
     if (nvram get os_version | grep -q 'AIO'); then
         nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirOverLoad}/vars" | cut -d ':' -f 1)
@@ -289,7 +289,7 @@ function gfnInstallDnscryptProxy() {
 }
 
 #### Install P2Partisan
-function gfnP2pArtisanStartStop() {
+gfnP2pArtisanStartStop() {
 
     if [ "${gbP2Partisan_Enable}" -eq 1 ] && [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]; then
         #### Files
@@ -364,7 +364,7 @@ gfnInstallNfsServer() {
 }
 
 #### Copy to Syslog
-function gfnCopyToSyslog() {
+gfnCopyToSyslog() {
     [ ! -f /tmp/to_syslog ] && return 0
 
     while read -r line; do
