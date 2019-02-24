@@ -1,8 +1,5 @@
 #!/opt/bin/bash
 
-#### Variables declaration
-declare gsDirOverLoad
-
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars

@@ -1,8 +1,5 @@
 #!/opt/bin/bash
 
-#### Variables declaration
-declare gsScriptName gsDirOverLoad gbP2Partisan_Enable
-
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars

@@ -22,10 +22,10 @@
 #
 ##################### FIRST LINE #####################################
 
-echo && echo -e "${CBLUE}*** Check versions ***${CEND}"
+echo && echo -e "${CBLUE}*** Check bash version ***${CEND}"
 
 bash --version
 
-echo
+echo && echo -e "${CBLUE}*** Check shellcheck version ***${CEND}"
 
 shellcheck --version

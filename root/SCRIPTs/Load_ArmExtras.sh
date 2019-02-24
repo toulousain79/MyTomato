@@ -1,8 +1,5 @@
 #!/opt/bin/bash
 
-#### Variables declaration
-declare gsScriptName gsDirOverLoad gsDirArmExtras gsUrlArmExtras binCurl
-
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
@@ -14,19 +11,19 @@ declare gsScriptName gsDirOverLoad gsDirArmExtras gsUrlArmExtras binCurl
 ##############################
 
 if [ -n "${gsUrlArmExtras}" ]; then
-	logger -p user.notice "| ${gsScriptName} |  Get ${gsUrlArmExtras}"
-	${binCurl} "${gsUrlArmExtras}" -o "/tmp/arm-extras.tar.gz"
+    logger -p user.notice "| ${gsScriptName} |  Get ${gsUrlArmExtras}"
+    ${binCurl} "${gsUrlArmExtras}" -o "/tmp/arm-extras.tar.gz"
 fi
 
 if [ -f "/tmp/arm-extras.tar.gz" ]; then
-	logger -p user.notice "| ${gsScriptName} |  Untar /tmp/arm-extras.tar.gz"
-	if [ -f "/tmp/arm-extras.tar.gz" ]; then
-		sSubDir="$(tar -ztf "/tmp/arm-extras.tar.gz" | cut -d '/' -f 1 | head -n 1)"
-		tar -zxf "/tmp/arm-extras.tar.gz" -C "/tmp/"
-		rm -rf "${gsDirArmExtras}"
-		mv "/tmp/${sSubDir}" "${gsDirArmExtras}"
-		rm -f "/tmp/arm-extras.tar.gz"
-	fi
+    logger -p user.notice "| ${gsScriptName} |  Untar /tmp/arm-extras.tar.gz"
+    if [ -f "/tmp/arm-extras.tar.gz" ]; then
+        sSubDir="$(tar -ztf "/tmp/arm-extras.tar.gz" | cut -d '/' -f 1 | head -n 1)"
+        tar -zxf "/tmp/arm-extras.tar.gz" -C "/tmp/"
+        rm -rf "${gsDirArmExtras}"
+        mv "/tmp/${sSubDir}" "${gsDirArmExtras}"
+        rm -f "/tmp/arm-extras.tar.gz"
+    fi
 fi
 
 gfnLoadModules 'usb'
