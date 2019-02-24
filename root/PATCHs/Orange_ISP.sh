@@ -1,8 +1,5 @@
 #!/opt/bin/bash
 
-#### Variables declaration
-declare gsScriptName gsDirOverLoad gsOrange_FTI
-
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
