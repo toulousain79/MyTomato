@@ -1,8 +1,5 @@
 #!/opt/bin/bash
 
-#### Variables declaration
-declare gsDirOverLoad gsDirLogs gsScriptName gsOpkgPackagesList gdDateTime gbRepoUpgrade_Enable
-
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
@@ -18,11 +15,11 @@ opkg update
 opkg upgrade
 
 if [ -f "${gsOpkgPackagesList}" ]; then
-	while read -r line; do
-		sPackage="$(echo "${line}" | awk '{ print $1 }')"
-		(! opkg list-installed | grep -q "${sPackage}") && opkg install "${sPackage}" \
-			logger -p user.notice "| ${gsScriptName} | EntWare install package '${sPackage}'"
-	done <"$gsOpkgPackagesList"
+    while read -r line; do
+        sPackage="$(echo "${line}" | awk '{ print $1 }')"
+        (! opkg list-installed | grep -q "${sPackage}") && opkg install "${sPackage}" \
+            logger -p user.notice "| ${gsScriptName} | EntWare install package '${sPackage}'"
+    done <"$gsOpkgPackagesList"
 fi
 
 logger -p user.notice "| ${gsScriptName} | EntWare generate pakages installed list"
@@ -30,31 +27,31 @@ opkg list-installed | awk '{ print $1 }' >"${gsDirLogs}/opkg_list-installed_${gd
 
 #### MyTomato repo
 if [ "${gbRepoUpgrade_Enable:?}" -eq 1 ]; then
-	[ -d "/opt/MyTomato" ] && cd "/opt/MyTomato" || exit 1
-	logger -p user.notice "| ${gsScriptName} | Update /opt/MyTomato via GitHub"
-	git fetch origin
-	git reset --hard origin/master
-	git pull origin master
+    [ -d "/opt/MyTomato" ] && cd "/opt/MyTomato" || exit 1
+    logger -p user.notice "| ${gsScriptName} | Update /opt/MyTomato via GitHub"
+    git fetch origin
+    git reset --hard origin/master
+    git pull origin master
 fi
 
 #### DNScrypt-proxy v2
 if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
-	logger -p user.notice "| ${gsScriptName} | Git clone https://github.com/jedisct1/dnscrypt-proxy.git"
-	git clone git://github.com/jedisct1/dnscrypt-proxy.git "${gsDirDnscrypt:?}"
+    logger -p user.notice "| ${gsScriptName} | Git clone https://github.com/jedisct1/dnscrypt-proxy.git"
+    git clone git://github.com/jedisct1/dnscrypt-proxy.git "${gsDirDnscrypt:?}"
 else
-	cd "${gsDirDnscrypt:?}" || exit 1
-	logger -p user.notice "| ${gsScriptName} | Update ${gsDirDnscrypt} via GitHub"
-	# git fetch origin
-	# git reset --hard origin/master
-	git pull origin master
+    cd "${gsDirDnscrypt:?}" || exit 1
+    logger -p user.notice "| ${gsScriptName} | Update ${gsDirDnscrypt} via GitHub"
+    # git fetch origin
+    # git reset --hard origin/master
+    git pull origin master
 fi
 if [ -f "${gsDirDnscryptGen:?}"/generate-domains-blacklist.py ]; then
-	cd "${gsDirDnscryptGen}"/ || exit 1
-	chmod +x generate-domains-blacklist.py
-	logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
-	python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
-	[ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ] && cp "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" /opt/etc/init.d/S09dnscrypt-proxy2
-	[ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && chmod +x /opt/etc/init.d/S09dnscrypt-proxy2
+    cd "${gsDirDnscryptGen}"/ || exit 1
+    chmod +x generate-domains-blacklist.py
+    logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
+    python generate-domains-blacklist.py -c domains-blacklist.conf >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+    [ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ] && cp "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" /opt/etc/init.d/S09dnscrypt-proxy2
+    [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && chmod +x /opt/etc/init.d/S09dnscrypt-proxy2
 fi
 
 #### SCRIPTs
