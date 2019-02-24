@@ -5,6 +5,7 @@
 - code review of ci/31-check_bash.sh
 - remove all variable declaration
 - add Youtube to DNScrypt whitelist
+- update P2Partisan blacklists _(block more countries)_
 
 ## v1.0.7 - _2019/01/31_
 
