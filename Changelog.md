@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.9 - 2019/03/04
+
+- funcs, bug fix
+
 ## v1.0.8 - 2019/02/24
 
 - code review of ci/31-check_bash.sh
