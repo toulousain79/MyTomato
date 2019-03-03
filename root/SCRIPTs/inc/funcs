@@ -291,9 +291,9 @@ gfnP2pArtisanStartStop() {
         # Create custom lists
         { [ -f "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/blacklists" ]; } &&
             cp "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklists"
-        { [ -f "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/blacklist-custom" ]; } &&
+        { [ -f "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/blacklist-custom" ]; } &&
             cp "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklist-custom"
-        { [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/greylist" ]; } &&
+        { [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/greylist" ]; } &&
             cp "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan/greylist"
         { [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/whitelist" ]; } &&
             cp -v "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan/whitelist"
