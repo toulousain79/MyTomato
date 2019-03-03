@@ -295,8 +295,8 @@ gfnP2pArtisanStartStop() {
             cp "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklist-custom"
         { [ -f "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/greylist" ]; } &&
             cp "${gsDirTemplates}/p2partisan/greylist.txt.tmpl" "${gsDirOverLoad}/p2partisan/greylist"
-        { [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f "${gsDirTemplates}/p2partisan/whitelist" ]; } &&
-            cp "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan/whitelist"
+        { [ -f "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" ] && [ ! -f "${gsDirOverLoad}/p2partisan/whitelist" ]; } &&
+            cp -v "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" "${gsDirOverLoad}/p2partisan/whitelist"
 
         # If exist, replace actual list by cutom
         [ -f "${gsDirOverLoad}/p2partisan/blacklists" ] && cp "${gsDirOverLoad}/p2partisan/blacklists" /opt/MyTomato/P2Partisan/blacklists
