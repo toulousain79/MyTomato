@@ -3,6 +3,7 @@
 ## v1.0.9 - 2019/03/04
 
 - funcs, bug fix
+- clean DNScrypt blacklist
 
 ## v1.0.8 - 2019/02/24
 
