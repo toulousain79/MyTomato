@@ -41,17 +41,18 @@ if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
 else
     cd "${gsDirDnscrypt:?}" || exit 1
     logger -p user.notice "| ${gsScriptName} | Update ${gsDirDnscrypt} via GitHub"
-    # git fetch origin
-    # git reset --hard origin/master
-    git pull origin master
+    git fetch origin
+    git reset --hard origin/master
+    # git pull origin master
+    [ -f "${gsDirDnscryptGen}"/generate-domains-blacklist.py ] && {
+        cp -v "${gsDirDnscryptGen}"/generate-domains-blacklist.py "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py
+        chmod +x "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py
+    }
 fi
-if [ -f "${gsDirDnscryptGen:?}"/generate-domains-blacklist.py ]; then
-    cd "${gsDirDnscryptGen}"/ || exit 1
-    chmod +x generate-domains-blacklist.py
+if [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py ]; then
+    cd "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/ || exit 1
     logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
     python generate-domains-blacklist.py -c domains-blacklist.conf >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
-    [ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ] && cp "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" /opt/etc/init.d/S09dnscrypt-proxy2
-    [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ] && chmod +x /opt/etc/init.d/S09dnscrypt-proxy2
 fi
 
 #### SCRIPTs
