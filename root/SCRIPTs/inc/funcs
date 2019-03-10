@@ -276,6 +276,14 @@ gfnInstallDnscryptProxy() {
     if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/*.conf &>/dev/null); then
         find "${gsDirTemplates}/dnscrypt/generate-domains-blacklists/" -name "*.conf.tmpl" -exec bash -c 'i="$1"; mv "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blacklists/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
+    # Blocklists - generate-domains-blacklists
+    mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists
+    if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/*.txt &>/dev/null); then
+        find "${gsDirTemplates}/dnscrypt/generate-domains-blacklists/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blacklists/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
+    fi
+    if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/*.conf &>/dev/null); then
+        find "${gsDirTemplates}/dnscrypt/generate-domains-blacklists/" -name "*.conf.tmpl" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blacklists/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
+    fi
 }
 
 #### Install P2Partisan
