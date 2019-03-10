@@ -45,11 +45,12 @@ else
     git reset --hard origin/master
     # git pull origin master
     [ -f "${gsDirDnscryptGen}"/generate-domains-blacklist.py ] && {
+        mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists
         cp -v "${gsDirDnscryptGen}"/generate-domains-blacklist.py "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py
         chmod +x "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py
     }
 fi
-if [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py ]; then
+if [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py ] && [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/domains-blacklist.conf ]; then
     cd "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/ || exit 1
     logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
     python generate-domains-blacklist.py -c domains-blacklist.conf >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
