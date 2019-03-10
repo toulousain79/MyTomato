@@ -3,7 +3,14 @@
 ## v1.0.9 - 2019/03/04
 
 - funcs, bug fix
-- clean DNScrypt blacklist
+- DNScrypt-proxy v2
+  - active tls_cipher_suite for default config
+  - clean blacklists.txt
+  - update default entries for cloaking-rules.txt
+  - update default entries for ip_blacklist.txt
+  - activate and add default file for query.log _(Query logging)_
+  - activate and add default file for nx.log _(Suspicious queries logging)_
+  - add defaults generate-domains-blacklists config files
 
 ## v1.0.8 - 2019/02/24
 
