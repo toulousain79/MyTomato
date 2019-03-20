@@ -14,7 +14,7 @@ fake-hwclock load force
 ##############################
 
 #### Lock file
-[ ! -f /tmp/${gsScriptName}.lock ] && touch ${gsScriptName}.lock || exit 0
+[ ! -f /tmp/${gsScriptName}.lock ] && touch /tmp/${gsScriptName}.lock || exit 0
 
 #### Sync time
 gfnNtpUpdate
@@ -63,6 +63,6 @@ bash "${gsDirScripts}/Services_Start.sh"
 gfnNvramSave
 
 #### Lock file
-[ -f /tmp/${gsScriptName}.lock ] && rm ${gsScriptName}.lock
+[ -f /tmp/${gsScriptName}.lock ] && rm /tmp/${gsScriptName}.lock
 
 exit 0
