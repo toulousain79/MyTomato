@@ -1,8 +1,8 @@
 # shellcheck disable=SC1073,SC1072,SC1020,SC1035
 ##############################################
-#											#
-#		dnscrypt-proxy configuration		#
-#											#
+#                                            #
+#        dnscrypt-proxy configuration        #
+#                                            #
 ##############################################
 
 ## This is an example configuration file.
@@ -11,7 +11,7 @@
 ## Online documentation is available here: https://dnscrypt.info/doc
 
 ##################################
-#		 Global settings		#
+#         Global settings        #
 ##################################
 
 ## List of servers to use
@@ -46,27 +46,38 @@ max_clients = 250
 ## Require servers (from static + remote sources) to satisfy specific properties
 
 # Use servers reachable over IPv4
+
 ipv4_servers = true
 
 # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
+
 ipv6_servers = false
 
 # Use servers implementing the DNSCrypt protocol
+
 dnscrypt_servers = true
 
 # Use servers implementing the DNS-over-HTTPS protocol
+
 doh_servers = true
 
 ## Require servers defined by remote sources to satisfy specific properties
 
 # Server must support DNS security extensions (DNSSEC)
-require_dnssec = true
+
+require_dnssec = false
 
 # Server must not log user queries (declarative)
+
 require_nolog = true
 
 # Server must not enforce its own blacklist (for parental control, ads blocking...)
+
 require_nofilter = true
+
+# Server names to avoid even if they match all criteria
+
+disabled_server_names = []
 
 ## Always use TCP to connect to upstream servers.
 ## This can be useful if you need to route everything through Tor.
@@ -95,6 +106,12 @@ timeout = 2500
 
 keepalive = 30
 
+## Use the REFUSED return code for blocked responses
+## Setting this to `false` means that some responses will be lies.
+## Unfortunately, `false` appears to be required for Android 8+
+
+refused_code_in_responses = false
+
 ## Load-balancing strategy: 'p2' (default), 'ph', 'fastest' or 'random'
 
 lb_strategy = 'p2'
@@ -120,7 +137,6 @@ cert_refresh_delay = 240
 ## Only enable if you don't have a lot of network load
 
 # dnscrypt_ephemeral_keys = false
-dnscrypt_ephemeral_keys = true
 
 ## DoH: Disable TLS session tickets - increases privacy but also latency
 
@@ -188,7 +204,7 @@ log_files_max_age = 7
 log_files_max_backups = 1
 
 #########################
-#		Filters		#
+#        Filters        #
 #########################
 
 ## Immediately respond to IPv6-related queries with an empty response
@@ -200,7 +216,7 @@ log_files_max_backups = 1
 block_ipv6 = false
 
 ##################################################################################
-#		Route queries for specific domains to a dedicated set of servers		#
+#        Route queries for specific domains to a dedicated set of servers        #
 ##################################################################################
 
 ## Example map entries (one entry per line):
@@ -210,7 +226,7 @@ block_ipv6 = false
 forwarding_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt'
 
 ###############################
-#		Cloaking rules	   #
+#        Cloaking rules       #
 ###############################
 
 ## Cloaking returns a predefined address for a specific name.
@@ -224,7 +240,7 @@ forwarding_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.
 cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt'
 
 ###########################
-#		DNS cache		#
+#        DNS cache        #
 ###########################
 
 ## Enable a DNS cache to reduce latency and outgoing traffic
@@ -252,7 +268,7 @@ cache_neg_min_ttl = 60
 cache_neg_max_ttl = 600
 
 ###############################
-#		Query logging		#
+#        Query logging        #
 ###############################
 
 ## Log client queries to a file
@@ -272,7 +288,7 @@ format = 'tsv'
 ignored_qtypes = ['DNSKEY', 'NS']
 
 ############################################
-#		Suspicious queries logging		#
+#        Suspicious queries logging        #
 ############################################
 
 ## Log queries for nonexistent zones
@@ -290,7 +306,7 @@ file = '/opt/var/log/dnscrypt/nx.log'
 format = 'tsv'
 
 ######################################################
-#		Pattern-based blocking (blacklists)		#
+#        Pattern-based blocking (blacklists)         #
 ######################################################
 
 ## Blacklists are made of one pattern per line. Example of valid patterns:
@@ -321,7 +337,7 @@ log_file = '/opt/var/log/dnscrypt/blocked.log'
 log_format = 'tsv'
 
 ###########################################################
-#		Pattern-based IP blocking (IP blacklists)		#
+#        Pattern-based IP blocking (IP blacklists)        #
 ###########################################################
 
 ## IP blacklists are made of one pattern per line. Example of valid patterns:
@@ -369,7 +385,7 @@ log_file = '/opt/var/log/dnscrypt/whitelisted.log'
 log_format = 'tsv'
 
 ##########################################
-#		Time access restrictions		#
+#        Time access restrictions        #
 ##########################################
 
 ## One or more weekly schedules can be defined here.
@@ -403,7 +419,7 @@ log_format = 'tsv'
 # fri = [{after='9:00', before='17:00'}]
 
 #########################
-#		Servers		#
+#        Servers        #
 #########################
 
 ## Remote lists of available servers

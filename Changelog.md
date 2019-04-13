@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.10 - 2019/04/13
+
+- DNScrypt-proxy v2
+  - update dnscrypt-proxy.toml.tmpl
+  - update generate-domains-blacklists/domains-blacklist.conf.tmpl
+
 ## v1.0.9 - 2019/03/04
 
 - funcs, bug fix
