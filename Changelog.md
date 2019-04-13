@@ -1,6 +1,12 @@
 # Changelog
 
-## v1.0.9 - 2019/03/04
+## v1.0.10 - _2019/04/13_
+
+- DNScrypt-proxy v2
+  - update dnscrypt-proxy.toml.tmpl
+  - update generate-domains-blacklists/domains-blacklist.conf.tmpl
+
+## v1.0.9 - _2019/03/04_
 
 - funcs, bug fix
 - DNScrypt-proxy v2
@@ -12,7 +18,7 @@
   - activate and add default file for nx.log _(Suspicious queries logging)_
   - add defaults generate-domains-blacklists config files
 
-## v1.0.8 - 2019/02/24
+## v1.0.8 - _2019/02/24_
 
 - code review of ci/31-check_bash.sh
 - remove all variable declaration

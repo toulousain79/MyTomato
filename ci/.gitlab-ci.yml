@@ -32,4 +32,5 @@ project_check_master:
         - master
         - schedules
     when: on_success
+    allow_failure: false
     <<: *tmpl_check
