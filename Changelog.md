@@ -5,6 +5,7 @@
 - DNScrypt-proxy v2
   - update dnscrypt-proxy.toml.tmpl
   - update generate-domains-blacklists/domains-blacklist.conf.tmpl
+  - set doh_servers to false _(DoH is not available with OPKG binary)_
 
 ## v1.0.9 - _2019/03/04_
 
