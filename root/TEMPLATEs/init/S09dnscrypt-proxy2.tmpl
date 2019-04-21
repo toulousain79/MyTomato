@@ -30,189 +30,192 @@ export ENABLED PROCS ARGS PREARGS DESC
 #------------------------------------------------------------
 # Checking prerequisites
 gfnCheckPrerequisites() {
-	local nExit sMode
+    local nExit sMode
 
-	nExit=0
-	sMode=''
+    nExit=0
+    sMode=''
 
-	# Check if DNScrypt-proxy is installed
-	if ! gfnCheckCommand $PROCS; then
-		sMode='con'
-		gsMess="\nSorry '$PROCS' was not found.\n"
-		gsMess+="Please check if the program was installed.\n"
-		nExit=1
-	fi
+    # Check if DNScrypt-proxy is installed
+    if ! gfnCheckCommand $PROCS; then
+        sMode='con'
+        gsMess="\nSorry '$PROCS' was not found.\n"
+        gsMess+="Please check if the program was installed.\n"
+        nExit=1
+    fi
 
-	if [ $nExit -eq 1 ]; then
-		gfnMessage 'ERROR' 'con' "$gsMess"
-		exit $nExit
-	else
-		gfnMessage 'INFO' 'log' "$gsMess"
-	fi
+    if [ $nExit -eq 1 ]; then
+        gfnMessage 'ERROR' 'con' "$gsMess"
+        exit $nExit
+    else
+        gfnMessage 'INFO' 'log' "$gsMess"
+    fi
 }
 
 # Function START
 gfnStart() {
-	local sType nReturn
+    local sType nReturn
 
-	# Stop others processes
-	if [ -n "$(pidof $PROCS)" ]; then
-		gfnMessage 'INFO' 'log' "$DESC is already running !"
-		nReturn=0
-	else
-		gfnInstallDnscryptProxy
+    # Stop others processes
+    if [ -n "$(pidof $PROCS)" ]; then
+        gfnMessage 'INFO' 'log' "$DESC is already running !"
+        nReturn=0
+    else
+        gfnInstallDnscryptProxy
 
-		${PROCS} -config /opt/etc/dnscrypt-proxy.toml >/dev/null 2>&1 &
-		sleep 1
+        ${PROCS} -config /opt/etc/dnscrypt-proxy.toml >/dev/null 2>&1 &
+        sleep 1
 
-		if [ -n "$(pidof $PROCS)" ]; then
-			# Start OK
-			sType='INFO'
-			gsMess="'$DESC' is started completly"
-			nReturn=0
-		else
-			# Start KO
-			sType='ERROR'
-			gsMess="'$DESC' did not started"
-			nReturn=1
-		fi
-	fi
+        if [ -n "$(pidof $PROCS)" ]; then
+            # Start OK
+            sType='INFO'
+            gsMess="'$DESC' is started completly"
+            nReturn=0
+        else
+            # Start KO
+            sType='ERROR'
+            gsMess="'$DESC' did not started"
+            nReturn=1
+        fi
+    fi
 
-	# Return
-	# 0		: if daemon has been started
-	# 1	: if daemon could not be started
-	case "$nReturn" in
-	0) gfnSwitchDNS 'dnscrypt' ;;
-	*) gfnStop ;;
-	esac
+    # Return
+    # 0		: if daemon has been started
+    # 1	: if daemon could not be started
+    case "$nReturn" in
+        0) gfnSwitchDNS 'dnscrypt' ;;
+        *) gfnStop ;;
+    esac
 
-	return $nReturn
+    return $nReturn
 }
 
 # Function STOP the daemon/service
 gfnStop() {
-	local sType
-	sType='INFO'
+    local sType
+    sType='INFO'
 
-	if [ -z "$(pidof $PROCS)" ]; then
-		gsMess="$DESC is not running !"
-	else
-		# Force kill
-		killall -q $PROCS >/dev/null
-		sType='NOTICE'
-		gsMess="\nForce kill for ghost processes !"
-	fi
+    if [ -z "$(pidof $PROCS)" ]; then
+        gsMess="$DESC is not running !"
+    else
+        # Force kill
+        killall -q $PROCS >/dev/null
+        sType='NOTICE'
+        gsMess="\nForce kill for ghost processes !"
+    fi
 
-	# Log file
-	gfnMessage "$sType" 'log' "$gsMess"
-	# Switch DNS
-	gfnSwitchDNS 'standard'
+    # Log file
+    gfnMessage "$sType" 'log' "$gsMess"
+    # Switch DNS
+    gfnSwitchDNS 'standard'
 }
 
 # Show Messages
 gfnMessage() {
-	# Options:
-	# $1:	[notice|info|warning|error]
-	# 		notice - send message to log [NOTICE]
-	# 		info - send message to log [INFO]
-	#		warning - send message to log [WARNING]
-	#		error - send message to log [ERROR]
-	# $2:	[con|log]
-	# 		con - send message to whiptail box OR console
-	# 		log - send message only into log
-	# $3:	[message]
-	local sType="$1"
-	local sMode="$2"
-	local sMess="$3"
+    # Options:
+    # $1:	[notice|info|warning|error]
+    # 		notice - send message to log [NOTICE]
+    # 		info - send message to log [INFO]
+    #		warning - send message to log [WARNING]
+    #		error - send message to log [ERROR]
+    # $2:	[con|log]
+    # 		con - send message to whiptail box OR console
+    # 		log - send message only into log
+    # $3:	[message]
+    local sType="$1"
+    local sMode="$2"
+    local sMess="$3"
 
-	fnWriteToLogFile() {
-		local sType="$1"
-		local sMess=''
+    fnWriteToLogFile() {
+        local sType="$1"
+        local sMess=''
 
-		# clear new line chars
-		sMess=$(echo -e "$2" | tr '\n' '|')
-		while IFS='|' read -ra sLogLine; do
-			for sLine in "${sLogLine[@]}"; do
-				logger -p user.notice "| $DESC" "[$sType] $sLine"
-			done
-		done <<<"$sMess"
-	}
+        # clear new line chars
+        sMess=$(echo -e "$2" | tr '\n' '|')
+        while IFS='|' read -ra sLogLine; do
+            for sLine in "${sLogLine[@]}"; do
+                logger -p user.notice "| $DESC" "[$sType] $sLine"
+            done
+        done <<<"$sMess"
+    }
 
-	case "$sMode" in
-	'con') echo -e "$sMess" ;;
-	esac
+    case "$sMode" in
+        'con') echo -e "$sMess" ;;
+    esac
 
-	fnWriteToLogFile "$sType" "$sMess"
+    fnWriteToLogFile "$sType" "$sMess"
 }
 
 # Check if a command exist
 gfnCheckCommand() {
-	if [ -z "$(whereis "$1" | awk '{ print $2 }')" ]; then
-		return 1
-	else
-		return 0
-	fi
+    if [ -z "$(whereis "$1" | awk '{ print $2 }')" ]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 # Switch DNS (standard / DNScrypt-proxy)
 gfnSwitchDNS() {
-	local scCommand="$1"
+    local scCommand="$1"
 
-	# Cleaning /etc/dnsmasq-custom.conf
-	sed -i '/no-resolv/d' /etc/dnsmasq-custom.conf
-	sed -i '/server=/d' /etc/dnsmasq-custom.conf
-	sed -i '/listen-address/d' /etc/dnsmasq-custom.conf
+    # Cleaning /etc/dnsmasq-custom.conf
+    sed -i '/no-resolv/d' /etc/dnsmasq-custom.conf
+    sed -i '/server=/d' /etc/dnsmasq-custom.conf
+    sed -i '/listen-address/d' /etc/dnsmasq-custom.conf
 
-	case "$scCommand" in
-	'dnscrypt')
-		NvramCommit="NO"
+    case "$scCommand" in
+        'dnscrypt')
+            NvramCommit="NO"
 
-		if (! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'); then
-			gfnNvramUpdate 'dnsmasq'
-			NvramCommit="YES"
-		fi
-		if [ "$(nvram get dnssec_enable)" == "0" ]; then
-			nvram set dnssec_enable=1
-			NvramCommit="YES"
-		fi
-		if [ -n "$(nvram get wan_dns)" ]; then
-			nvram set wan_dns=
-			NvramCommit="YES"
-		fi
-		# Commit ?
-		if [ "$NvramCommit" == "YES" ]; then
-			nvram commit
-		fi
+            if (! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'); then
+                gfnNvramUpdate 'dnsmasq'
+                NvramCommit="YES"
+            fi
+            if [ "$(nvram get dnssec_enable)" == "0" ]; then
+                nvram set dnssec_enable=1
+                NvramCommit="YES"
+            fi
+            # if [ -n "$(nvram get wan_dns)" ]; then
+            #     nvram set wan_dns=
+            #     NvramCommit="YES"
+            # fi
+            # Commit ?
+            if [ "$NvramCommit" == "YES" ]; then
+                nvram commit
+            fi
 
-		# /etc/dnsmasq-custom.conf
-		{
-			echo "server=127.0.0.1#52"
-			echo "server=::1#52"
-			echo "listen-address=::1,127.0.0.1"
-		} >>/etc/dnsmasq-custom.conf
+            # /etc/dnsmasq-custom.conf
+            {
+                echo "server=127.0.0.1#52"
+                echo "server=::1#52"
+                echo "listen-address=::1,127.0.0.1"
+            } >>/etc/dnsmasq-custom.conf
 
-		service dnsmasq restart >/dev/null
-		;;
-	'standard')
-		NvramCommit="NO"
+            service dnsmasq stop >/dev/null
+            sleep 1
+            service dnsmasq start >/dev/null
+            ;;
+        'standard')
+            NvramCommit="NO"
 
-		if (! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'); then
-			gfnNvramUpdate 'dnsmasq'
-			NvramCommit="YES"
-		fi
-		if [ "$(nvram get wan_dns)" != "$gsWan1_DNS" ]; then
-			nvram set wan_dns="$gsWan1_DNS"
-			NvramCommit="YES"
-		fi
+            if (! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'); then
+                gfnNvramUpdate 'dnsmasq'
+                NvramCommit="YES"
+            fi
+            if [ "$(nvram get wan_dns)" != "$gsWan1_DNS" ]; then
+                nvram set wan_dns="$gsWan1_DNS"
+                NvramCommit="YES"
+            fi
+            # Commit ?
+            if [ "$NvramCommit" == "YES" ]; then
+                nvram commit
+            fi
 
-		# Commit ?
-		if [ "$NvramCommit" == "YES" ]; then
-			nvram commit
-		fi
-
-		service dnsmasq restart >/dev/null
-		;;
-	esac
+            service dnsmasq stop >/dev/null
+            sleep 1
+            service dnsmasq start >/dev/null
+            ;;
+    esac
 }
 
 #------------------------------------------------------------
@@ -236,25 +239,25 @@ gfnCheckPrerequisites
 
 # Options
 if [ $# -ge 1 ]; then
-	for Arg in "$@"; do
-		case "$Arg" in
-		'start') gfnStart ;;
-		'stop') gfnStop ;;
-		'restart')
-			gfnStop
-			gfnStart
-			;;
-		'status')
-			sProcess="$(pidof $PROCS)"
-			if [ -n "$sProcess" ]; then
-				gfnMessage 'NOTICE' 'con' "$DESC is running !"
-			else
-				gfnMessage 'NOTICE' 'con' "$DESC is not running !"
-			fi
-			;;
-		*) exit 0 ;;
-		esac
-	done
+    for Arg in "$@"; do
+        case "$Arg" in
+            'start') gfnStart ;;
+            'stop') gfnStop ;;
+            'restart')
+                gfnStop
+                gfnStart
+                ;;
+            'status')
+                sProcess="$(pidof $PROCS)"
+                if [ -n "$sProcess" ]; then
+                    gfnMessage 'NOTICE' 'con' "$DESC is running !"
+                else
+                    gfnMessage 'NOTICE' 'con' "$DESC is not running !"
+                fi
+                ;;
+            *) exit 0 ;;
+        esac
+    done
 fi
 
 ######################################################################
@@ -264,8 +267,8 @@ fi
 ######################################################################
 
 if [ $# -lt 1 ]; then
-	printf "Usage: %s {start|stop|restart|status}\n" "$0" >&2
-	exit 1
+    printf "Usage: %s {start|stop|restart|status}\n" "$0" >&2
+    exit 1
 fi
 
 exit 0
