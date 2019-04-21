@@ -110,7 +110,7 @@ keepalive = 30
 ## Setting this to `false` means that some responses will be lies.
 ## Unfortunately, `false` appears to be required for Android 8+
 
-refused_code_in_responses = false
+refused_code_in_responses = true
 
 ## Load-balancing strategy: 'p2' (default), 'ph', 'fastest' or 'random'
 
@@ -456,6 +456,15 @@ minisign_key = "RWQBphd2+f6eiAqBsvDZEBXBGHQBJfeG6G+wJPPKxCZMoEQYpmoysKUN"
 cache_file = "quad9-resolvers.md"
 refresh_delay = 72
 prefix = "quad9-"
+
+## OpenNIC - https://download.dnscrypt.info/dnscrypt-resolvers/v2/opennic.md
+
+[sources.'opennic']
+urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v2/opennic.md', 'https://download.dnscrypt.info/resolvers-list/v2/opennic.md']
+minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+cache_file = 'opennic.md'
+refresh_delay = 72
+prefix = "opennic-"
 
 ## Another example source, with resolvers censoring some websites not appropriate for children
 ## This is a subset of the `public-resolvers` list, so enabling both is useless
