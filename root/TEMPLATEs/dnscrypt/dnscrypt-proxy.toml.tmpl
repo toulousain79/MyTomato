@@ -176,7 +176,7 @@ fallback_resolver = '9.9.9.9:53'
 ## Never let dnscrypt-proxy try to use the system DNS settings;
 ## unconditionally use the fallback resolver.
 
-ignore_system_dns = true
+ignore_system_dns = false
 
 ## Maximum time (in seconds) to wait for network connectivity before
 ## initializing the proxy.
@@ -223,7 +223,7 @@ block_ipv6 = false
 ## example.com 9.9.9.9
 ## example.net 9.9.9.9,8.8.8.8,1.1.1.1
 
-forwarding_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt'
+# forwarding_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt'
 
 ###############################
 #        Cloaking rules       #
@@ -237,7 +237,7 @@ forwarding_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.
 ## example.com	 10.1.1.1
 ## www.google.com  forcesafesearch.google.com
 
-cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt'
+# cloaking_rules = '/opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt'
 
 ###########################
 #        DNS cache        #
@@ -326,7 +326,7 @@ format = 'tsv'
 
 ## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
 
-blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt'
+# blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt'
 
 ## Optional path to a file logging blocked queries
 
@@ -350,7 +350,7 @@ log_format = 'tsv'
 
 ## Path to the file of blocking rules (absolute, or relative to the same directory as the executable file)
 
-blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt'
+# blacklist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt'
 
 ## Optional path to a file logging blocked queries
 
@@ -374,7 +374,7 @@ log_format = 'tsv'
 
 ## Path to the file of whitelisting rules (absolute, or relative to the same directory as the executable file)
 
-whitelist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt'
+# whitelist_file = '/opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt'
 
 ## Optional path to a file logging whitelisted queries
 
