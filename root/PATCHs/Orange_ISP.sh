@@ -92,7 +92,7 @@ iptables -t mangle -A POSTROUTING -o vlan832 -p udp --dport 67 -j CLASSIFY --set
 
 nvram get script_fire >/tmp/script_fire
 sed -i '/orange_ack_script_fire/d' /tmp/script_fire
-echo "sh /opt/etc/orange_ack_script_fire.sh" >/tmp/script_fire
+echo "sh /opt/etc/orange_ack_script_fire.sh" >>/tmp/script_fire
 nvram set script_fire="$(cat /tmp/script_fire)"
 rm -f /tmp/script_fire
 
