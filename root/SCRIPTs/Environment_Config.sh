@@ -77,6 +77,10 @@ chmod +x /opt/.autorun
 [ -f "${gsDirTemplates}/init/rc.func.tmpl" ] && cp "${gsDirTemplates}/init/rc.func.tmpl" /opt/etc/init.d/rc.func
 chmod +x /opt/etc/init.d/*
 
+#### /opt/etc/init/SXX
+/opt/bin/find "${gsDirTemplates}/init/" -name "*.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" /opt/etc/init.d/$(basename $(echo "${i}" | sed "s/.tmpl//g;"))' _ {} \;
+chmod +x /opt/etc/init.d/*
+
 #### Replace binaries with aliases
 if [ -d /opt/bin/ ]; then
     # Create an empty file if needed
