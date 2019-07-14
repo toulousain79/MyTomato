@@ -12,8 +12,9 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 </p>
 
 <p align="center">
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N">
-    <img src="https://img.shields.io/badge/Donate-PayPal-green.svg?style=for-the-badge" /></a>
+
+[![Donate](https://img.shields.io/badge/Paypal-Donate-blue.svg?style=plastic&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N) [![Donate](https://img.shields.io/badge/BitCoin-Donate-orange.svg?style=plastic&logo=bitcoin)](https://www.blockchain.com/btc/payment_request?address=1HtuGsnSsGoUz7DmRbDLCFnRc41jYEY2FE)
+
 </p>
 
 ## Features
