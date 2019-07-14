@@ -5,7 +5,7 @@ stages:
 
 # #### Templates - BoF
 .tmpl_check: &tmpl_check
-    image: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/mysb_images/project_check/project_check:latest
+    image: ${CI_REGISTRY}/${CI_PROJECT_NAMESPACE}/mysb_images/project_check/project_check:v6.0
     script:
         - |
             for script in $(echo ${CI_PROJECT_DIR}/ci/scripts/[0-9][0-9]-*.sh); do
