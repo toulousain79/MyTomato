@@ -3,8 +3,6 @@
 TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version _(kernel v2.6.36)_.
 
 <p align="center">
-  <a href="https://gitlab.com/toulousain79/MyTomato/blob/master/README.md">
-    <img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/master">
     <img alt="master pipeline status" src="https://img.shields.io/gitlab/pipeline/toulousain79/MyTomato/master.svg?label=master%20pipeline%20status" /></a>
   <a href="https://gitlab.com/toulousain79/MyTomato/commits/develop">
@@ -12,9 +10,14 @@ TomatoUSB environment for Shibby or FreshTomato **ARM v7** firmwares VPN version
 </p>
 
 <p align="center">
+    <a href="https://github.com/toulousain79/MySB/blob/v6.0/LICENCE.md"><img src="https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square" /></a>
+</p>
 
-[![Donate](https://img.shields.io/badge/Paypal-Donate-blue.svg?style=plastic&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N) [![Donate](https://img.shields.io/badge/BitCoin-Donate-orange.svg?style=plastic&logo=bitcoin)](https://www.blockchain.com/btc/payment_request?address=1HtuGsnSsGoUz7DmRbDLCFnRc41jYEY2FE)
-
+<p align="center">
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4ZZDD9NJVGL4N">
+    <img alt="PayPal donate" src="https://img.shields.io/badge/Paypal-Donate-blue.svg?style=plastic&logo=paypal" /></a>
+  <a href="https://www.blockchain.com/btc/payment_request?address=1HtuGsnSsGoUz7DmRbDLCFnRc41jYEY2FE">
+    <img alt="Bitcoins doante" src="https://img.shields.io/badge/BitCoin-Donate-orange.svg?style=plastic&logo=bitcoin" /></a>
 </p>
 
 ## Features
