@@ -239,7 +239,7 @@ touch /etc/dnsmasq-custom.conf"
 nvram set script_usbmount="{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\""
 # USB and NAS > USB Support>Run before unmounting
 {
-	echo "{ [ \"$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\""
+	echo "{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\""
 	echo "sleep 2; service dnsmasq restart"
 } >/tmp/script_usbumount
 nvram set script_usbumount="$(cat /tmp/script_usbumount)"
