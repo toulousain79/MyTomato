@@ -6,6 +6,7 @@ stages:
     - trigger
     - check_master_after_merge
 
+
 # #### Templates - BoF
 .tmpl_check: &tmpl_check
     image: ${REGISTRY_IMAGES}
