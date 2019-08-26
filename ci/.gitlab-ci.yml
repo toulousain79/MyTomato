@@ -15,23 +15,26 @@ stages:
 
 
 # #### Project check (merge request)
-project_check_develop:
+Develop:
     stage: check_develop
     only:
       refs:
-        - schedules
         - merge_requests
-    allow_failure: false
+        - schedules
+      variables:
+        - $RELEASE == "develop"
     <<: *tmpl_check
 
-
 # #### Project check for master branch (after merge request & schedules)
-project_check_master:
+Prod:
     stage: check_master
     only:
       refs:
-        - master
+        - merge_requests
         - schedules
+        - triggers
+      variables:
+        - $RELEASE == "develop"
+        - $RELEASE == "prod"
     when: on_success
-    allow_failure: false
     <<: *tmpl_check
