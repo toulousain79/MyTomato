@@ -31,5 +31,6 @@ Prod:
       refs:
         - schedules
         - merge_requests
+        - master
     <<: *tmpl_check
 # #### Project check after merge - EoF
