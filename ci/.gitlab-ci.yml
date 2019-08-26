@@ -26,7 +26,7 @@ Develop:
 
 # #### Project check after merge - BoF
 Prod:
-    stage: check_develop
+    stage: check_master
     only:
       refs:
         - schedules
