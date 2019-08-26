@@ -21,8 +21,7 @@ Develop:
       refs:
         - merge_requests
         - schedules
-      variables:
-        - $RELEASE == "develop"
+        - develop
     <<: *tmpl_check
 
 # #### Project check for master branch (after merge request & schedules)
@@ -30,11 +29,7 @@ Prod:
     stage: check_master
     only:
       refs:
-        - merge_requests
         - schedules
-        - triggers
-      variables:
-        - $RELEASE == "develop"
-        - $RELEASE == "prod"
+        - master
     when: on_success
     <<: *tmpl_check
