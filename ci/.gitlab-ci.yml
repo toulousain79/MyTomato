@@ -3,6 +3,7 @@ stages:
     - scheduled_check_develop
     - scheduled_check_master
     - check_develop_before_merge
+    - trigger
     - check_master_after_merge
 
 # #### Templates - BoF
@@ -16,7 +17,7 @@ stages:
 # #### Templates - EoF
 
 # #### Project check scheduled - BoF
-Develop:
+Scheduled Develop:
     stage: scheduled_check_develop
     only:
       refs:
@@ -25,7 +26,7 @@ Develop:
         - $RELEASE == "develop"
     <<: *tmpl_check
 
-Prod:
+Scheduled Prod:
     stage: scheduled_check_master
     only:
       refs:
@@ -42,8 +43,12 @@ Develop:
       refs:
         - merge_requests
     <<: *tmpl_check
+
+Trigger:
+    stage: trigger
     script:
         - "curl -X POST -F token=${TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/10397707/trigger/pipeline"
+    when: on_success
 # #### Project check before merge - EoF
 
 # #### Project check after merge - BoF
@@ -52,6 +57,5 @@ Prod:
     only:
       refs:
         - triggered
-    when: on_success
     <<: *tmpl_check
 # #### Project check after merge - EoF
