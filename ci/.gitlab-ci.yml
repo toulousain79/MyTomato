@@ -36,7 +36,7 @@ Prod:
 # #### Project check scheduled - EoF
 
 # #### Project check before merge - BoF
-Prod:
+Develop:
     stage: check_develop
     only:
       refs:
@@ -54,7 +54,6 @@ Prod:
       refs:
         - triggered
         - master
-    when:
-        - on_success
+    when: on_success
     <<: *tmpl_check
 # #### Project check after merge - EoF
