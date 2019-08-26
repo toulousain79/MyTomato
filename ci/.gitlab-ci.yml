@@ -46,7 +46,7 @@ Develop:
 Prod:
     stage: check_master_after_merge
     <<: *tmpl_check
-  only:
-    - master
-  when: on_success
+    only:
+        - master
+    when: on_success
 # #### Project check before merge - EoF
