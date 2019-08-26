@@ -21,6 +21,7 @@ Develop:
       refs:
         - merge_requests
         - schedules
+        - develop
       variables:
         - $RELEASE == "develop"
     <<: *tmpl_check
@@ -31,6 +32,7 @@ Prod:
     only:
       refs:
         - schedules
+        - master
       variables:
         - $RELEASE == "prod"
     when: on_success
