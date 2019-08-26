@@ -1,7 +1,9 @@
 ---
 stages:
-    - check_develop
-    - check_master
+    - scheduled_check_develop
+    - scheduled_check_master
+    - check_develop_before_merge
+    - check_master_after_merge
 
 # #### Templates - BoF
 .tmpl_check: &tmpl_check
@@ -15,7 +17,7 @@ stages:
 
 # #### Project check scheduled - BoF
 Develop:
-    stage: check_develop
+    stage: scheduled_check_develop
     only:
       refs:
         - schedules
@@ -24,7 +26,7 @@ Develop:
     <<: *tmpl_check
 
 Prod:
-    stage: check_master
+    stage: scheduled_check_master
     only:
       refs:
         - schedules
@@ -35,7 +37,7 @@ Prod:
 
 # #### Project check before merge - BoF
 Develop:
-    stage: check_develop
+    stage: check_develop_before_merge
     only:
       refs:
         - merge_requests
@@ -46,7 +48,7 @@ Develop:
 
 # #### Project check after merge - BoF
 Prod:
-    stage: check_master
+    stage: check_master_after_merge
     only:
       refs:
         - triggered
