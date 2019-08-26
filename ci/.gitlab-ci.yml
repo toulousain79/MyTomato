@@ -19,7 +19,6 @@ Develop:
     only:
       refs:
         - schedules
-        - develop
       variables:
         - $RELEASE == "develop"
     <<: *tmpl_check
@@ -29,7 +28,6 @@ Prod:
     only:
       refs:
         - schedules
-        - master
       variables:
         - $RELEASE == "prod"
     <<: *tmpl_check
@@ -41,7 +39,6 @@ Develop:
     only:
       refs:
         - merge_requests
-        - develop
     <<: *tmpl_check
     script:
         - "curl -X POST -F token=${TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/10397707/trigger/pipeline"
@@ -53,7 +50,6 @@ Prod:
     only:
       refs:
         - triggered
-        - master
     when: on_success
     <<: *tmpl_check
 # #### Project check after merge - EoF
