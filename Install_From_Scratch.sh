@@ -11,7 +11,7 @@ gsWan1_DNS=""
 [ -n "${1}" ] && FILESYSTEM="${1}" || FILESYSTEM="ext4"
 
 #### Check if OPKG already exist
-(type -P opkg >/dev/null) && echo "ERROR: 'opkg' already exist" && exit 1
+(type opkg >/dev/null) && echo "ERROR: 'opkg' already exist" && exit 1
 
 #### Mount /opt
 (df -h | grep -q '/tmp/mnt/ENTWARE') && umount /tmp/mnt/ENTWARE
