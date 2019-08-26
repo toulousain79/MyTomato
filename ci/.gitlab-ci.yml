@@ -48,6 +48,5 @@ Prod:
     <<: *tmpl_check
     only:
         - master
-        - merge_requests
     when: on_success
 # #### Project check before merge - EoF
