@@ -14,24 +14,23 @@ stages:
 # #### Templates - EoF
 
 
-# #### Project check (merge request)
+# #### Project check before merge - BoF
 Develop:
     stage: check_develop
     only:
       refs:
-        - merge_requests
         - schedules
         - develop
     <<: *tmpl_check
+# #### Project check before merge - EoF
 
-# #### Project check for master branch (after merge request & schedules)
+# #### Project check after merge - BoF
 Prod:
-    stage: check_master
+    stage: check_develop
     only:
       refs:
         - schedules
+        - merge_requests
         - master
-      variables:
-        - $RELEASE == "prod"
-    when: on_success
     <<: *tmpl_check
+# #### Project check after merge - EoF
