@@ -31,5 +31,7 @@ Prod:
       refs:
         - schedules
         - master
+      variables:
+        - $RELEASE == "prod"
     when: on_success
     <<: *tmpl_check
