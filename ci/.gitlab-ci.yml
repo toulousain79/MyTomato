@@ -48,5 +48,7 @@ Prod:
     <<: *tmpl_check
     only:
         - master
+    except:
+        - schedules
     when: on_success
 # #### Project check before merge - EoF
