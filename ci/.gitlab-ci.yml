@@ -6,7 +6,6 @@ stages:
     - trigger
     - check_master_after_merge
 
-
 # #### Templates - BoF
 .tmpl_check: &tmpl_check
     image: ${REGISTRY_IMAGES}
@@ -47,6 +46,9 @@ Develop:
 
 Trigger:
     stage: trigger
+    only:
+      refs:
+        - merge_requests
     script:
         - "curl -X POST -F token=${TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/10397707/trigger/pipeline"
     when: on_success
