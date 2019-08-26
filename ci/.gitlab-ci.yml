@@ -1,7 +1,10 @@
 ---
 stages:
-    - check_develop
-    - check_master
+    - scheduled_check_develop
+    - scheduled_check_master
+    - check_develop_before_merge
+    - trigger
+    - check_master_after_merge
 
 # #### Templates - BoF
 .tmpl_check: &tmpl_check
@@ -13,23 +16,49 @@ stages:
             done
 # #### Templates - EoF
 
+# #### Project check scheduled - BoF
+Scheduled Develop:
+    stage: scheduled_check_develop
+    only:
+      refs:
+        - schedules
+      variables:
+        - $RELEASE == "develop"
+    <<: *tmpl_check
 
-# #### Project check (merge request)
+Scheduled Prod:
+    stage: scheduled_check_master
+    only:
+      refs:
+        - schedules
+      variables:
+        - $RELEASE == "prod"
+    <<: *tmpl_check
+# #### Project check scheduled - EoF
+
+# #### Project check before merge - BoF
 Develop:
-    stage: check_develop
+    stage: check_develop_before_merge
     only:
       refs:
         - merge_requests
-        - schedules
-        - develop
     <<: *tmpl_check
 
-# #### Project check for master branch (after merge request & schedules)
-Prod:
-    stage: check_master
+Trigger:
+    stage: trigger
     only:
       refs:
-        - schedules
-        - master
+        - merge_requests
+    script:
+        - "curl -X POST -F token=${TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/10397707/trigger/pipeline"
     when: on_success
+# #### Project check before merge - EoF
+
+# #### Project check after merge - BoF
+Prod:
+    stage: check_master_after_merge
+    only:
+      refs:
+        - triggered
     <<: *tmpl_check
+# #### Project check after merge - EoF
