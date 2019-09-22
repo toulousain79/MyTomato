@@ -4,6 +4,7 @@
 
 - DNScrypt-proxy v2
   - add 'gsExternalDns' variable for use external DNS server like PiHole
+- Minor code review
 
 ## v1.0.10 - _2019/04/13_
 

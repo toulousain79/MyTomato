@@ -226,7 +226,7 @@ chmod +x /opt/etc/init.d/*
 # Create empty file
 touch /etc/dnsmasq-custom.conf
 touch ${gsDirOverLoad}/.bash_aliases
-/opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/p2partisan.//g;" | sed "s/.txt.tmpl//g;"))' _ {} \;
+/opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/p2partisan.//g;s/.txt.tmpl//g;"))' _ {} \;
 /opt/bin/find "${gsDirTemplates}/dnscrypt/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
 
 #### NVRAM settings
