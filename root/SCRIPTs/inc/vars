@@ -63,6 +63,7 @@ gsP2Partisan_TcpPorts=""			 # Whitelist TCP ports separated by commas
 # DNScrypt-proxy
 gbDNScrypt_Enable=1				  # Off = 0 / On = 1
 gsWan1_DNS="9.9.9.9 149.112.112.112" # Quad 9 DNS; Add 1 or 2 IP address comma seperated.
+gsExternalDns=""                  # External DNS server like PiHole instead of local DNScrypt
 
 # Upgrade MyTomato from GitHub repository
 gbRepoUpgrade_Enable=1 # Off = 0 / On = 1
@@ -70,6 +71,6 @@ gbRepoUpgrade_Enable=1 # Off = 0 / On = 1
 #### Export
 export binCurl gsDirArmExtras gsUrlArmExtras gsLocales gsTimezone
 export gsScriptName gsDirRoot gsDirScripts gsDirOpenVpn gsDirBackups gsDirLogs gsDirTemplates gsDirOverLoad gsDirDnscrypt gsDirDnscryptGen
-export gsUsbFileSystem gsUsbOptUuid gsWan1_DNS gsP2Partisan_UdpPorts gsP2Partisan_TcpPorts
+export gsUsbFileSystem gsUsbOptUuid gsWan1_DNS gsExternalDns gsP2Partisan_UdpPorts gsP2Partisan_TcpPorts
 export gdDateTime gsOpkgPackagesList
 export gbP2Partisan_Enable gbDNScrypt_Enable gbRepoUpgrade_Enable gbSyslog_Enable

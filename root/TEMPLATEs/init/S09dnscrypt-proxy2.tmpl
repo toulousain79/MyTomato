@@ -186,8 +186,12 @@ gfnSwitchDNS() {
 
             # /etc/dnsmasq-custom.conf
             {
-                echo "server=127.0.0.1#52"
-                echo "server=::1#52"
+                if [ -z "${gsExternalDns}" ]; then
+                    echo "server=127.0.0.1#52"
+                    echo "server=::1#52"
+                else
+                    echo "server=${gsExternalDns}#53"
+                fi
                 echo "listen-address=::1,127.0.0.1"
             } >>/etc/dnsmasq-custom.conf
 
