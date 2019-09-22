@@ -1,6 +1,6 @@
 #!/opt/bin/bash
 
-ENABLED="$(nvram get log_file |sed 's/0/no/g;' |sed 's/1/yes/g;')"
+ENABLED="$(nvram get log_file |sed 's/0/no/g;s/1/yes/g;')"
 PROCS=syslogd
 ARGS="-L -s $(nvram get log_file_size) -O $(nvram get log_file_path) -b $(nvram get log_file_keep)"
 PREARGS=""

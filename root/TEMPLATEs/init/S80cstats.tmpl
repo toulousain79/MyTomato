@@ -1,6 +1,6 @@
 #!/opt/bin/bash
 
-ENABLED="$(nvram get cstats_enable | sed 's/0/no/g;'| sed 's/1/yes/g;')"
+ENABLED="$(nvram get cstats_enable | sed 's/0/no/g;s/1/yes/g;')"
 PROCS=cstats
 ARGS=""
 PREARGS=""

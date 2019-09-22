@@ -104,7 +104,7 @@ gfnEntwareServices() {
     # DNScrypt-proxy
     if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
         nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
-        sed -i "${nNumLine}"s/.*/ENABLED="$(echo "${gbDNScrypt_Enable}" | sed 's/0/no/g;' | sed 's/1/yes/g;')"/ /opt/etc/init.d/S09dnscrypt-proxy2
+        sed -i "${nNumLine}"s/.*/ENABLED="$(echo "${gbDNScrypt_Enable}" | sed 's/0/no/g;s/1/yes/g;')"/ /opt/etc/init.d/S09dnscrypt-proxy2
     fi
 
     # fake-hwclock
