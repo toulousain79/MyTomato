@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.11 - _2019/09/22_
+
+- DNScrypt-proxy v2
+  - add 'gsExternalDns' variable for use external DNS server like PiHole
+
 ## v1.0.10 - _2019/04/13_
 
 - DNScrypt-proxy v2
