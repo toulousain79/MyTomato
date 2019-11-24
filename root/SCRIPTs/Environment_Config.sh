@@ -128,7 +128,7 @@ if [ -n "${gsLocales}" ]; then
 fi
 if [ -n "${gsTimezone}" ]; then
     logger -p user.notice "| ${gsScriptName} |  Add timezone '${gsTimezone}'"
-    ln -sf /opt/share/zoneinfo/${gsTimezone} /opt/etc/localtime
+    ln -sf /opt/share/zoneinfo/"${gsTimezone}" /opt/etc/localtime
 fi
 
 exit 0

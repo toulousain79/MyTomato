@@ -58,7 +58,7 @@ fi
 
 #### SCRIPTs
 logger -p user.notice "| ${gsScriptName} | Chmod +x to ${gsDirScripts}/*"
-chmod +x ${gsDirScripts}/*
+chmod +x "${gsDirScripts}"/*
 logger -p user.notice "| ${gsScriptName} | Chmod +x to /opt/MyTomato/P2Partisan/p2partisan.sh"
 [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ] && chmod +x /opt/MyTomato/P2Partisan/p2partisan.sh
 
