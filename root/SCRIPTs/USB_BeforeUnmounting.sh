@@ -11,7 +11,7 @@
 ##############################
 
 #### Lock file
-[ ! -f /tmp/${gsScriptName}.lock ] && touch ${gsScriptName}.lock || exit 0
+[ ! -f /tmp/"${gsScriptName}".lock ] && touch "${gsScriptName}".lock || exit 0
 
 #### NVRAM settings
 gfnNvramUpdate 'dns_wan1' 'get'
@@ -50,7 +50,7 @@ fi
 (/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vl /opt
 
 #### Lock file
-[ -f /tmp/${gsScriptName}.lock ] && rm ${gsScriptName}.lock
+[ -f /tmp/"${gsScriptName}".lock ] && rm "${gsScriptName}".lock
 
 #### Kill bash sessions
 for sPid in $(pidof bash); do kill -9 "${sPid}"; done

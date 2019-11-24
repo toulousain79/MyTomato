@@ -14,7 +14,7 @@ fake-hwclock load force
 ##############################
 
 #### Lock file
-[ ! -f /tmp/${gsScriptName}.lock ] && touch /tmp/${gsScriptName}.lock || exit 0
+[ ! -f /tmp/"${gsScriptName}".lock ] && touch /tmp/"${gsScriptName}".lock || exit 0
 
 #### Sync time
 gfnNtpUpdate
@@ -25,11 +25,11 @@ gfnNtpUpdate
 [ ! -d "${gsDirArmExtras}" ] && mkdir -pv "${gsDirArmExtras}"
 
 #### SCRIPTs
-chmod +x ${gsDirScripts}/*
+chmod +x "${gsDirScripts}"/*
 
 #### Restore config if needed
 if [ -z "$(nvram get mytomato_config_save)" ]; then
-    sLastConfig="$(find ${gsDirBackups}/ -type f -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
+    sLastConfig="$(find "${gsDirBackups}"/ -type f -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
     if [ -n "${sLastConfig}" ] && [ -f "${sLastConfig}" ]; then
         (nvram restore "${sLastConfig}") && reboot
     fi
@@ -63,6 +63,6 @@ bash "${gsDirScripts}/Services_Start.sh"
 gfnNvramSave
 
 #### Lock file
-[ -f /tmp/${gsScriptName}.lock ] && rm /tmp/${gsScriptName}.lock
+[ -f /tmp/"${gsScriptName}".lock ] && rm /tmp/"${gsScriptName}".lock
 
 exit 0
