@@ -11,6 +11,9 @@ stages:
     script:
         - |
             for script in $(echo ${CI_PROJECT_DIR}/ci/scripts/[0-9][0-9]-*.sh); do
+                echo ${script} "${CI_PROJECT_DIR}"
+            done
+            for script in $(echo ${CI_PROJECT_DIR}/ci/scripts/[0-9][0-9]-*.sh); do
                 . ${script} "${CI_PROJECT_DIR}"
             done
 # #### Templates - EoF
