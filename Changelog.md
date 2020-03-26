@@ -3,6 +3,7 @@
 ## v1.0.12 - _2020/03/26_
 
 - typo fix
+- CI review
 - Freebox API script
   - auto reboot Freebox when Internet access is down _(not used, not validated)_
 

@@ -4,8 +4,8 @@
 ##################### FIRST LINE #####################################
 
 if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
-    # shellcheck source=ci/scripts/00-load_vars.bsh
-    source "$(dirname "$0")/00-libs.bsh"
+    # shellcheck source=ci/scripts/00-load_vars.sh
+    source "$(dirname "$0")/00-libs.sh"
 else
     nReturn=${nReturn}
 fi
