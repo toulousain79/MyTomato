@@ -5,6 +5,8 @@ sPwd=$(pwd)
 nReturn=0
 [ -n "${CI_PROJECT_PATH}" ] && sProjectDir="/builds/${CI_PROJECT_PATH}" || sProjectDir="$(pwd)"
 sDirToScan="/tmp/shellcheck_scan"
+echo "sProjectDir: $sProjectDir"
+echo "sDirToScan: $sDirToScan"
 
 #### 1 - Colors
 CEND="\033[0m"
