@@ -133,7 +133,7 @@ gfnMessage() {
         sMess=$(echo -e "$2" | tr '\n' '|')
         while IFS='|' read -ra sLogLine; do
             for sLine in "${sLogLine[@]}"; do
-                logger -p user.notice "| $DESC" "[$sType] $sLine"
+                logger -p user.notice -t -s "| $DESC" "[$sType] $sLine"
             done
         done <<<"$sMess"
     }
