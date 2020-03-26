@@ -8,9 +8,9 @@ if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
     echo "basename: $(basename "$0")"
     echo "dirname: $(dirname "$0")"
     echo "pwd: $(pwd)"
-    echo "/builds/${CI_PROJECT_PATH}"
+    echo "/builds/${CI_PROJECT_PATH}/ci/scripts/00-libs.sh"
     # shellcheck source=ci/scripts/00-load_vars.sh
-    . "/builds/${CI_PROJECT_PATH}/00-libs.sh"
+    . "/builds/${CI_PROJECT_PATH}/ci/scripts/00-libs.sh"
 else
     nReturn=${nReturn}
 fi
