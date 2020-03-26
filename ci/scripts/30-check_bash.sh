@@ -4,8 +4,10 @@
 ##################### FIRST LINE #####################################
 
 if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
-    (dirname "$0")
-    pwd
+    echo "\$0: $0"
+    echo "basename: $(basename "$0")"
+    echo "dirname: $(dirname "$0")"
+    echo "pwd: $(pwd)"
     # shellcheck source=ci/scripts/00-load_vars.sh
     source "$(dirname "$0")/00-libs.sh"
 else
