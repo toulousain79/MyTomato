@@ -88,7 +88,7 @@ gfnNvramUpdate() {
 #### Start all Optware services
 gfnEntwareServices() {
     local sAction
-    [ -n "${1}" ] && sAction="echo ${1} | sed 's/^ //g;s/\s+$//g;'"
+    [ -n "${1}" ] && sAction="$(echo "${1}" | sed 's/^ //g;s/\s+$//g;')"
 
     # NFS
     # gfnInstallNfsServer
