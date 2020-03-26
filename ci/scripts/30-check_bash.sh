@@ -4,6 +4,8 @@
 ##################### FIRST LINE #####################################
 
 if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
+    (dirname "$0")
+    pwd
     # shellcheck source=ci/scripts/00-load_vars.sh
     source "$(dirname "$0")/00-libs.sh"
 else
