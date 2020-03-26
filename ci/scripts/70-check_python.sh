@@ -1,6 +1,11 @@
 #!/bin/bash
 
-nReturn=${nReturn}
+if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
+    # shellcheck source=ci/scripts/00-load_vars.sh
+    . "/builds/${CI_PROJECT_PATH}/00-libs.sh"
+else
+    nReturn=${nReturn}
+fi
 
 # sFilesList="$(grep -IRl "\(#\!/usr/bin/env\) python2" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "ci" "${sDirToScan}/")"
 # if [ -n "${sFilesList}" ]; then
