@@ -22,7 +22,7 @@ case "$ACTION" in
 esac
 
 for i in $(find /opt/etc/init.d/ -perm '-u+x' -name 'S*' | sort $ORDER); do
-    logger -p user.notice -t "| $(basename "$0") |" "Beginning $ACTION sequence for '$(basename "$i")'"
+    logger -p user.notice "| $(basename "$0") |" "Beginning $ACTION sequence for '$(basename "$i")'"
 
     LOOP=1 # Permit to avoid loop for some sourced scripts !!!
     export LOOP
@@ -40,5 +40,5 @@ for i in $(find /opt/etc/init.d/ -perm '-u+x' -name 'S*' | sort $ORDER); do
             ;;
     esac
 
-    logger -p user.notice -t "| $(basename "$0") |" "Ending $ACTION sequence for '$(basename "$i")'"
+    logger -p user.notice "| $(basename "$0") |" "Ending $ACTION sequence for '$(basename "$i")'"
 done

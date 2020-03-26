@@ -137,7 +137,7 @@ alias sed='/bin/sed'
 alias iptables='/usr/sbin/iptables'
 alias service='/sbin/service'
 alias killall='/usr/bin/killall'
-alias plog='logger -t "| P2PARTISAN | "'
+alias plog='logger -t "| P2PARTISAN | " -s'
 alias deaggregate='/bin/nice -n10 /tmp/deaggregate.sh'
 service ntpc restart >/dev/null
 now=$(date +%s)

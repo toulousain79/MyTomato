@@ -11,12 +11,12 @@
 ##############################
 
 if [ -n "${gsUrlArmExtras}" ]; then
-    logger -p user.notice -t "| ${gsScriptName} |  Get ${gsUrlArmExtras}"
+    logger -p user.notice "| ${gsScriptName} |  Get ${gsUrlArmExtras}"
     ${binCurl} "${gsUrlArmExtras}" -o "/tmp/arm-extras.tar.gz"
 fi
 
 if [ -f "/tmp/arm-extras.tar.gz" ]; then
-    logger -p user.notice -t "| ${gsScriptName} |  Untar /tmp/arm-extras.tar.gz"
+    logger -p user.notice "| ${gsScriptName} |  Untar /tmp/arm-extras.tar.gz"
     if [ -f "/tmp/arm-extras.tar.gz" ]; then
         sSubDir="$(tar -ztf "/tmp/arm-extras.tar.gz" | cut -d '/' -f 1 | head -n 1)"
         tar -zxf "/tmp/arm-extras.tar.gz" -C "/tmp/"

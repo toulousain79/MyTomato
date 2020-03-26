@@ -51,14 +51,14 @@ fi
 # /opt/root
 if (! /opt/bin/mount -l | grep -q '/tmp/home/root'); then
     if [ ! -f /tmp/home/root/.uuid ]; then
-        logger -p user.notice -t "| ${gsScriptName} | Clean /tmp/home/root/"
+        logger -p user.notice "| ${gsScriptName} | Clean /tmp/home/root/"
         rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
     fi
     if [ ! -f /opt/root/.uuid ]; then
-        logger -p user.notice -t "| ${gsScriptName} | Clean /opt/root/"
+        logger -p user.notice "| ${gsScriptName} | Clean /opt/root/"
         rm -rRf /opt/root/* && rm -rRf /opt/root/.??*
     fi
-    logger -p user.notice -t "| ${gsScriptName} | Mount /opt/MyTomato/root to /tmp/home/root"
+    logger -p user.notice "| ${gsScriptName} | Mount /opt/MyTomato/root to /tmp/home/root"
     /opt/bin/mount --bind /opt/MyTomato/root /tmp/home/root
 fi
 
@@ -123,11 +123,11 @@ gfnCopyToSyslog
 
 #### Locales
 if [ -n "${gsLocales}" ]; then
-    logger -p user.notice -t "| ${gsScriptName} |  Add locales '${gsLocales}'"
+    logger -p user.notice "| ${gsScriptName} |  Add locales '${gsLocales}'"
     /opt/bin/localedef.new -c -f UTF-8 -i "${gsLocales}" "${gsLocales}.UTF-8"
 fi
 if [ -n "${gsTimezone}" ]; then
-    logger -p user.notice -t "| ${gsScriptName} |  Add timezone '${gsTimezone}'"
+    logger -p user.notice "| ${gsScriptName} |  Add timezone '${gsTimezone}'"
     ln -sf /opt/share/zoneinfo/"${gsTimezone}" /opt/etc/localtime
 fi
 
