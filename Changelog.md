@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.12 - _2020/03/26_
+
+- typo fix
+- Freebox API script
+  - auto reboot Freebox when Internet access is down _(not used, not validated)_
+
 ## v1.0.11 - _2019/09/22_
 
 - DNScrypt-proxy v2

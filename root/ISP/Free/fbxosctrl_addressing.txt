@@ -1,0 +1,7 @@
+{
+ "api_base_url": "/api/",
+ "api_domain": "pkulrcyl.fbxos.fr",
+ "api_version": "6.0",
+ "port": 13080,
+ "protocol": "http"
+}
