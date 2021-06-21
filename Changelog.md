@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.13 - _2021/06/21_
+
+- disable **Ext4 Metadata Checksums** for USB disk setup from documentation _(#2)_
+
 ## v1.0.12 - _2020/03/26_
 
 - typo fix

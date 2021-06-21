@@ -85,10 +85,10 @@ This allows faster read/write access, and increases the life of your USB device 
     mkfs.ext4 -L ENTWARE /dev/xxxx
     ```
 
-4. Tuning the Ext4 filesystem _(disable Journal, disable Directory Indexing, reduce 5% to 2% Reserved Blocks)_
+4. Tuning the Ext4 filesystem _(disable Journal, disable Directory Indexing, disable Ext4 Metadata Checksums, reduce 5% to 2% Reserved Blocks)_
 
     ```bash
-    tune2fs -o ^journal_data_writeback -O ^has_journal,dir_index /dev/xxxx
+    tune2fs -o ^journal_data_writeback -O ^has_journal,dir_index,^metadata_csum /dev/xxxx
     tune2fs -m 2 /dev/xxxx
     e2fsck -Df /dev/xxxx
     ```
