@@ -34,110 +34,109 @@ rm -rf /tmp/i18n
 
 opkg update
 opkg install \
-	bash \
-	wget \
-	curl \
-	bzip2 \
-	less \
-	lsof \
-	perl \
-	tar \
-	unzip \
-	sed \
-	vim \
-	vim-runtime \
-	tcpdump \
-	htop \
-	gawk \
-	bind-dig \
-	file \
-	strace \
-	whereis \
-	mlocate \
-	git \
-	jq \
-	xxd \
-	logrotate \
-	mount-utils \
-	coreutils-ln \
-	coreutils-uniq \
-	coreutils-kill \
-	coreutils-dircolors \
-	coreutils-dirname \
-	coreutils-cp \
-	coreutils-mv \
-	coreutils-chown \
-	coreutils-chmod \
-	coreutils-cat \
-	coreutils-basename \
-	coreutils-install \
-	coreutils-df \
-	procps-ng-ps \
-	procps-ng-pgrep \
-	ca-certificates \
-	ca-bundle \
-	fake-hwclock \
-	ntpdate \
-	ntpd \
-	rsync \
-	openssh-sftp-server \
-	nfs-kernel-server \
-	nfs-kernel-server-utils \
-	python \
-	python3
+    bash \
+    wget \
+    curl \
+    bzip2 \
+    less \
+    lsof \
+    perl \
+    tar \
+    unzip \
+    sed \
+    vim \
+    vim-runtime \
+    tcpdump \
+    htop \
+    gawk \
+    bind-dig \
+    file \
+    strace \
+    whereis \
+    mlocate \
+    git \
+    jq \
+    xxd \
+    logrotate \
+    mount-utils \
+    coreutils-ln \
+    coreutils-uniq \
+    coreutils-kill \
+    coreutils-dircolors \
+    coreutils-dirname \
+    coreutils-cp \
+    coreutils-mv \
+    coreutils-chown \
+    coreutils-chmod \
+    coreutils-cat \
+    coreutils-basename \
+    coreutils-install \
+    coreutils-df \
+    procps-ng-ps \
+    procps-ng-pgrep \
+    ca-certificates \
+    ca-bundle \
+    fake-hwclock \
+    ntpdate \
+    ntpd \
+    rsync \
+    openssh-sftp-server \
+    nfs-kernel-server \
+    nfs-kernel-server-utils \
+    python3
 
 #### NTP
 ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
 
 #### Clone GitHub repoistory
 if [ ! -d /opt/MyTomato ]; then
-	git clone git://github.com/toulousain79/MyTomato.git /opt/MyTomato
+    git clone git://github.com/toulousain79/MyTomato.git /opt/MyTomato
 else
-	cd /opt/MyTomato || exit 1
-	git fetch origin
-	git reset --hard origin/master
-	git pull origin master
+    cd /opt/MyTomato || exit 1
+    git fetch origin
+    git reset --hard origin/master
+    git pull origin master
 fi
 
 #### DNScrypt-proxy v2
 if (! nvram get os_version | grep -q 'AIO'); then
-	if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
-		git clone git://github.com/jedisct1/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
-	else
-		cd /opt/usr/local/dnscrypt-proxy || exit 1
-		git fetch origin
-		git reset --hard origin/master
-		git pull origin master
-	fi
-	if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/generate-domains-blacklist.py ]; then
-		cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/ || exit
-		chmod +x generate-domains-blacklist.py
-		# python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
-	fi
+    if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
+        git clone git://github.com/jedisct1/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
+    else
+        cd /opt/usr/local/dnscrypt-proxy || exit 1
+        git fetch origin
+        git reset --hard origin/master
+        git pull origin master
+    fi
+    if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/generate-domains-blacklist.py ]; then
+        cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/ || exit
+        chmod +x generate-domains-blacklist.py
+        # python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+    fi
 fi
 
 # Add /opt UUID to "/opt/MyTomato/root/ConfigOverload/vars"
 cp -v /opt/MyTomato/root/TEMPLATEs/vars.tmpl /opt/MyTomato/root/ConfigOverload/vars
 gsUsbOptUuid="$(blkid | grep 'ENTWARE' | awk '{ print $3 }' | cut -d '"' -f 2)"
 if [ -f /opt/MyTomato/root/ConfigOverload/vars ]; then
-	nNumLine=$(grep 'gsUsbOptUuid' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
-	sed -i "${nNumLine}"s/.*/gsUsbOptUuid=\""${gsUsbOptUuid}"\"/ /opt/MyTomato/root/ConfigOverload/vars
-	nNumLine=$(grep 'gsUsbFileSystem' -n -m 1 <"/opt/MyTomato/root/ConfigOverload/vars" | cut -d ':' -f 1)
-	sed -i "${nNumLine}"s/.*/gsUsbFileSystem=\""${FILESYSTEM}"\"/ /opt/MyTomato/root/ConfigOverload/vars
+    nNumLine=$(grep 'gsUsbOptUuid' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
+    sed -i "${nNumLine}"s/.*/gsUsbOptUuid=\""${gsUsbOptUuid}"\"/ /opt/MyTomato/root/ConfigOverload/vars
+    nNumLine=$(grep 'gsUsbFileSystem' -n -m 1 <"/opt/MyTomato/root/ConfigOverload/vars" | cut -d ':' -f 1)
+    sed -i "${nNumLine}"s/.*/gsUsbFileSystem=\""${FILESYSTEM}"\"/ /opt/MyTomato/root/ConfigOverload/vars
 else
-	{
-		echo "########################################"
-		echo "#### USB Disk"
-		echo "gsUsbOptUuid=\"${gsUsbOptUuid}\""
-		echo "gsUsbFileSystem=\"${FILESYSTEM}\""
-		echo
-	} >>/opt/MyTomato/root/ConfigOverload/vars
+    {
+        echo "########################################"
+        echo "#### USB Disk"
+        echo "gsUsbOptUuid=\"${gsUsbOptUuid}\""
+        echo "gsUsbFileSystem=\"${FILESYSTEM}\""
+        echo
+    } >>/opt/MyTomato/root/ConfigOverload/vars
 fi
 
 #### Loading vars
 [ ! -f /opt/MyTomato/root/SCRIPTs/inc/vars ] && {
-	echo "Error, '/opt/MyTomato/root/SCRIPTs/inc/vars' file does not exist, aborting !"
-	exit 1
+    echo "Error, '/opt/MyTomato/root/SCRIPTs/inc/vars' file does not exist, aborting !"
+    exit 1
 }
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
@@ -166,44 +165,44 @@ cat /opt/etc/shells
 
 #### TAG '/opt' and '/opt/var/log' with UUID to avoid deleting
 if [ -n "${gsUsbOptUuid}" ]; then
-	if [ ! -f /opt/.uuid ] || [ "$(cat /opt/.uuid)" != "${gsUsbOptUuid}" ]; then
-		echo "${gsUsbOptUuid}" >/opt/.uuid
-	fi
-	if [ ! -f /opt/root/.uuid ] || [ "$(cat /opt/root/.uuid)" != "${gsUsbOptUuid}" ]; then
-		echo "${gsUsbOptUuid}" >/opt/root/.uuid
-	fi
-	if [ ! -f /opt/var/log/.uuid ] || [ "$(cat /opt/var/log/.uuid)" != "${gsUsbOptUuid}" ]; then
-		echo "${gsUsbOptUuid}" >/opt/var/log/.uuid
-	fi
+    if [ ! -f /opt/.uuid ] || [ "$(cat /opt/.uuid)" != "${gsUsbOptUuid}" ]; then
+        echo "${gsUsbOptUuid}" >/opt/.uuid
+    fi
+    if [ ! -f /opt/root/.uuid ] || [ "$(cat /opt/root/.uuid)" != "${gsUsbOptUuid}" ]; then
+        echo "${gsUsbOptUuid}" >/opt/root/.uuid
+    fi
+    if [ ! -f /opt/var/log/.uuid ] || [ "$(cat /opt/var/log/.uuid)" != "${gsUsbOptUuid}" ]; then
+        echo "${gsUsbOptUuid}" >/opt/var/log/.uuid
+    fi
 fi
 
 #### Prepare some files and directories ####
 # /opt/tmp
 if (! mount -l | grep -q '/tmp'); then
-	mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
-	cp -af /tmp/* /opt/tmp/
-	rm -rRf /tmp/* && rm -rRf /tmp/.??*
-	mount -v --bind /opt/tmp /tmp
+    mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
+    cp -af /tmp/* /opt/tmp/
+    rm -rRf /tmp/* && rm -rRf /tmp/.??*
+    mount -v --bind /opt/tmp /tmp
 fi
 
 # /opt/var/log
 if (! mount -l | grep -q '/tmp/var/log'); then
-	if [ -f /tmp/var/log/messages ]; then
-		cat /tmp/var/log/messages >>/opt/var/log/messages
-		if [ ! -f /tmp/var/log/.uuid ]; then
-			rm -rRfv /tmp/var/log/* && rm -rRf /tmp/var/log/.??*
-		fi
-		/opt/bin/mount -v --bind /opt/var/log /tmp/var/log
-	fi
+    if [ -f /tmp/var/log/messages ]; then
+        cat /tmp/var/log/messages >>/opt/var/log/messages
+        if [ ! -f /tmp/var/log/.uuid ]; then
+            rm -rRfv /tmp/var/log/* && rm -rRf /tmp/var/log/.??*
+        fi
+        /opt/bin/mount -v --bind /opt/var/log /tmp/var/log
+    fi
 fi
 
 # /opt/root
 if (! mount -l | grep -q '/tmp/home/root'); then
-	if [ ! -f /tmp/home/root/.uuid ]; then
-		rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
-		rm -rf /opt/root
-	fi
-	/opt/bin/mount -v --bind /opt/MyTomato/root /tmp/home/root
+    if [ ! -f /tmp/home/root/.uuid ]; then
+        rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
+        rm -rf /opt/root
+    fi
+    /opt/bin/mount -v --bind /opt/MyTomato/root /tmp/home/root
 fi
 [ ! -h /opt/root ] && ln -s /opt/MyTomato/root/ /opt/root
 
@@ -239,8 +238,8 @@ touch /etc/dnsmasq-custom.conf"
 nvram set script_usbmount="{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_AfterMounting.sh\""
 # USB and NAS > USB Support>Run before unmounting
 {
-	echo "{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\""
-	echo "sleep 2; service dnsmasq restart"
+    echo "{ [ \"\$1\" == \"/opt\" ]; [ -f \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\" ]; } && bash \"\$1/MyTomato/root/SCRIPTs/USB_BeforeUnmounting.sh\""
+    echo "sleep 2; service dnsmasq restart"
 } >/tmp/script_usbumount
 nvram set script_usbumount="$(cat /tmp/script_usbumount)"
 # Administration > Scheduler > Custom 1
@@ -282,12 +281,12 @@ nvram set wan_dns="${gsWan1_DNS}"
 nvram set ntp_tdod=1
 ## VPN Tunneling > OpenVPN Client > Client 1 > Advanced
 {
-	echo "ca /opt/MyTomato/root/OpenVPN/client1/ca_example.crt"
-	echo "cert /opt/MyTomato/root/OpenVPN/client1/demo_example.crt"
-	echo "key /opt/MyTomato/root/OpenVPN/client1/demo_example.key"
-	echo "tls-auth /opt/MyTomato/root/OpenVPN/client1/ta_example.key 1"
-	echo "log /opt/MyTomato/root/OpenVPN/client1/client1.log"
-	echo "verb 3"
+    echo "ca /opt/MyTomato/root/OpenVPN/client1/ca_example.crt"
+    echo "cert /opt/MyTomato/root/OpenVPN/client1/demo_example.crt"
+    echo "key /opt/MyTomato/root/OpenVPN/client1/demo_example.key"
+    echo "tls-auth /opt/MyTomato/root/OpenVPN/client1/ta_example.key 1"
+    echo "log /opt/MyTomato/root/OpenVPN/client1/client1.log"
+    echo "verb 3"
 } >>/tmp/openvpn_client1
 nvram set vpn_client1_custom="$(cat /tmp/openvpn_client1)"
 
@@ -299,27 +298,27 @@ rm -fv /tmp/openvpn_client1
 rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
 if (nvram get os_version | grep -q 'AIO'); then
-	rm -fv /opt/etc/dnscrypt-proxy.toml
-	rm -fv ${gsDirBackups}/dnscrypt-proxy*
-	rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
-	rm -fv ${gsDirOverLoad}/dnscrypt*
-	rm -fv ${gsDirOverLoad}/*.md
-	rm -fv ${gsDirOverLoad}/*.minisig
+    rm -fv /opt/etc/dnscrypt-proxy.toml
+    rm -fv ${gsDirBackups}/dnscrypt-proxy*
+    rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
+    rm -fv ${gsDirOverLoad}/dnscrypt*
+    rm -fv ${gsDirOverLoad}/*.md
+    rm -fv ${gsDirOverLoad}/*.minisig
 
-	nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
-	sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/ConfigOverload/vars
-	if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
-		nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
-		sed -i "${nNumLine}"s/.*/ENABLED=no/ /opt/etc/init.d/S09dnscrypt-proxy2
-	fi
-	if [ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ]; then
-		nNumLine=$(grep 'ENABLED' -n -m 1 <"${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" | cut -d ':' -f 1)
-		sed -i "${nNumLine}"s/.*/ENABLED=no/ "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl"
-	fi
+    nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
+    sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/ConfigOverload/vars
+    if [ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]; then
+        nNumLine=$(grep 'ENABLED' -n -m 1 </opt/etc/init.d/S09dnscrypt-proxy2 | cut -d ':' -f 1)
+        sed -i "${nNumLine}"s/.*/ENABLED=no/ /opt/etc/init.d/S09dnscrypt-proxy2
+    fi
+    if [ -f "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" ]; then
+        nNumLine=$(grep 'ENABLED' -n -m 1 <"${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl" | cut -d ':' -f 1)
+        sed -i "${nNumLine}"s/.*/ENABLED=no/ "${gsDirTemplates}/init/S09dnscrypt-proxy2.tmpl"
+    fi
 
-	nvram set dnscrypt2_enable=0
+    nvram set dnscrypt2_enable=0
 else
-	nvram set dnscrypt2_enable=1
+    nvram set dnscrypt2_enable=1
 fi
 
 # Commit

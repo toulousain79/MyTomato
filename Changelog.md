@@ -3,6 +3,7 @@
 ## v1.0.13 - _2021/06/21_
 
 - disable **Ext4 Metadata Checksums** for USB disk setup from documentation _(#2)_
+- remove OPKG Python2 package to avoid `opkg_install_cmd: Cannot install package python` error
 
 ## v1.0.12 - _2020/03/26_
 
