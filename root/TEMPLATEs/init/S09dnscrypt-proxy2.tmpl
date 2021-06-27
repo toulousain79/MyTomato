@@ -205,8 +205,8 @@ gfnSwitchDNS() {
                 gfnNvramUpdate 'dnsmasq'
                 NvramCommit="YES"
             fi
-            if [ "$(nvram get wan_dns)" != "$gsWan1_DNS" ]; then
-                nvram set wan_dns="$gsWan1_DNS"
+            if [ "$(nvram get wan_dns)" != "${gsWan1_DNS}" ]; then
+                nvram set wan_dns="${gsWan1_DNS}"
                 NvramCommit="YES"
             fi
             # Commit ?

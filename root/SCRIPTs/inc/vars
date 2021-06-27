@@ -42,7 +42,6 @@ gsUsbOptUuid=""
 ########################################
 #### Logging
 gdDateTime="$(date +%Y%m%d_%H%M)"
-gsOpkgPackagesList="$([ -d "${gsDirLogs}" ] && /opt/bin/find "${gsDirLogs}/" -type f -name "opkg*" | tail -n 1)"
 
 ########################################
 #### Services
@@ -55,22 +54,25 @@ gsOpkgPackagesList="$([ -d "${gsDirLogs}" ] && /opt/bin/find "${gsDirLogs}/" -ty
 # - Edit the blacklists file if needed
 # - Edit the blacklist-custom if needed
 # - Edit the whitelist file if needed
-gbP2Partisan_Enable=1                  # Off = 0 / On = 1
+gbP2Partisan_Enable=1                       # Off = 0 / On = 1
 # All system services ports are already added to whitelist (nvram show 2>/dev/null | grep 'port=')
-gsP2Partisan_UdpPorts=""               # Whitelist UDP ports separated by commas
-gsP2Partisan_TcpPorts=""               # Whitelist TCP ports separated by commas
+gsP2Partisan_UdpPorts=""                    # Whitelist UDP ports separated by commas
+gsP2Partisan_TcpPorts=""                    # Whitelist TCP ports separated by commas
 
 # DNScrypt-proxy
-gbDNScrypt_Enable=1                    # Off = 0 / On = 1
-gsWan1_DNS="84.200.69.80 84.200.70.40" # Quad 9 DNS; Add 1 or 2 IP address comma seperated.
-gsExternalDns=""                       # External DNS server like PiHole instead of local DNScrypt
+gbDNScrypt_Enable=1                         # Off = 0 / On = 1
+gsWan1_DNS="84.200.69.80 84.200.70.40"      # Quad 9 DNS; Add 1 or 2 IP address comma seperated.
+gsExternalDns=""                            # External DNS server like PiHole instead of local DNScrypt
 
 # Upgrade MyTomato from GitHub repository
-gbRepoUpgrade_Enable=1 # Off = 0 / On = 1
+gbRepoUpgrade_Enable=1                      # Off = 0 / On = 1
 
 #### Export
 export binCurl gsDirArmExtras gsUrlArmExtras gsLocales gsTimezone
 export gsScriptName gsDirRoot gsDirScripts gsDirOpenVpn gsDirBackups gsDirLogs gsDirTemplates gsDirOverLoad gsDirDnscrypt gsDirDnscryptGen
 export gsUsbFileSystem gsUsbOptUuid gsWan1_DNS gsExternalDns gsP2Partisan_UdpPorts gsP2Partisan_TcpPorts
-export gdDateTime gsOpkgPackagesList
+export gdDateTime
 export gbP2Partisan_Enable gbDNScrypt_Enable gbRepoUpgrade_Enable gbSyslog_Enable
+
+# shellcheck disable=SC1091
+[ -f "${gsDirOverLoad}"/vars ] && . "${gsDirOverLoad}"/vars

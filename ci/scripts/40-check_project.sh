@@ -7,10 +7,10 @@
 #   SINON KO
 
 if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
-    # shellcheck source=ci/scripts/00-load_vars.sh
+    # shellcheck source=/dev/null
     . "/builds/${CI_PROJECT_PATH}/ci/scripts/00-libs.sh"
 else
-    nReturn=${nReturn}
+    nReturn=$((nReturn + 1))
 fi
 
 gfnCopyProject

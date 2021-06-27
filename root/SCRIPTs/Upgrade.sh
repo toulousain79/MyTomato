@@ -14,16 +14,17 @@
 opkg update
 opkg upgrade
 
+logger -p user.notice "| ${gsScriptName} | EntWare generate pakages installed list"
+gsOpkgPackagesList="${gsDirLogs}/opkg_list-installed_${gdDateTime}.txt"
+opkg list-installed | awk '{ print $1 }' >"${gsOpkgPackagesList}"
+
 if [ -f "${gsOpkgPackagesList}" ]; then
     while read -r line; do
         sPackage="$(echo "${line}" | awk '{ print $1 }')"
         (! opkg list-installed | grep -q "${sPackage}") && opkg install "${sPackage}" \
             logger -p user.notice "| ${gsScriptName} | EntWare install package '${sPackage}'"
-    done <"$gsOpkgPackagesList"
+    done <"${gsOpkgPackagesList}"
 fi
-
-logger -p user.notice "| ${gsScriptName} | EntWare generate pakages installed list"
-opkg list-installed | awk '{ print $1 }' >"${gsDirLogs}/opkg_list-installed_${gdDateTime}.txt"
 
 #### MyTomato repo
 if [ "${gbRepoUpgrade_Enable:?}" -eq 1 ]; then
@@ -31,6 +32,7 @@ if [ "${gbRepoUpgrade_Enable:?}" -eq 1 ]; then
     logger -p user.notice "| ${gsScriptName} | Update /opt/MyTomato via GitHub"
     git fetch origin
     git reset --hard origin/master
+    git config pull.rebase false
     git pull origin master
 fi
 
