@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.0.14 - _2021/06/27_
+
+- fix `.gitignore`
+- Shellcheck fix
+- code format
+- force scripts permissions
+- remove unused empty log files
+- fix `Upgrade.sh` about OPKG packages listing
+- `p2partisan.sh`
+  - nslookup DNS
+  - Shellcheck review
+  - `deaggregate.sh` review
+  - clean
+- force source of overloaded vars
+- force Quad9 DNS for internal scripts
+- fix shebang
+
 ## v1.0.13 - _2021/06/21_
 
 - disable **Ext4 Metadata Checksums** for USB disk setup from documentation _(#2)_

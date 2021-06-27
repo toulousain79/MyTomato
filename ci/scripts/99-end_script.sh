@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ -z "$gbLoaded" ] || [ "$gbLoaded" -eq 0 ]; then
+if [ -z "${gbLoaded}" ] || [ "${gbLoaded}" -eq 0 ]; then
     # shellcheck source=ci/scripts/00-libs.sh
     . "/builds/${CI_PROJECT_PATH}/ci/scripts/00-libs.sh"
 fi
 
-if [ -n "$nReturn" ]; then
+if [ -n "${nReturn}" ]; then
     if [[ -f /.dockerenv ]]; then
-        exit "$nReturn"
+        exit "${nReturn}"
     else
-        return "$nReturn"
+        return "${nReturn}"
     fi
 fi

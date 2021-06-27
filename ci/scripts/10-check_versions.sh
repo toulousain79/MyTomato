@@ -1,6 +1,4 @@
-#!/bin/bash
-
-nReturn=${nReturn}
+#!/usr/bin/env bash
 
 echo && echo -e "${CBLUE}*** Current branch ***${CEND}"
 if [ -n "${CI_COMMIT_REF_NAME}" ]; then
