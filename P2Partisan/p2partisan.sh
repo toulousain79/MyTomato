@@ -111,25 +111,11 @@ whiteports_tcp=$(echo "${whiteports_tcp},${gsP2Partisan_TcpPorts}" | tr "," "\n"
 
 ipsetversion=$(ipset -V | grep ipset | awk '{print $2}' | cut -c2) #4=old 6=new
 if [[ ${ipsetversion} -ne 6 ]]; then
-    echo -e "\033[1;31mipset not compatible with this P2Partisan release.
+    echo -e "${CRED}ipset not compatible with this P2Partisan release.
 ipset available: ${ipsetversion}
-ipset supported: 6.x\033[0;40m"
+ipset supported: 6.x${CBBLACK}"
     exit
 fi
-
-# Wait until Internet is available
-max=5
-while :; do
-    if [[ ${count} -ge ${max} ]]; then
-        echo -e "\033[1;31 $testip is not responding, exiting...\033[0;40m"
-        exit
-    fi
-    if (ping -c 3 $testip >/dev/null 2>&1); then
-        break
-    fi
-    sleep 5
-    count=$((count + 1))
-done
 
 pidfile="/var/run/p2partisan.pid"
 logfile=$(nvram get log_file_path) || logfile=$(/var/log/messages)
@@ -154,10 +140,10 @@ vpnif=$(route | grep -E '^default.*.tun..$|^default.*.ppp.$' | awk '{print $8}')
 # DHCP hardcoded patch
 p1=$(echo "${whiteports_udp}" | grep -Eo '^67[,|:]|[,|:]67[,|:]|,67$' | wc -l)
 p2=$(echo "${whiteports_udp}" | grep -Eo '^68[,|:]|[,|:]68[,|:]|,68$' | wc -l)
-if [[ $p1 -eq 0 ]]; then
+if [[ ${p1} -eq 0 ]]; then
     whiteports_udp="${whiteports_udp},67"
 fi
-if [[ $p2 -eq 0 ]]; then
+if [[ ${p2} -eq 0 ]]; then
     whiteports_udp="${whiteports_udp},68"
 fi
 
@@ -165,10 +151,10 @@ fi
     {
         # Encrypt command: cat /tmp/deaggregate.sh | gzip | openssl enc -base64
         b64="openssl enc -base64 -d"
-        [[ "$(echo WQ== | $b64)" != "Y" ]] && b64="b64"
+        [[ "$(echo WQ== | ${b64})" != "Y" ]] && b64="b64"
 
         {
-            cat <<'ENDF' | $b64 | gunzip >/tmp/deaggregate.sh
+            cat <<'ENDF' | ${b64} | gunzip >/tmp/deaggregate.sh
 H4sIAAAAAAAAA+1VXW/bNhR916+4ob1GqiXLUpamTaoAXbINAbomWArswU0HRaJt
 IjKlknTsNdF/372i5q+kWzAM3UvlB4vkuffcj3Opzk54LWSoJ04H9IQXRTbh2Q3k
 QqfXBU8uT+JB9MK/PIkGryLH6eADZzIrZjnXmxa6nKmMJ6osTXh58uvZxXsdCpmF
@@ -196,9 +182,25 @@ ENDF
         chmod 777 /tmp/deaggregate.sh
     }
 
+# Wait until Internet is available
+function connection_check() {
+    max=5
+    while :; do
+        if [[ ${count} -ge ${max} ]]; then
+            echo -e "${CRED}Can not resolve ${testip} with DNS ${sDNS}, exiting...${CBBLACK}"
+            exit
+        fi
+        if (nslookup ${testip} "${sDNS}" >/dev/null 2>&1); then
+            break
+        fi
+        sleep 5
+        count=$((count + 1))
+    done
+}
+
 function psoftstop() {
     [ -f /tmp/p2partisan.loading ] && echo "P2Partisan is still loading. Can't stop right now Exiting..." && exit
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                   _______ __
 |                  |     __|  |_.-----.-----.
@@ -214,14 +216,14 @@ function psoftstop() {
     [ -f iptables-add ] && rm -f "iptables-add" 2>/dev/null
     [ -f iptables-del ] && rm -f "iptables-del" 2>/dev/null
     ptutorunset
-    echo -e "+---------------------------------------------------------------+ \033[0;39m"
+    echo -e "+---------------------------------------------------------------+ ${CDEFAULT}"
 }
 
 function pforcestop() {
     if [ -n "$1" ]; then
         if [ "$1" != fix ]; then
             name=$1
-            echo -e "\033[0;40m
+            echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |  _____   __         __                         __         __
 | |     |_|__|.-----.|  |_ ______.--.--.-----.--|  |.---.-.|  |_.-----.
@@ -230,25 +232,25 @@ function pforcestop() {
 |                                     |__|
 |
 +---------------------------------------------------------------+
-|			background updating list: \033[1;35m$1\033[0;40m
-+---------------------------------------------------------------+\033[0;39m"
+|			background updating list: ${CBOLDPURPLE}$1${CBBLACK}
++---------------------------------------------------------------+${CDEFAULT}"
 
             grep -Ev "^$" ./blacklists | tr -d "\r" | grep -E "^#( .*|)${name} http*." >/dev/null 2>&1 && {
-                echo -e "\033[0;40m| Warning: \033[1;33mthe list reference exists but is currently disabled in the blacklists\033[0;40m
-+---------------------------------------------------------------+\033[0;39m"
+                echo -e "${CBBLACK}| Warning: ${CYELLOW}the list reference exists but is currently disabled in the blacklists${CBBLACK}
++---------------------------------------------------------------+${CDEFAULT}"
                 exit
             } 2>/dev/null
             {
                 grep -Ev "^#|^$" ./blacklists | tr -d "\r" | grep "${name}" >/dev/null 2>&1 || {
-                    echo -e "\033[0;40m| Error: \033[1;31mit appears like the list ${name} is not a valid reference.\033[0;40m Typo?
-+---------------------------------------------------------------+\033[0;39m"
+                    echo -e "${CBBLACK}| Error: ${CRED}it appears like the list ${name} is not a valid reference.${CBBLACK} Typo?
++---------------------------------------------------------------+${CDEFAULT}"
                     exit
                 } 2>/dev/null
             }
 
             url=$(grep -Ev "^#|^$" ./blacklists | tr -d "\r" | grep "${name}" | awk '{print $2}')
 
-            if [ -n "$url" ]; then
+            if [ -n "${url}" ]; then
                 ps | grep -E ".*deaggregate.sh ${name}" | grep -v grep | cut -c1-6 | while read -r line; do kill "${line}" >/dev/null; done
                 rm "/tmp/p2partisan.${name}.LOAD" 2>/dev/null
                 if [ "$(ipset --swap "${name}.bro" "${name}.bro" 2>&1 | grep 'does not exist')" != "" ]; then
@@ -257,40 +259,40 @@ function pforcestop() {
 
                 statusaaa=$(ipset -T "${name}".bro ${sDNS} 2>/dev/null && echo "1" || echo "0")
                 statusaa=$(ipset -L "${name}" 2>/dev/null | head -8 | tail -1 | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).*" >/dev/null && echo "1" || echo "0")
-                if [[ $statusaa -eq 0 ]]; then
-                    if [[ $statusaaa -eq 1 ]]; then
+                if [[ ${statusaa} -eq 0 ]]; then
+                    if [[ ${statusaaa} -eq 1 ]]; then
                         {
                             ipset swap "${name}" "${name}".bro
                             ipset -F "${name}".bro
                             ipset -X "${name}".bro
                             ipset -N "${name}".bro hash:net hashsize 1024 --resize 5 maxelem 4096000
-                            deaggregate "${name}".bro "$url" 1 "" "${name}" $maxconcurrentlistload ${P2Partisandir} &
+                            deaggregate "${name}".bro "${url}" 1 "" "${name}" ${maxconcurrentlistload} ${P2Partisandir} &
                         } 2>/dev/null
-                    elif [[ $statusaaa -eq 0 ]]; then
+                    elif [[ ${statusaaa} -eq 0 ]]; then
                         {
                             ipset -F "${name}"
                             ipset -N "${name}" hash:net hashsize 1024 --resize 5 maxelem 4096000
-                            deaggregate "${name}" "$url" 1 "" "" $maxconcurrentlistload ${P2Partisandir} &
+                            deaggregate "${name}" "${url}" 1 "" "" ${maxconcurrentlistload} ${P2Partisandir} &
                         } 2>/dev/null
                     fi
-                elif [[ $statusaa -eq 1 ]]; then
+                elif [[ ${statusaa} -eq 1 ]]; then
                     {
                         ipset -F "${name}".bro
                         ipset -X "${name}".bro
                         ipset -N "${name}".bro hash:net hashsize 1024 --resize 5 maxelem 4096000
-                        deaggregate "${name}".bro "$url" 1 "" "${name}" $maxconcurrentlistload ${P2Partisandir} &
+                        deaggregate "${name}".bro "${url}" 1 "" "${name}" ${maxconcurrentlistload} ${P2Partisandir} &
                     } 2>/dev/null
                 fi
             else
-                echo -e "|					\033[1;31mError: list not found\033[0;40m
-+---------------------------------------------------------------+\033[0;39m"
+                echo -e "|					${CRED}Error: list not found${CBBLACK}
++---------------------------------------------------------------+${CDEFAULT}"
             fi
             exit
         elif [ "$1" == "fix" ]; then
             rm ./cidr/*.cidr 2>/dev/null
         fi
     fi
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                   _______ __
 |                  |     __|  |_.-----.-----.
@@ -303,20 +305,20 @@ function pforcestop() {
         counter=0
         killall "deaggregate.sh" >/dev/null
         while iptables -L wanin | grep P2PARTISAN-IN; do
-            iptables -D wanin -i "$wanif" -m state --state NEW -j P2PARTISAN-IN
+            iptables -D wanin -i "${wanif}" -m state --state NEW -j P2PARTISAN-IN
         done
         while iptables -L wanout | grep P2PARTISAN-OUT; do
-            iptables -D wanout -o "$wanif" -m state --state NEW -j P2PARTISAN-OUT
+            iptables -D wanout -o "${wanif}" -m state --state NEW -j P2PARTISAN-OUT
         done
         while iptables -L INPUT | grep P2PARTISAN-IN; do
-            iptables -D INPUT -i "$wanif" -m state --state NEW -j P2PARTISAN-IN
+            iptables -D INPUT -i "${wanif}" -m state --state NEW -j P2PARTISAN-IN
         done
         while iptables -L OUTPUT | grep P2PARTISAN-OUT; do
-            iptables -D OUTPUT -o "$wanif" -m state --state NEW -j P2PARTISAN-OUT
+            iptables -D OUTPUT -o "${wanif}" -m state --state NEW -j P2PARTISAN-OUT
         done
-        iptables -D INPUT -o "$vpnif" -m state --state NEW -j P2PARTISAN-IN
-        iptables -D OUTPUT -i "$vpnif" -m state --state NEW -j P2PARTISAN-IN
-        iptables -D FORWARD -o "$vpnif" -m state --state NEW -j P2PARTISAN-IN
+        iptables -D INPUT -o "${vpnif}" -m state --state NEW -j P2PARTISAN-IN
+        iptables -D OUTPUT -i "${vpnif}" -m state --state NEW -j P2PARTISAN-IN
+        iptables -D FORWARD -o "${vpnif}" -m state --state NEW -j P2PARTISAN-IN
         iptables -F P2PARTISAN-DROP-IN
         iptables -F P2PARTISAN-DROP-OUT
         iptables -F P2PARTISAN-LISTS-IN
@@ -354,7 +356,7 @@ function pforcestop() {
                     counter=$(expr ${counter} + 1)
                     counter=$(printf "%02d" "${counter}")
                     name=$(echo "${line}" | awk '{print $1}')
-                    echo -e "| Removing Blacklist_${counter} --> \033[1;37m***${name}***\033[0;40m"
+                    echo -e "| Removing Blacklist_${counter} --> ${CBOLDWHITE}***${name}***${CBBLACK}"
                     [ -f ./"${name}".gz ] && rm -f ./"${name}".gz
                 done
             )
@@ -362,13 +364,13 @@ function pforcestop() {
     } >/dev/null 2>&1
     ptutorunset
     plog "P2Partisan stopped"
-    echo -e "+---------------------------------------------------------------+\033[0;39m"
+    echo -e "+---------------------------------------------------------------+${CDEFAULT}"
 }
 
 function pstatus() {
     if [ -n "$1" ]; then
         name=$1
-        echo -e "\033[0;40m
+        echo -e "${CBBLACK}
 
 +------------------------- P2Partisan --------------------------+
 |  _____   __         __          _______ __          __
@@ -377,17 +379,17 @@ function pstatus() {
 | |_______|__||_____||____|      |_______|____|___._||____|_____|_____|
 |
 +---------------------------------------------------------------+
-|					list name: \033[1;33m$1\033[0;40m
+|					list name: ${CYELLOW}$1${CBBLACK}
 +---------------------------------------------------------------+"
 
         grep -Ev "^$" ./blacklists | tr -d "\r" | grep -E "^#( .*|)${name} http*." >/dev/null 2>&1 && {
-            echo -e "| Warning: \033[1;33mthe list reference exists but is currently disabled in the blacklists\033[0;40m
+            echo -e "| Warning: ${CYELLOW}the list reference exists but is currently disabled in the blacklists${CBBLACK}
 +---------------------------------------------------------------+"
             exit
         } 2>/dev/null
         {
             grep -Ev "^#|^$" ./blacklists | tr -d "\r" | grep -o "${name} " >/dev/null 2>&1 || {
-                echo -e "| Error: \033[1;31mit appears like the list ${name} is not a valid reference.\033[0;40m Typo?
+                echo -e "| Error: ${CRED}it appears like the list ${name} is not a valid reference.${CBBLACK} Typo?
 +---------------------------------------------------------------+"
                 exit
             } 2>/dev/null
@@ -403,63 +405,62 @@ function pstatus() {
         sizeb=$(ipset -L "${name}" 2>/dev/null | head -5 | tail -1 | awk '{print $4}' || echo 0)
         sizebb=$(ipset -L "${name}".bro 2>/dev/null | head -5 | tail -1 | awk '{print $4}' || echo 0)
         sizem=$((sizeb / 1024))
-        sizemm=$((sizebb / 1024))
         age=$([ -e ./cidr/"${name}".cidr ] && echo $(($(date +%s) - $(date -r ./cidr/"${name}".cidr +%s))) || echo 0)
-        if [[ $statusaaa -eq 0 ]]; then
-            if [[ $statusaa -eq 1 ]]; then
-                if [[ $statusa -gt 2 ]]; then
-                    a="\033[1;33mPartially loaded\033[0;40m"
-                elif [[ $statusa -le 2 ]]; then
-                    a="\033[1;35mLoading\033[0;40m"
+        if [[ ${statusaaa} -eq 0 ]]; then
+            if [[ ${statusaa} -eq 1 ]]; then
+                if [[ ${statusa} -gt 2 ]]; then
+                    a="${CYELLOW}Partially loaded${CBBLACK}"
+                elif [[ ${statusa} -le 2 ]]; then
+                    a="${CBOLDPURPLE}Loading${CBBLACK}"
                 fi
             else
-                if [[ $statusap -eq 1 ]]; then
-                    a="\033[1;36mQueued\033[0;40m"
+                if [[ ${statusap} -eq 1 ]]; then
+                    a="${CBOLDCYAN}Queued${CBBLACK}"
                 else
-                    a="\033[1;31mEmpty\033[0;40m"
+                    a="${CRED}Empty${CBBLACK}"
                 fi
             fi
-        elif [[ $statusaaa -eq 1 ]]; then
-            a="\033[1;32mFully loaded\033[0;40m"
+        elif [[ ${statusaaa} -eq 1 ]]; then
+            a="${CGREEN}Fully loaded${CBBLACK}"
         fi
 
-        if [[ $statusbbb -eq 0 ]]; then
-            if [[ $statusbb -eq 1 ]]; then
-                if [[ $statusb -gt 2 ]]; then
-                    b="\033[1;37mPartially loaded\033[0;40m"
-                elif [[ $statusb -le 2 ]]; then
-                    b="\033[1;35mLoading\033[0;40m"
+        if [[ ${statusbbb} -eq 0 ]]; then
+            if [[ ${statusbb} -eq 1 ]]; then
+                if [[ ${statusb} -gt 2 ]]; then
+                    b="${CBOLDWHITE}Partially loaded${CBBLACK}"
+                elif [[ ${statusb} -le 2 ]]; then
+                    b="${CBOLDPURPLE}Loading${CBBLACK}"
                 fi
             else
-                if [[ $statusbp -eq 1 ]]; then
-                    b="\033[1;36mQueued\033[0;40m"
+                if [[ ${statusbp} -eq 1 ]]; then
+                    b="${CBOLDCYAN}Queued${CBBLACK}"
                 else
-                    b="\033[1;37mEmpty\033[0;40m"
+                    b="${CBOLDWHITE}Empty${CBBLACK}"
                 fi
             fi
-        elif [[ $statusbbb -eq 1 ]]; then
-            b="\033[1;37mFully loaded\033[0;40m"
+        elif [[ ${statusbbb} -eq 1 ]]; then
+            b="${CBOLDWHITE}Fully loaded${CBBLACK}"
         fi
 
         if [ -f ./cidr/"${name}".cidr ]; then
-            cat ./cidr/"${name}".cidr 2>/dev/null | cut -d" " -f3 | grep -E "^${sDNS}$" >/dev/null && c="\033[1;37mFully loaded\033[0;40m" || c="\033[1;37mPartially loaded\033[0;40m"
+            cat ./cidr/"${name}".cidr 2>/dev/null | cut -d" " -f3 | grep -E "^${sDNS}$" >/dev/null && c="${CBOLDWHITE}Fully loaded${CBBLACK}" || c="${CBOLDWHITE}Partially loaded${CBBLACK}"
         else
-            c="\033[1;37mEmpty\033[0;40m"
+            c="${CBOLDWHITE}Empty${CBBLACK}"
         fi
 
         d=$((age / 86400))
         h=$(((age / 3600) % 24))
         m=$(((age / 60) % 60))
         s=$((age % 60))
-        age=$(printf "$d - %02d:%02d:%02d\n" $h $m $s)
+        age=$(printf "${d} - %02d:%02d:%02d\n" ${h} ${m} ${s})
         ipta=$(grep -c "${name}" ./iptables-add)
         iptb=$(iptables -L | grep -c "${name}")
         if [ "$((ipta + iptb))" -eq 4 ]; then
-            d="\033[1;32mFully loaded\033[0;40m"
+            d="${CGREEN}Fully loaded${CBBLACK}"
         elif [ "$((ipta + iptb))" -eq 0 ]; then
-            d="\033[1;37mEmpty\033[0;40m"
+            d="${CBOLDWHITE}Empty${CBBLACK}"
         else
-            "\033[1;33mPartially loaded\033[0;40m"
+            "${CYELLOW}Partially loaded${CBBLACK}"
         fi
         echo -e "| Primary lists and iptables are used for filtering, they are both
 | expected to be Fully Loaded while P2Partisan operates.
@@ -469,23 +470,23 @@ function pstatus() {
 |		   Name: ${name}
 |			URL: $(grep -Ev "^#|^$" ./blacklists | tr -d "\r" | grep "${name}" | awk '{print $2}')
 +---------------------------------------------------------------+
-|  ipset primary: $a
+|  ipset primary: ${a}
 |		  items: $(ipset -L "${name}" 2>/dev/null | tail -n +8 | wc -l || echo 0)
-|	size in RAM: $sizem KB
+|	size in RAM: ${sizem} KB
 +---------------------------------------------------------------+
-| ipset seconday: $b
+| ipset seconday: ${b}
 |		  items: $(ipset -L "${name}".bro 2>/dev/null | tail -n +8 | wc -l || echo 0)
-|	size in RAM: $sizemm KB
+|	size in RAM: ${sizem}m KB
 +---------------------------------------------------------------+
-|	  cidr file: $c
+|	  cidr file: ${c}
 |		  items: $(cat ./cidr/"${name}".cidr 2>/dev/null | tail -n +2 | wc -l || echo 0)
 |   size on disk: $(ls -lh ./cidr/"${name}".cidr 2>/dev/null | awk '{print $5}' || echo 0)
-|   Last updated: $(date -r ./cidr/"${name}".cidr '+%H:%M:%S %d/%b/%y' 2>/dev/null) | \033[1;37m$age\033[0;40m ago
+|   Last updated: $(date -r ./cidr/"${name}".cidr '+%H:%M:%S %d/%b/%y' 2>/dev/null) | ${CBOLDWHITE}${age}${CBBLACK} ago
 +---------------------------------------------------------------+
-|	   iptables: $d
+|	   iptables: ${d}
 $(grep "${name}" ./iptables-add)
 $(iptables -L | grep "${name}")
-+---------------------------------------------------------------+\033[0;39m
++---------------------------------------------------------------+${CDEFAULT}
 "
 
         exit
@@ -494,11 +495,11 @@ $(iptables -L | grep "${name}")
     counter=0
     running3=$(iptables -L | grep -v Chain | grep -c 'P2PARTISAN-IN\|P2PARTISAN-OUT' 2>/dev/null)
     running4=$([ -f ${pidfile} ] && echo 1 || echo 0)
-    running7=$(tail -200 "$logfile" | grep Dropped | tail -1 | awk '{printf "| %s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
-    running7a=$(tail -200 "$logfile" | grep Rejected | tail -1 | awk '{printf "| %s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
-    running9=$(nvram get script_fire | grep "P2Partisan-tutor" >/dev/null && echo "\033[1;32mYes\033[0;40m" || echo "\033[1;31mNo\033[0;40m")
+    running7=$(tail -200 "${logfile}" | grep Dropped | tail -1 | awk '{printf "| %s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
+    running7a=$(tail -200 "${logfile}" | grep Rejected | tail -1 | awk '{printf "| %s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
+    running9=$(nvram get script_fire | grep "P2Partisan-tutor" >/dev/null && echo "${CGREEN}Yes${CBBLACK}" || echo "${CRED}No${CBBLACK}")
     logwin=$((now - 86400))
-    tail -1500 "$logfile" | grep -i "P2Partisan tutor had" >/tmp/tutor.tmp
+    tail -1500 "${logfile}" | grep -i "P2Partisan tutor had" >/tmp/tutor.tmp
     [ -f /tmp/tutor.temp ] && {
         while read -r line; do
             logtime=$(echo "${line}" | awk '{print $3}')
@@ -512,7 +513,7 @@ $(iptables -L | grep "${name}")
     [ -f /tmp/tutor.temp ] && rm /tmp/tutor.temp || runningB=0
     runningD=$([ -f ./runtime ] && cat ./runtime)
     runningF=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
-    from=$([ -f ./iptables-add ] && head -1 ./iptables-add 2>/dev/null | awk '{print $2}' || echo "$now")
+    from=$([ -f ./iptables-add ] && head -1 ./iptables-add 2>/dev/null | awk '{print $2}' || echo "${now}")
     runtime=$((now - from))
     d=$((runtime / 86400))
     d=$(printf "%02d" "${d}")
@@ -531,31 +532,31 @@ $(iptables -L | grep "${name}")
         h=$(((druntime / 3600) % 24))
         m=$(((druntime / 60) % 60))
         s=$((druntime % 60))
-        druntime=$(printf "%02d:%02d:%02d\n" $h $m $s)
+        druntime=$(printf "%02d:%02d:%02d\n" ${h} ${m} ${s})
         dendtime=$([ -f ./iptables-debug-del ] && head -2 ./iptables-debug-del | tail -n 1 | awk '{print $2}')
         ttime=$((dendtime / 60))
         ttime=$((dfrom + dendtime))
         leftime=$((ttime - now))
         m=$(((leftime / 60) % 60))
         s=$((leftime % 60))
-        leftime=$(printf "%02d:%02d:%02d\n" $h $m $s)
+        leftime=$(printf "%02d:%02d:%02d\n" ${h} ${m} ${s})
         zzztime=$((dendtime / 60))
     fi
 
-    if [[ $running3 -eq 0 ]] && [[ $running4 -eq 0 ]]; then
-        running8="\033[1;31mNo\033[0;40m"
-    elif [[ $running3 -eq 0 ]] && [[ $running4 -eq 1 ]]; then
-        running8="\033[1;35mLoading...\033[0;40m"
-    elif [[ $running3 -lt 4 ]] && [[ $running4 -eq 0 ]]; then
-        running8="\033[1;31mNot quite... try to run \"p2partisan.sh update\"\033[0;40m"
-    elif [[ $running3 -eq 4 ]] && [[ $running4 -eq 1 ]]; then
-        running8="\033[1;32mYes\033[0;40m"
+    if [[ ${running3} -eq 0 ]] && [[ ${running4} -eq 0 ]]; then
+        running8="${CRED}No${CBBLACK}"
+    elif [[ ${running3} -eq 0 ]] && [[ ${running4} -eq 1 ]]; then
+        running8="${CBOLDPURPLE}Loading...${CBBLACK}"
+    elif [[ ${running3} -lt 4 ]] && [[ ${running4} -eq 0 ]]; then
+        running8="${CRED}Not quite... try to run \"p2partisan.sh update\"${CBBLACK}"
+    elif [[ ${running3} -eq 4 ]] && [[ ${running4} -eq 1 ]]; then
+        running8="${CGREEN}Yes${CBBLACK}"
     fi
 
-    if [[ $runningF -eq 1 ]]; then
-        runningF="\033[1;35mOn\033[0;40m IP \033[1;33m$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG | awk '{print $5}') \033[1;33m$f\033[0;40mrunning for \033[1;33m$druntime\033[0;40m /\033[1;33m$zzztime\033[0;40m min (\033[1;33m$leftime\033[0;40m left)"
-    elif [[ $runningF -gt 1 ]]; then
-        runningF="\033[1;35mOn - reverse \033[0;40m(entire LAN except port \033[1;33m$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG | head -1 | awk '{print $7}' | cut -f2 -d!)) \033[1;33m$f\033[0;40mrunning for \033[1;33m$druntime\033[0;40m /\033[1;33m$zzztime\033[0;40m min (\033[1;33m$leftime\033[0;40m left)"
+    if [[ ${runningF} -eq 1 ]]; then
+        runningF="${CBOLDPURPLE}On${CBBLACK} IP ${CYELLOW}$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG | awk '{print $5}') ${CYELLOW}${f}${CBBLACK}running for ${CYELLOW}${druntime}${CBBLACK} /${CYELLOW}${zzztime}${CBBLACK} min (${CYELLOW}${leftime}${CBBLACK} left)"
+    elif [[ ${runningF} -gt 1 ]]; then
+        runningF="${CBOLDPURPLE}On - reverse ${CBBLACK}(entire LAN except port ${CYELLOW}$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG | head -1 | awk '{print $7}' | cut -f2 -d!)) ${CYELLOW}${f}${CBBLACK}running for ${CYELLOW}${druntime}${CBBLACK} /${CYELLOW}${zzztime}${CBBLACK} min (${CYELLOW}${leftime}${CBBLACK} left)"
     else
         runningF="Off"
     fi
@@ -563,10 +564,10 @@ $(iptables -L | grep "${name}")
     whiteip=$(ipset -L whitelist 2>/dev/null | grep -c -E "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])")
     whiteextra=$(ipset -L whitelist 2>/dev/null | grep -c -E '(^10\.|(^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[0-1]\.)|^192\.168\.)')
 
-    if [[ $whiteextra == "0" ]]; then
+    if [[ ${whiteextra} == "0" ]]; then
         whiteextra=" "
     else
-        whiteextra="/ $whiteextra LAN IP ref defined"
+        whiteextra="/ ${whiteextra} LAN IP ref defined"
     fi
     blackip=$(ipset -L blacklist-custom 2>/dev/null | grep -c -E "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])")
     greyip=$(ipset -L greylist 2>/dev/null | grep -c -E "(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])")
@@ -578,38 +579,38 @@ $(iptables -L | grep "${name}")
 |           |__     |   _|  _  ||   _|  |  |__ --|
 |           |_______|____|___._||____|_____|_____|
 |
-|    Release version:  \033[1;40m$version\033[0;40m
+|    Release version:  \033[1;40m${version}${CBBLACK}
 +---------------------------------------------------------------+
-|            Running:  $running8
-|              Tutor:  $running9 / \033[1;37m$runningB\033[0;40m problems in the last 24h
-|           Debugger:  $runningF
-|    Partisan uptime:  \033[1;37m$runtime\033[0;40m
-|       Startup time:  \033[1;37m$runningD\033[0;40m seconds
-|         Dropped in:  \033[1;37m$drop_packet_count_in\033[0;40m
-|       Rejected out:  \033[1;37m$drop_packet_count_out\033[0;40m
+|            Running:  ${running8}
+|              Tutor:  ${running9} / ${CBOLDWHITE}${runningB}${CBBLACK} problems in the last 24h
+|           Debugger:  ${runningF}
+|    Partisan uptime:  ${CBOLDWHITE}${runtime}${CBBLACK}
+|       Startup time:  ${CBOLDWHITE}${runningD}${CBBLACK} seconds
+|         Dropped in:  ${CBOLDWHITE}${drop_packet_count_in}${CBBLACK}
+|       Rejected out:  ${CBOLDWHITE}${drop_packet_count_out}${CBBLACK}
 +---------------------------------------------------------------+"
-    echo -e "|          Black IPs:  \033[1;37m$blackip\033[0;40m"
-    echo -e "|           Grey IPs:  \033[1;37m$greyip\033[0;40m"
-    echo -e "|          White IPs:  \033[1;37m$whiteip $whiteextra\033[0;40m"
+    echo -e "|          Black IPs:  ${CBOLDWHITE}${blackip}${CBBLACK}"
+    echo -e "|           Grey IPs:  ${CBOLDWHITE}${greyip}${CBBLACK}"
+    echo -e "|          White IPs:  ${CBOLDWHITE}${whiteip} ${whiteextra}${CBBLACK}"
     transmissionenable=$(nvram get bt_enable)
-    if [[ -z $transmissionenable ]]; then
+    if [[ -z ${transmissionenable} ]]; then
         echo "|     TransmissionBT:  Not available"
-    elif [[ $transmissionenable -eq 0 ]]; then
+    elif [[ ${transmissionenable} -eq 0 ]]; then
         echo "|     TransmissionBT:  Off"
     else
-        echo -e "|     TransmissionBT:  \033[1;32mOn\033[0;40m"
+        echo -e "|     TransmissionBT:  ${CGREEN}On${CBBLACK}"
         transmissionport=$(nvram get bt_port 2>/dev/null)
-        greyports_tcp="${greyports_tcp},$transmissionport"
-        greyports_udp="${greyports_udp},$transmissionport"
+        greyports_tcp="${greyports_tcp},${transmissionport}"
+        greyports_udp="${greyports_udp},${transmissionport}"
     fi
     echo "${greyports_tcp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-        echo -e "|     Grey ports TCP:  \033[1;37m$w\033[0;40m"
+        echo -e "|     Grey ports TCP:  ${CBOLDWHITE}${w}${CBBLACK}"
     done
     echo "${greyports_udp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-        echo -e "|     Grey ports UDP:  \033[1;37m$w\033[0;40m"
+        echo -e "|     Grey ports UDP:  ${CBOLDWHITE}${w}${CBBLACK}"
     done
     echo "${whiteports_tcp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-        echo -e "|    White ports TCP:  \033[1;37m$w\033[0;40m"
+        echo -e "|    White ports TCP:  ${CBOLDWHITE}${w}${CBBLACK}"
     done
     echo "${whiteports_udp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
         ColorOff='\\\e[0;40m'
@@ -617,13 +618,13 @@ $(iptables -L | grep "${name}")
         BWhite='\\\e[100m'
         p1=$(head -70 ./p2partisan.sh | grep -E ^whiteports_udp= | grep -Eo '[,|:|=]67[,|:]|,67$' | wc -l)
         p2=$(head -70 ./p2partisan.sh | grep -E ^whiteports_udp= | grep -Eo '[,|:|=]68[,|:]|,68$' | wc -l)
-        if [[ $p1 -eq 0 ]]; then
-            w=$(echo -e "$w" | sed -e "s/^67,/${BWhite}67${ColorOn},/g" | sed -e "s/,67,/,${BWhite}67${ColorOff}${ColorOn},/g" | sed -e "s/,67$/,${BWhite}67/g")
+        if [[ ${p1} -eq 0 ]]; then
+            w=$(echo -e "${w}" | sed -e "s/^67,/${BWhite}67${ColorOn},/g" | sed -e "s/,67,/,${BWhite}67${ColorOff}${ColorOn},/g" | sed -e "s/,67$/,${BWhite}67/g")
         fi
-        if [[ $p2 -eq 0 ]]; then
-            w=$(echo -e "$w" | sed -e "s/^68,/${BWhite}68${ColorOn},/g" | sed -e "s/,68,/,${BWhite}68${ColorOff}${ColorOn},/g" | sed -e "s/,68$/,${BWhite}68/g")
+        if [[ ${p2} -eq 0 ]]; then
+            w=$(echo -e "${w}" | sed -e "s/^68,/${BWhite}68${ColorOn},/g" | sed -e "s/,68,/,${BWhite}68${ColorOff}${ColorOn},/g" | sed -e "s/,68$/,${BWhite}68/g")
         fi
-        echo -e "|    White ports UDP:  \033[1;37m$w\033[0;40m"
+        echo -e "|    White ports UDP:  ${CBOLDWHITE}${w}${CBBLACK}"
     done
     grep -Ev "^#|^$" ./blacklists | tr -d "\r" |
         (
@@ -642,53 +643,52 @@ $(iptables -L | grep "${name}")
                 sizeb=$(ipset -L "${name}" 2>/dev/null | head -5 | tail -1 | awk '{print $4}' || echo 0)
                 sizebb=$(ipset -L "${name}".bro 2>/dev/null | head -5 | tail -1 | awk '{print $4}' || echo 0)
                 sizem=$((sizeb / 1024))
-                sizem=$(printf "%04s" $sizem)
-                sizemm=$((sizebb / 1024))
+                sizem=$(printf "%04s" ${sizem})
                 lin=$(iptables -L P2PARTISAN-LISTS-IN 2>/dev/null | grep -c "${name}")
                 lout=$(iptables -L P2PARTISAN-LISTS-OUT 2>/dev/null | grep -c "${name}")
                 ipt=$((lin + lout))
-                if [ $ipt -eq 2 ]; then
-                    i="\033[1;32mo\033[0;40m"
-                elif [ $ipt -eq 1 ]; then
-                    i="\033[1;33mp\033[0;40m"
+                if [ ${ipt} -eq 2 ]; then
+                    i="${CGREEN}o${CBBLACK}"
+                elif [ ${ipt} -eq 1 ]; then
+                    i="${CYELLOW}p${CBBLACK}"
                 else
-                    i="\033[1;31me\033[0;40m"
+                    i="${CRED}e${CBBLACK}"
                 fi
 
-                if [[ $statusaaa -eq 0 ]]; then
-                    if [[ $statusaa -eq 1 ]]; then
-                        if [[ $statusa -gt 2 ]]; then
-                            a="\033[1;33mp\033[0;40m"
-                        elif [[ $statusa -le 2 ]]; then
-                            a="\033[1;35ml\033[0;40m"
+                if [[ ${statusaaa} -eq 0 ]]; then
+                    if [[ ${statusaa} -eq 1 ]]; then
+                        if [[ ${statusa} -gt 2 ]]; then
+                            a="${CYELLOW}p${CBBLACK}"
+                        elif [[ ${statusa} -le 2 ]]; then
+                            a="${CBOLDPURPLE}l${CBBLACK}"
                         fi
                     else
-                        if [[ $statusap -eq 1 ]]; then
-                            a="\033[1;36mq\033[0;40m"
+                        if [[ ${statusap} -eq 1 ]]; then
+                            a="${CBOLDCYAN}q${CBBLACK}"
                         else
-                            a="\033[1;31me\033[0;40m"
+                            a="${CRED}e${CBBLACK}"
                         fi
                     fi
-                elif [[ $statusaaa -eq 1 ]]; then
-                    a="\033[1;32mo\033[0;40m"
+                elif [[ ${statusaaa} -eq 1 ]]; then
+                    a="${CGREEN}o${CBBLACK}"
                 fi
 
-                if [[ $statusbbb -eq 0 ]]; then
-                    if [[ $statusbb -eq 1 ]]; then
-                        if [[ $statusb -gt 2 ]]; then
-                            b="\033[1;37mp\033[0;40m"
-                        elif [[ $statusb -le 2 ]]; then
-                            b="\033[1;35ml\033[0;40m"
+                if [[ ${statusbbb} -eq 0 ]]; then
+                    if [[ ${statusbb} -eq 1 ]]; then
+                        if [[ ${statusb} -gt 2 ]]; then
+                            b="${CBOLDWHITE}p${CBBLACK}"
+                        elif [[ ${statusb} -le 2 ]]; then
+                            b="${CBOLDPURPLE}l${CBBLACK}"
                         fi
                     else
-                        if [[ $statusbp -eq 1 ]]; then
-                            b="\033[1;36mq\033[0;40m"
+                        if [[ ${statusbp} -eq 1 ]]; then
+                            b="${CBOLDCYAN}q${CBBLACK}"
                         else
-                            b="\033[1;37me\033[0;40m"
+                            b="${CBOLDWHITE}e${CBBLACK}"
                         fi
                     fi
-                elif [[ $statusbbb -eq 1 ]]; then
-                    b="\033[1;37mo\033[0;40m"
+                elif [[ ${statusbbb} -eq 1 ]]; then
+                    b="${CBOLDWHITE}o${CBBLACK}"
                 fi
 
                 if [ -f ./cidr/"${name}".cidr ]; then
@@ -696,36 +696,40 @@ $(iptables -L | grep "${name}")
                         {
                             age=$([ -e ./cidr/"${name}".cidr ] && echo $(($(date +%s) - $(date -r ./cidr/"${name}".cidr +%s))) || echo 0)
                             d=$((age / 86400))
-                            if [[ $d -eq 7 ]]; then
-                                c="\033[1;33mo\033[0;40m"
-                            elif [[ $d -ge 8 ]]; then
-                                c="\033[1;31mo\033[0;40m"
+                            if [[ ${d} -eq 7 ]]; then
+                                c="${CYELLOW}o${CBBLACK}"
+                            elif [[ ${d} -ge 8 ]]; then
+                                c="${CRED}o${CBBLACK}"
                             else
-                                c="\033[1;37mo\033[0;40m"
+                                c="${CBOLDWHITE}o${CBBLACK}"
                             fi
-                        } || c="\033[1;37mp\033[0;40m"
+                        } || c="${CBOLDWHITE}p${CBBLACK}"
                 else
-                    c="\033[1;37me\033[0;40m"
+                    c="${CBOLDWHITE}e${CBBLACK}"
                 fi
 
-                echo -e "|       Blacklist_${counter}:  [$a] [$b] [$c] [$i] - $sizem KB - \033[1;37m${name}\033[0;40m"
+                echo -e "|       Blacklist_${counter}:  [${a}] [${b}] [${c}] [$i] - ${sizem} KB - ${CBOLDWHITE}${name}${CBBLACK}"
 
                 sizeram=$((sizeram + sizeb + sizebb))
             done
             sizeram=$((sizeram / 1024))
             echo "|                       ^   ^   ^   ^"
-            echo -e "|            Maxload: \033[1;37m$maxconcurrentlistload\033[0;40m - \e[1;37;100mpri sec cid ipt\033[0;40m - [\033[1;37me\033[0;40m]mpty [\033[1;37ml\033[0;40m]oading l[\033[1;37mo\033[0;40m]aded [\033[1;37mp\033[0;40m]artial [\033[1;37mq\033[0;40m]ueued"
-            echo -e "|       Consumed RAM:  \033[1;37m$sizeram\033[0;40m KB"
+            echo -e "|                      \e[1;37;100mpri sec cid ipt${CBBLACK} - [${CBOLDWHITE}e${CBBLACK}]mpty [${CBOLDWHITE}l${CBBLACK}]oading l[${CBOLDWHITE}o${CBBLACK}]aded [${CBOLDWHITE}p${CBBLACK}]artial [${CBOLDWHITE}q${CBBLACK}]ueued"
+            echo
+            echo -e "|            Maxload:  ${CBOLDWHITE}${maxconcurrentlistload}${CBBLACK}"
+            echo -e "|       Consumed RAM:  ${CBOLDWHITE}${sizeram}${CBBLACK} KB"
         )
 
-    echo -e "+----------------------- Logs max($maxloghour/hour) ----------------------+
-$running7
-$running7a
-+---------------------------------------------------------------+\033[0;39m"
+    if [[ -n ${running7} || -n ${running7a} ]]; then
+        echo -e "+----------------------- Logs max(${maxloghour}/hour) ----------------------+"
+        [[ -n ${running7} ]] && echo -e "${running7}"
+        [[ -n ${running7a} ]] && echo -e "${running7a}"
+    fi
+    echo -e "+---------------------------------------------------------------+${CDEFAULT}"
 }
 
 function pdetective() {
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |         __         __               __   __
 |     .--|  |.-----.|  |_.-----.----.|  |_|__|.--.--.-----.
@@ -738,8 +742,8 @@ function pdetective() {
 | command multiple times to reduce the number of false positive. Once
 | identified the port/s can be added under greyports_tcp & greyports_udp.
 +---------------------------------------------------------------+"
-    cat /proc/net/ip_conntrack | awk '{for (i=1;i<=NF;i++) if ($i~/(src|dst|sport|dport)=/) printf "%s ",$i;print "\n"}' | grep -vE '^$' | sed s/\ src=/'\n'/ | awk '{print $1" "$3" "$2" "$4}' | sed s/\ dst=/'\n'/ | sed s/sport=// | sed s/dport=// | grep -E '(^10\.|(^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[0-1]\.)|^192\.168\.)' | grep -v "$(nvram get lan_ipaddr)$" | grep -v "$(nvram get lan1_ipaddr)$" | awk '/[0-9]/ {cnt[$1" "$2]++}END{for(k in cnt) print cnt[k],k}' | sort -nr | while read -r socket; do echo "$socket" | if [ "$(cut -f1 -d" ")" -gt $greyline ]; then echo "$socket" | awk '{print "| "$2" "$3" - "$1" Sessions"}'; fi; done
-    echo -e "+---------------------------------------------------------------+\033[0;39m"
+    cat /proc/net/ip_conntrack | awk '{for (i=1;i<=NF;i++) if ($i~/(src|dst|sport|dport)=/) printf "%s ",$i;print "\n"}' | grep -vE '^$' | sed s/\ src=/'\n'/ | awk '{print $1" "$3" "$2" "$4}' | sed s/\ dst=/'\n'/ | sed s/sport=// | sed s/dport=// | grep -E '(^10\.|(^172\.1[6-9]\.|^172\.2[0-9]\.|^172\.3[0-1]\.)|^192\.168\.)' | grep -v "$(nvram get lan_ipaddr)$" | grep -v "$(nvram get lan1_ipaddr)$" | awk '/[0-9]/ {cnt[$1" "$2]++}END{for(k in cnt) print cnt[k],k}' | sort -nr | while read -r socket; do echo "${socket}" | if [ "$(cut -f1 -d" ")" -gt ${greyline} ]; then echo "${socket}" | awk '{print "| "$2" "$3" - "$1" Sessions"}'; fi; done
+    echo -e "+---------------------------------------------------------------+${CDEFAULT}"
 }
 
 function ptutor() {
@@ -750,8 +754,8 @@ function ptutor() {
     running3=$(iptables -L | grep -v Chain | grep -c 'P2PARTISAN-IN\|P2PARTISAN-OUT' 2>/dev/null)
     running4=$([ -f ${pidfile} ] && echo 1 || echo 0)
     runningE=$(iptables -L wanin | grep -c P2PARTISAN-IN 2>/dev/null)
-    schfrom=$(echo $scheduleupdates | cut -d, -f1)
-    schto=$(echo $scheduleupdates | cut -d, -f2)
+    schfrom=$(echo ${scheduleupdates} | cut -d, -f1)
+    schto=$(echo ${scheduleupdates} | cut -d, -f2)
 
     grep -Ev "^#|^$" ./blacklists | tr -d "\r" |
         (
@@ -771,39 +775,39 @@ function ptutor() {
                     exit
                 }
                 age=$(($(date +%s) - $(date -r ./cidr/"${name}".cidr +%s)))
-                if [[ $age -gt "604800" ]] && [[ $h -ge $schfrom ]] && [[ $h -le $schto ]]; then
+                if [[ ${age} -gt "604800" ]] && [[ ${h} -ge ${schfrom} ]] && [[ ${h} -le $schto ]]; then
                     plog "P2Partisan is updating list ${name}"
                     pforcestop "${name}"
                     exit
                 fi
-                if [[ $age -gt "300" ]] && [[ $statusbbb -eq 1 ]]; then
+                if [[ ${age} -gt "300" ]] && [[ ${statusbbb} -eq 1 ]]; then
                     plog "P2Partisan is clearing the ${name} secondary list"
                     ipset -F "${name}".bro
                 fi
             done
         )
-    if [[ $runningE -gt 1 ]]; then
+    if [[ ${runningE} -gt 1 ]]; then
         pforcestop
         plog "P2Partisan tutor had to restart due to: iptables redundant rules found"
         pstart
-    elif [[ $running3 -eq 4 ]] && [[ $running4 -eq 0 ]]; then
+    elif [[ ${running3} -eq 4 ]] && [[ ${running4} -eq 0 ]]; then
         plog "P2Partisan tutor had to restart due to: pid file missing"
         pforcestop
         pstart
-        # elif [[ $running3 -eq 0 ]] && [[ $running4 -eq 1 ]]; then
+        # elif [[ ${running3} -eq 0 ]] && [[ ${running4} -eq 1 ]]; then
         # plog "P2Partisan tutor had to restart due to: iptables instructions missing"
         # pforcestop
         # pstart
-    elif [[ $running3 -ne 4 ]] && [[ $running4 -eq 1 ]]; then
+    elif [[ ${running3} -ne 4 ]] && [[ ${running4} -eq 1 ]]; then
         plog "P2Partisan might be loading, I'll wait 10 seconds..."
         sleep 10
-        if [[ $running3 -ne 4 ]] && [[ $running4 -eq 1 ]]; then
+        if [[ ${running3} -ne 4 ]] && [[ ${running4} -eq 1 ]]; then
             plog "P2Partisan tutor had to restart due to iptables instruction missing"
             pforcestop
             pstart
         fi
     else
-        echo -e "\033[0;40m
+        echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                _______         __
 |               |_     _|.--.--.|  |_.-----.----.
@@ -812,12 +816,12 @@ function ptutor() {
 |
 +---------------------------------------------------------------+
 | P2Partisan up and running. The tutor is happy
-+---------------------------------------------------------------+\033[0;39m"
++---------------------------------------------------------------+${CDEFAULT}"
     fi
 }
 
 function ptutorset() {
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                _______         __
 |               |_     _|.--.--.|  |_.-----.----.
@@ -827,19 +831,19 @@ function ptutorset() {
 +-------------------------- Scheduler --------------------------+"
     cru d P2Partisan-tutor
     p=$(nvram get sch_c1_cmd | grep -c "${P2Partisandir}/p2partisan.sh tutor")
-    if [[ $p -eq 0 ]]; then
+    if [[ ${p} -eq 0 ]]; then
         t=$(nvram get sch_c1_cmd)
-        t=$(printf "%s\n%s\n" "$t" "bash ${P2Partisandir}/p2partisan.sh tutor")
-        nvram set "sch_c1_cmd=$t"
+        t=$(printf "%s\n%s\n" "${t}" "bash ${P2Partisandir}/p2partisan.sh tutor")
+        nvram set "sch_c1_cmd=${t}"
     fi
 
     plog "P2Partisan tutor is ON"
-    echo -e "+---------------------------------------------------------------+\033[0;39m"
+    echo -e "+---------------------------------------------------------------+${CDEFAULT}"
     nvram commit
 }
 
 function ptutorunset() {
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                _______         __
 |               |_     _|.--.--.|  |_.-----.----.
@@ -849,19 +853,19 @@ function ptutorunset() {
 +-------------------------- Scheduler --------------------------+"
     cru d P2Partisan-tutor
     p=$(nvram get sch_c1_cmd | grep -c "${P2Partisandir}/p2partisan.sh tutor")
-    if [[ $p -eq 1 ]]; then
+    if [[ ${p} -eq 1 ]]; then
         t=$(nvram get sch_c1_cmd)
-        t=$(printf "%s\n%s\n" "$t" "bash ${P2Partisandir}/p2partisan.sh tutor" | grep -v "p2partisan.sh tutor")
-        nvram set "sch_c1_cmd=$t"
+        t=$(printf "%s\n%s\n" "${t}" "bash ${P2Partisandir}/p2partisan.sh tutor" | grep -v "p2partisan.sh tutor")
+        nvram set "sch_c1_cmd=${t}"
     fi
     plog "P2Partisan tutor is OFF"
-    echo -e "+---------------------------------------------------------------+\033[0;39m"
+    echo -e "+---------------------------------------------------------------+${CDEFAULT}"
     nvram commit
 }
 
 function ptest() {
     checklist="blacklist-custom greylist whitelist $(grep -Ev "^#|^$" ./blacklists | tr -d "\r" | awk '{print $1}')"
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                  _______               __
 |                 |_     _|.-----.-----.|  |_
@@ -875,26 +879,26 @@ function ptest() {
 +---------------------------------------------------------------+"
     else
         test=$1
-        echo "$test" | grep -E "(^[2][5][0-5].|^[2][0-4][0-9].|^[1][0-9][0-9].|^[0-9][0-9].|^[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && test=1 || test=0
-        if [[ $test -eq 1 ]]; then
-            echo "$checklist" | tr " " "\n" |
+        echo "${test}" | grep -E "(^[2][5][0-5].|^[2][0-4][0-9].|^[1][0-9][0-9].|^[0-9][0-9].|^[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && test=1 || test=0
+        if [[ ${test} -eq 1 ]]; then
+            echo "${checklist}" | tr " " "\n" |
                 (
                     while read -r LIST; do
-                        ipset -T "$LIST" "$1" >/dev/null 2>&1 && if [ "$LIST" == "whitelist" ]; then echo -e "| \033[1;32m$1 found in		$LIST\033[0;40m"; else echo -e "| \033[1;31m$1 found in		$LIST\033[0;40m"; fi || echo -e "| $1 not found in	$LIST"
+                        ipset -T "${LIST}" "$1" >/dev/null 2>&1 && if [ "${LIST}" == "whitelist" ]; then echo -e "| ${CGREEN}$1 found in		${LIST}${CBBLACK}"; else echo -e "| ${CRED}$1 found in		${LIST}${CBBLACK}"; fi || echo -e "| $1 not found in	${LIST}"
                     done
                 )
             echo -e "+---------------------------------------------------------------+
 |		in case of multiple match the first prevails
-+---------------------------------------------------------------+\033[0;39m"
-        elif [[ $test -eq 0 ]]; then
++---------------------------------------------------------------+${CDEFAULT}"
+        elif [[ ${test} -eq 0 ]]; then
             echo -e "| Invalid input. Please specify a valid IP address.
-+---------------------------------------------------------------+\033[0;39m"
++---------------------------------------------------------------+${CDEFAULT}"
         fi
     fi
 }
 
 function pdebug() {
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                _____         __
 |               |     \.-----.|  |--.--.--.-----.
@@ -926,22 +930,22 @@ function pdebug() {
         h=$(((druntime / 3600) % 24))
         m=$(((druntime / 60) % 60))
         s=$((druntime % 60))
-        druntime=$(printf "%02d:%02d:%02d\n" $h $m $s)
+        druntime=$(printf "%02d:%02d:%02d\n" ${h} ${m} ${s})
         dendtime=$(head -2 ./iptables-debug-del | tail -n 1 | awk '{print $2}')
         ttime=$((dendtime / 60))
         ttime=$((dfrom + dendtime))
         leftime=$((ttime - now))
         m=$(((leftime / 60) % 60))
         s=$((leftime % 60))
-        leftime=$(printf "%02d:%02d:%02d\n" $h $m $s)
+        leftime=$(printf "%02d:%02d:%02d\n" ${h} ${m} ${s})
         zzztime=$((dendtime / 60))
     fi
 
-    if [[ $off -eq 1 ]]; then
+    if [[ ${off} -eq 1 ]]; then
         f=$(iptables -L P2PARTISAN-DROP-IN | grep DEBUG)
         fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
-        if [[ $fc -ge 1 ]]; then
-            kill "$(ps | grep -E "sleep $dendtime$" | awk '{print $1}')" >/dev/null
+        if [[ ${fc} -ge 1 ]]; then
+            kill "$(ps | grep -E "sleep ${dendtime}$" | awk '{print $1}')" >/dev/null
             plog "All DEBUG activities have stopped"
             {
                 while iptables -L P2PARTISAN-DROP-IN | grep DEBUG; do
@@ -951,13 +955,13 @@ function pdebug() {
                     iptables -D P2PARTISAN-DROP-OUT 1
                 done
             } >/dev/null 2>&1
-            echo -e "| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show debug information, if any.
-+---------------------------------------------------------------+\033[0;39m"
+            echo -e "| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show debug information, if any.
++---------------------------------------------------------------+${CDEFAULT}"
             exit
         else
             echo -e "| Debug is currently off and not collecting any information.
-| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show existing debug information, if any.
-+---------------------------------------------------------------+\033[0;39m"
+| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show existing debug information, if any.
++---------------------------------------------------------------+${CDEFAULT}"
             exit
         fi
     fi
@@ -965,30 +969,30 @@ function pdebug() {
     if [[ -z $1 ]]; then
         f=$(iptables -L P2PARTISAN-DROP-IN | grep DEBUG | awk '{print $5}' | head -1)
         fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
-        if [[ $fc -gt 1 ]]; then
-            echo -e "| P2partisan is currently debugging IP \033[1;33m$f\033[0;40m for \033[1;33m$druntime\033[0;40m /\033[1;33m$zzztime\033[0;40m min (\033[1;33m$leftime\033[0;40m left)
-| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show debug information
-+---------------------------------------------------------------+\033[0;39m"
+        if [[ ${fc} -gt 1 ]]; then
+            echo -e "| P2partisan is currently debugging IP ${CYELLOW}${f}${CBBLACK} for ${CYELLOW}${druntime}${CBBLACK} /${CYELLOW}${zzztime}${CBBLACK} min (${CYELLOW}${leftime}${CBBLACK} left)
+| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show debug information
++---------------------------------------------------------------+${CDEFAULT}"
             exit
-        elif [[ $fc -eq 0 ]]; then
+        elif [[ ${fc} -eq 0 ]]; then
             echo -e "| Debug is currently off and not collecting any information.
-| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show existing debug information, if any.
-+---------------------------------------------------------------+\033[0;39m"
+| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show existing debug information, if any.
++---------------------------------------------------------------+${CDEFAULT}"
             exit
         fi
-    elif [[ $q -eq 1 ]]; then
-        echo -e "| The input \033[1;31m$1\033[0;40m doesn't appear to be a valid IP
-+---------------------------------------------------------------+\033[0;39m"
+    elif [[ ${q} -eq 1 ]]; then
+        echo -e "| The input ${CRED}$1${CBBLACK} doesn't appear to be a valid IP
++---------------------------------------------------------------+${CDEFAULT}"
         exit
     fi
 
     f=$(iptables -L P2PARTISAN-DROP-IN | grep DEBUG | awk '{print $5}' | head -1)
     fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
-    if [[ $fc -gt 1 ]]; then
-        echo -e "| P2partisan is currently debugging IP \033[1;33m$f\033[0;40m for \033[1;33m$druntime\033[0;40m /\033[1;33m$zzztime\033[0;40m min (\033[1;33m$leftime\033[0;40m left)
+    if [[ ${fc} -gt 1 ]]; then
+        echo -e "| P2partisan is currently debugging IP ${CYELLOW}${f}${CBBLACK} for ${CYELLOW}${druntime}${CBBLACK} /${CYELLOW}${zzztime}${CBBLACK} min (${CYELLOW}${leftime}${CBBLACK} left)
 | NOTE: Only one debug at the time is possible! Command ignored.
-| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show the debug information
-+---------------------------------------------------------------+\033[0;39m"
+| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show the debug information
++---------------------------------------------------------------+${CDEFAULT}"
         exit
     fi
 
@@ -998,21 +1002,21 @@ function pdebug() {
     elif [[ $2 -gt 120 ]] || [[ $2 -eq 0 ]]; then
         echo -e "| Please specify an acceptable time: 1 to 60 (min). If omitted 15 will be used
 | Debug NOT enabled. Exiting...
-+---------------------------------------------------------------+\033[0;39m"
++---------------------------------------------------------------+${CDEFAULT}"
         exit
     else
         minutes=$2
         time=$(($2 * 60))
     fi
-    if [[ $q -eq 2 ]]; then
+    if [[ ${q} -eq 2 ]]; then
         if [[ -z ${greyports_tcp} ]] || [[ -z ${greyports_udp} ]]; then
             echo -e "| It appears like you have no greyport set. This function due to the potential amount
 | of logging involved requires the both greyports_tcp and greyports_udp to be set
-| if unsure on what ports to use, try to run \033[1;33m./p2partisan.sh detective\033[0;40m
+| if unsure on what ports to use, try to run ${CYELLOW}./p2partisan.sh detective${CBBLACK}
 +---------------------------------------------------------------+"
             exit
         fi
-        echo "# $now
+        echo "# ${now}
 iptables -I P2PARTISAN-DROP-IN 1 -p tcp --sport ${greyports_tcp} -j DROP
 iptables -I P2PARTISAN-DROP-IN 1 -p udp --sport ${greyports_udp} -j DROP
 iptables -I P2PARTISAN-DROP-IN 1 -p tcp --dport ${greyports_tcp} -j DROP
@@ -1024,15 +1028,15 @@ iptables -I P2PARTISAN-DROP-OUT 1 -p udp --dport ${greyports_udp} -j DROP
 iptables -I P2PARTISAN-DROP-IN 5 -j LOG --log-prefix 'P2Partisan-DEBUG-IN->> ' --log-level 1
 iptables -I P2PARTISAN-DROP-OUT 5 -j LOG --log-prefix 'P2Partisan-DEBUG-OUT->> ' --log-level 1" >./iptables-debug
         chmod 777 ./iptables-debug >/dev/null 2>&1
-        plog "Reverse Debug started for for $minutes minute"
+        plog "Reverse Debug started for for ${minutes} minute"
         ./iptables-debug 1>/dev/null &
-        echo -e "| Enabled full debug logging for all the LAN IPs for \033[1;32m$minutes\033[0;40m minutes
+        echo -e "| Enabled full debug logging for all the LAN IPs for ${CGREEN}${minutes}${CBBLACK} minutes
 | This excludes the greyports_tcp ${greyports_tcp} and greyports_udp ${greyports_udp}
-| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show the debug information
+| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show the debug information
 +---------------------------------------------------------------+"
 
-        echo "# $now
-sleep $time
+        echo "# ${now}
+sleep ${time}
 iptables -D P2PARTISAN-DROP-IN -p tcp -m tcp --sport ${greyports_tcp} -j DROP
 iptables -D P2PARTISAN-DROP-IN -p udp -m udp --sport ${greyports_udp} -j DROP
 iptables -D P2PARTISAN-DROP-IN -p tcp -m tcp --dport ${greyports_tcp} -j DROP
@@ -1046,18 +1050,18 @@ iptables -D P2PARTISAN-DROP-OUT -j LOG --log-prefix 'P2Partisan-DEBUG-OUT->> ' -
         chmod 777 ./iptables-debug-del 2>/dev/null
         ./iptables-debug-del 1>/dev/null &
     else
-        echo "# $now
+        echo "# ${now}
 iptables -I P2PARTISAN-DROP-IN 1 -d $1 -j LOG --log-prefix \"P2Partisan-DEBUG-IN->> \" --log-level 1 > /dev/null 2>&1
 iptables -I P2PARTISAN-DROP-OUT 1 -s $1 -j LOG --log-prefix \"P2Partisan-DEBUG-OUT->> \" --log-level 1 > /dev/null 2>&1" >./iptables-debug
         chmod 777 ./iptables-debug >/dev/null 2>&1
-        plog "Debug started for IP $1 for $minutes minute"
+        plog "Debug started for IP $1 for ${minutes} minute"
         ./iptables-debug 1>/dev/null &
-        echo -e "| Enabled full debug logging for LAN IP \033[1;32m$1\033[0;40m for \033[1;32m$minutes\033[0;40m minutes
-| Use \033[1;33m./p2partisan.sh debug-display\033[0;40m to show the debug information
+        echo -e "| Enabled full debug logging for LAN IP ${CGREEN}$1${CBBLACK} for ${CGREEN}${minutes}${CBBLACK} minutes
+| Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show the debug information
 +---------------------------------------------------------------+"
 
-        echo "# $now
-sleep $time
+        echo "# ${now}
+sleep ${time}
 iptables -D P2PARTISAN-DROP-IN -d $1 -j LOG --log-prefix \"P2Partisan-DEBUG-IN->> \" --log-level 1  > /dev/null 2>&1
 iptables -D P2PARTISAN-DROP-OUT -s $1 -j LOG --log-prefix \"P2Partisan-DEBUG-OUT->> \" --log-level 1 > /dev/null 2>&1" >./iptables-debug-del
         chmod 777 ./iptables-debug-del 2>/dev/null
@@ -1066,7 +1070,7 @@ iptables -D P2PARTISAN-DROP-OUT -s $1 -j LOG --log-prefix \"P2Partisan-DEBUG-OUT
 }
 
 function pdebugdisplay() {
-    echo -e "\033[0;40m
+    echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 _____         __                          __ __               __
 |     \.-----.|  |--.--.--.-----.______.--|  |__|.-----.-----.|  |.---.-.--.--.
@@ -1080,81 +1084,85 @@ _____         __                          __ __               __
 | p2partisan.sh debug-display out		   Displays outbound debug logs only
 +-------------------------- Drop Logs --------------------------+"
 
-    dfrom=$(head -1 ./iptables-debug 2>/dev/null | awk '{print $2}')
-    druntime=$((now - dfrom))
-    h=$(((druntime / 3600) % 24))
-    m=$(((druntime / 60) % 60))
-    s=$((druntime % 60))
-    druntime=$(printf "%02d:%02d:%02d\n" $h $m $s)
-    dendtime=$(head -2 ./iptables-debug-del | tail -n 1 | awk '{print $2}')
-    ttime=$((dendtime / 60))
-    ttime=$((dfrom + dendtime))
-    leftime=$((ttime - now))
-    m=$(((leftime / 60) % 60))
-    s=$((leftime % 60))
-    leftime=$(printf "%02d:%02d:%02d\n" $h $m $s)
-    zzztime=$((dendtime / 60))
+    if [ -e ./iptables-debug ] && [ -e ./iptables-debug-del ]; then
+        dfrom=$(head -1 ./iptables-debug 2>/dev/null | awk '{print $2}')
+        druntime=$((now - dfrom))
+        h=$(((druntime / 3600) % 24))
+        m=$(((druntime / 60) % 60))
+        s=$((druntime % 60))
+        druntime=$(printf "%02d:%02d:%02d\n" ${h} ${m} ${s})
+        dendtime=$(head -2 ./iptables-debug-del | tail -n 1 | awk '{print $2}')
+        ttime=$((dendtime / 60))
+        ttime=$((dfrom + dendtime))
+        leftime=$((ttime - now))
+        m=$(((leftime / 60) % 60))
+        s=$((leftime % 60))
+        leftime=$(printf "%02d:%02d:%02d\n" ${h} ${m} ${s})
+        zzztime=$((dendtime / 60))
 
-    c=0
-    rm ./debug.rev >/dev/null 2>&1
-    tail -800 "$logfile" | grep -i "P2Partisan" >./debug.log
-    cat ./debug.log | sed '1!G;h;$!d' |
-        (
+        c=0
+        rm ./debug.rev >/dev/null 2>&1
+        tail -800 "${logfile}" | grep -i "P2Partisan" >./debug.log
+        cat ./debug.log | sed '1!G;h;$!d' |
+            (
+                while read -r line; do
+                    testo=$(echo "${line}" | grep -c "Debug started for IP")
+                    if [[ ${testo} -ge 1 ]]; then
+                        echo "${line}" >>./debug.rev
+                        cat ./debug.rev | sed '1!G;h;$!d' >./debug.log
+                        rm ./debug.rev >/dev/null 2>&1
+                        exit
+                    else
+                        echo "${line}" >>./debug.rev
+                    fi
+                done
+            )
+
+        if [[ -z $1 ]]; then
+            echo -e "${CBACKCYAN}+----------------------- INPUT & OUTPUT ------------------------+${CBBLACK}"
+            head -1 ./debug.log
             while read -r line; do
-                testo=$(echo "${line}" | grep -c "Debug started for IP")
-                if [[ $testo -ge 1 ]]; then
-                    echo "${line}" >>./debug.rev
-                    cat ./debug.rev | sed '1!G;h;$!d' >./debug.log
-                    rm ./debug.rev >/dev/null 2>&1
-                    exit
-                else
-                    echo "${line}" >>./debug.rev
-                fi
+                [ $((c % 2)) -eq 1 ] && printf "\e[100m"
+                printf "%s${CEND}\n" "${line}"
+                c=$((c + 1))
+            done < <(grep "DEBUG-" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
+
+            fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+            if [[ ${fc} -ge 1 ]]; then
+                echo -e "\e[93mNOTE: debugging is active for ${druntime} /${zzztime} min (${leftime} left). Run this command again to update the report${CEND}"
+            fi
+            echo -e "${CBACKCYAN}+----------------------- INPUT & OUTPUT ------------------------+${CBBLACK}"
+        elif [[ $1 == "in" ]]; then
+            echo -e "${CBACKCYAN}+--------------------------- INPUT -----------------------------+${CBBLACK}"
+            head -1 ./debug.log
+            while read -r line; do
+                [ $((c % 2)) -eq 1 ] && printf "\e[100m"
+                printf "%s${CEND}\n" "${line}"
+                c=$((c + 1))
+            done < <(grep "DEBUG-IN" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
+            fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+            if [[ ${fc} -ge 1 ]]; then
+                echo -e "\e[93mNOTE: debugging is active for ${druntime} /${zzztime} min (${leftime} left). Run this command again to update the report${CEND}"
+            fi
+            echo -e "${CBACKCYAN}+--------------------------- INPUT -----------------------------+${CBBLACK}"
+        elif [[ $1 == "out" ]]; then
+            echo -e "${CBACKCYAN}+--------------------------- OUTPUT ----------------------------+${CBBLACK}"
+            head -1 ./debug.log
+            grep "DEBUG-OUT" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g' | while read -r line; do
+                [ $((c % 2)) -eq 1 ] && printf "\e[100m"
+                printf "%s${CEND}\n" "${line}"
+                c=$((c + 1))
             done
-        )
-
-    if [[ -z $1 ]]; then
-        echo -e "\033[48;5;89m+----------------------- INPUT & OUTPUT ------------------------+\033[40m"
-        head -1 ./debug.log
-        while read -r line; do
-            [ $((c % 2)) -eq 1 ] && printf "\e[100m"
-            printf "%s\033[0m\n" "${line}"
-            c=$((c + 1))
-        done < <(grep "DEBUG-" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
-
-        fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
-        if [[ $fc -ge 1 ]]; then
-            echo -e "\e[93mNOTE: debugging is active for $druntime /$zzztime min ($leftime left). Run this command again to update the report\033[0m"
+            fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+            if [[ ${fc} -ge 1 ]]; then
+                echo -e "\e[93mNOTE: debugging is active for ${druntime} /${zzztime} min (${leftime} left). Run this command again to update the report${CEND}"
+            fi
+            echo -e "${CBACKCYAN}+--------------------------- OUTPUT ----------------------------+${CBBLACK}"
         fi
-        echo -e "\033[48;5;89m+----------------------- INPUT & OUTPUT ------------------------+\033[40m"
-    elif [[ $1 == "in" ]]; then
-        echo -e "\033[48;5;89m+--------------------------- INPUT -----------------------------+\033[40m"
-        head -1 ./debug.log
-        while read -r line; do
-            [ $((c % 2)) -eq 1 ] && printf "\e[100m"
-            printf "%s\033[0m\n" "${line}"
-            c=$((c + 1))
-        done < <(grep "DEBUG-IN" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
-        fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
-        if [[ $fc -ge 1 ]]; then
-            echo -e "\e[93mNOTE: debugging is active for $druntime /$zzztime min ($leftime left). Run this command again to update the report\033[0m"
-        fi
-        echo -e "\033[48;5;89m+--------------------------- INPUT -----------------------------+\033[40m"
-    elif [[ $1 == "out" ]]; then
-        echo -e "\033[48;5;89m+--------------------------- OUTPUT ----------------------------+\033[40m"
-        head -1 ./debug.log
-        grep "DEBUG-OUT" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g' | while read -r line; do
-            [ $((c % 2)) -eq 1 ] && printf "\e[100m"
-            printf "%s\033[0m\n" "${line}"
-            c=$((c + 1))
-        done
-        fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
-        if [[ $fc -ge 1 ]]; then
-            echo -e "\e[93mNOTE: debugging is active for $druntime /$zzztime min ($leftime left). Run this command again to update the report\033[0m"
-        fi
-        echo -e "\033[48;5;89m+--------------------------- OUTPUT ----------------------------+\033[40m"
+        echo -e "+---------------------------------------------------------------+${CDEFAULT}"
+    else
+        echo -e "${CYELLOW}Please, use p2partisan debug before.${CBBLACK}"
     fi
-    echo -e "+---------------------------------------------------------------+\033[0;39m"
 }
 
 function pwhitelist() {
@@ -1163,12 +1171,12 @@ function pwhitelist() {
     # VPN - Tinc hosts are IP whitelisted
     if [ "$(nvram get tinc_wanup)" == "1" ]; then
         for IP in $(nvram get tinc_hosts | grep -Eo '\w*[a-z]\w*(\.\w*[a-z]\w*)+'); do
-            echo "$IP" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && nslookup "$IP" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" | {
+            echo "${IP}" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" | {
                 while read -r IPO; do
                     ipset -A whitelist "${IPO%*/32}" 2>/dev/null
                 done
             }
-            echo "$IP" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && ipset -A whitelist "$IP" 2>/dev/null
+            echo "${IP}" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && ipset -A whitelist "${IP}" 2>/dev/null
         done
     fi
     #/ VPN - Tinc hosts are IP whitelisted
@@ -1177,30 +1185,30 @@ function pwhitelist() {
         (
             while read -r IP; do
                 q=100
-                echo "$IP" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && q=1
-                echo "$IP" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9]-.*)" >/dev/null 2>&1 && q=0
-                echo "$IP" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && q=2
-                echo "$IP" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && q=3
-                echo "$IP" | awk '{print $2}' | grep -E '^(http)' >/dev/null 2>&1 && q=4
-                if [[ $q -eq 0 ]]; then
-                    echo "$IP" | pdeaggregate | {
+                echo "${IP}" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && q=1
+                echo "${IP}" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9]-.*)" >/dev/null 2>&1 && q=0
+                echo "${IP}" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && q=2
+                echo "${IP}" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && q=3
+                echo "${IP}" | awk '{print $2}' | grep -E '^(http)' >/dev/null 2>&1 && q=4
+                if [[ ${q} -eq 0 ]]; then
+                    echo "${IP}" | pdeaggregate | {
                         while read -r cidr; do
-                            ipset -A whitelist "$cidr" 2>/dev/null
+                            ipset -A whitelist "${cidr}" 2>/dev/null
                         done
                     }
-                elif [[ $q -eq 1 ]]; then
-                    nslookup "$IP" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                elif [[ ${q} -eq 1 ]]; then
+                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A whitelist "${IPO%*/32}" 2>/dev/null
                         done
-                elif [[ $q -eq 2 ]]; then
+                elif [[ ${q} -eq 2 ]]; then
                     ipset -A whitelist "${IP%*/32}" 2>/dev/null
-                elif [[ $q -eq 3 ]]; then
-                    ipset -A whitelist "$IP" 2>/dev/null
-                elif [[ $q -eq 4 ]]; then
+                elif [[ ${q} -eq 3 ]]; then
+                    ipset -A whitelist "${IP}" 2>/dev/null
+                elif [[ ${q} -eq 4 ]]; then
                     # SORT OUT
-                    url=$(echo "$IP" | awk '{print $2}')
-                    # deaggregate whitelist "$url" 3 &
+                    url=$(echo "${IP}" | awk '{print $2}')
+                    # deaggregate whitelist "${url}" 3 &
                 fi
             done
         )
@@ -1212,30 +1220,30 @@ function pgreylist() {
         (
             while read -r IP; do
                 q=100
-                echo "$IP" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && q=1
-                echo "$IP" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9]-.*)" >/dev/null 2>&1 && q=0
-                echo "$IP" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && q=2
-                echo "$IP" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && q=3
-                echo "$IP" | awk '{print $2}' | grep -E '^(http)' >/dev/null 2>&1 && q=4
-                if [[ $q -eq 0 ]]; then
-                    echo "$IP" | pdeaggregate | {
+                echo "${IP}" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && q=1
+                echo "${IP}" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9]-.*)" >/dev/null 2>&1 && q=0
+                echo "${IP}" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && q=2
+                echo "${IP}" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && q=3
+                echo "${IP}" | awk '{print $2}' | grep -E '^(http)' >/dev/null 2>&1 && q=4
+                if [[ ${q} -eq 0 ]]; then
+                    echo "${IP}" | pdeaggregate | {
                         while read -r cidr; do
-                            ipset -A greylist "$cidr" 2>/dev/null
+                            ipset -A greylist "${cidr}" 2>/dev/null
                         done
                     }
-                elif [[ $q -eq 1 ]]; then
-                    nslookup "$IP" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                elif [[ ${q} -eq 1 ]]; then
+                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A greylist "${IPO%*/32}" 2>/dev/null
                         done
-                elif [[ $q -eq 2 ]]; then
+                elif [[ ${q} -eq 2 ]]; then
                     ipset -A greylist "${IP%*/32}" 2>/dev/null
-                elif [[ $q -eq 3 ]]; then
-                    ipset -A greylist "$IP" 2>/dev/null
-                elif [[ $q -eq 4 ]]; then
+                elif [[ ${q} -eq 3 ]]; then
+                    ipset -A greylist "${IP}" 2>/dev/null
+                elif [[ ${q} -eq 4 ]]; then
                     # SORT OUT
-                    url=$(echo "$IP" | awk '{print $2}')
-                    # deaggregate whitelist "$url" 3 &
+                    url=$(echo "${IP}" | awk '{print $2}')
+                    # deaggregate whitelist "${url}" 3 &
                 fi
             done
         )
@@ -1247,25 +1255,25 @@ function pblacklistcustom() {
         (
             while read -r IP; do
                 q=100
-                echo "$IP" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && q=1
-                echo "$IP" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9]-.*)" >/dev/null 2>&1 && q=0
-                echo "$IP" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && q=2
-                echo "$IP" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && q=3
-                if [[ $q -eq 0 ]]; then
-                    echo "$IP" | pdeaggregate | {
+                echo "${IP}" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && q=1
+                echo "${IP}" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9]-.*)" >/dev/null 2>&1 && q=0
+                echo "${IP}" | grep -Eo "^([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])$" >/dev/null 2>&1 && q=2
+                echo "${IP}" | grep -Eo "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$" >/dev/null 2>&1 && q=3
+                if [[ ${q} -eq 0 ]]; then
+                    echo "${IP}" | pdeaggregate | {
                         while read -r cidr; do
-                            ipset -A whitelist "$cidr" 2>/dev/null
+                            ipset -A whitelist "${cidr}" 2>/dev/null
                         done
                     }
-                elif [[ $q -eq 1 ]]; then
-                    nslookup "$IP" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                elif [[ ${q} -eq 1 ]]; then
+                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A blacklist-custom "${IPO%*/32}" 2>/dev/null
                         done
-                elif [[ $q -eq 2 ]]; then
+                elif [[ ${q} -eq 2 ]]; then
                     ipset -A blacklist-custom "${IP%*/32}" 2>/dev/null
-                elif [[ $q -eq 3 ]]; then
-                    ipset -A blacklist-custom "$IP" 2>/dev/null
+                elif [[ ${q} -eq 3 ]]; then
+                    ipset -A blacklist-custom "${IP}" 2>/dev/null
                 fi
             done
         )
@@ -1273,7 +1281,7 @@ function pblacklistcustom() {
 
 function pstart() {
     running4=$([ -f ${pidfile} ] && echo 1 || echo 0)
-    if [[ $running4 -eq 0 ]]; then
+    if [[ ${running4} -eq 0 ]]; then
         [ -f /tmp/p2partisan.loading ] && echo "P2Partisan is still loading. Exiting..." && exit
         touch /tmp/p2partisan.loading
         pre=$(date +%s)
@@ -1283,7 +1291,7 @@ function pstart() {
         [ -e iptables-del ] && rm iptables-del
         [ -e ipset-del ] && rm ipset-del
 
-        echo -e "\033[0;40m
+        echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                 _______ __               __
 |                |     __|  |_.---.-.----.|  |_
@@ -1303,7 +1311,7 @@ function pstart() {
         counter=$(printf "%02d" ${counter})
         echo "+---- CUSTOM IP BLACKLIST -----
 | preparing blacklist-custom ..."
-        echo -e "| Loading Blacklist_${counter} data ---> \033[1;37m***Custom IP blacklist***\033[0;40m"
+        echo -e "| Loading Blacklist_${counter} data ---> ${CBOLDWHITE}***Custom IP blacklist***${CBBLACK}"
         if [ "$(ipset --swap blacklist-custom blacklist-custom 2>&1 | grep 'does not exist')" != "" ]; then
             ipset --create blacklist-custom hash:net hashsize 1024 --resize 5 maxelem 1024000 2>/dev/null
         fi
@@ -1314,58 +1322,58 @@ function pstart() {
 
         echo "+--------- GREYPORTs ----------"
         echo "${greyports_tcp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-            echo -e "| Loading grey TCP ports:  \033[1;37m$w\033[0;40m"
-            echo "iptables -A P2PARTISAN-IN -i $wanif -p tcp --match multiport --dports $w -g P2PARTISAN-LISTS-IN
-iptables -A P2PARTISAN-OUT -o $wanif -p tcp --match multiport --sports $w -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
+            echo -e "| Loading grey TCP ports:  ${CBOLDWHITE}${w}${CBBLACK}"
+            echo "iptables -A P2PARTISAN-IN -i ${wanif} -p tcp --match multiport --dports ${w} -g P2PARTISAN-LISTS-IN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p tcp --match multiport --sports ${w} -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
         done
         echo "${greyports_udp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-            echo -e "| Loading grey UDP ports:  \033[1;37m$w\033[0;40m"
-            echo "iptables -A P2PARTISAN-IN -i $wanif -p udp --match multiport --dports $w -g P2PARTISAN-LISTS-IN
-iptables -A P2PARTISAN-OUT -o $wanif -p udp --match multiport --sports $w -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
+            echo -e "| Loading grey UDP ports:  ${CBOLDWHITE}${w}${CBBLACK}"
+            echo "iptables -A P2PARTISAN-IN -i ${wanif} -p udp --match multiport --dports ${w} -g P2PARTISAN-LISTS-IN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p udp --match multiport --sports ${w} -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
         done
         # Get transmission port for greylisting if enabled
         transmissionenable=$(nvram get bt_enable)
-        if [[ -z $transmissionenable ]]; then
+        if [[ -z ${transmissionenable} ]]; then
             echo "|  TransmissionBT:  Not available"
-        elif [[ $transmissionenable -eq 0 ]]; then
+        elif [[ ${transmissionenable} -eq 0 ]]; then
             echo "|  TransmissionBT:  Off"
         else
-            echo -e "|  TransmissionBT:  \033[1;32mOn\033[0;40m"
+            echo -e "|  TransmissionBT:  ${CGREEN}On${CBBLACK}"
             transmissionport=$(nvram get bt_port 2>/dev/null)
             wanip=$(nvram get wan_ipaddr)
-            p3=$(echo "${greyports_tcp}" | grep -Eo "$transmissionport" | wc -l)
-            p4=$(echo "${greyports_udp}" | grep -Eo "$transmissionport" | wc -l)
+            p3=$(echo "${greyports_tcp}" | grep -Eo "${transmissionport}" | wc -l)
+            p4=$(echo "${greyports_udp}" | grep -Eo "${transmissionport}" | wc -l)
             if [[ $p3 -eq 0 ]]; then
-                echo "iptables -A P2PARTISAN-IN -i $wanif -p tcp -d $wanip --dport $transmissionport -g P2PARTISAN-LISTS-IN
-iptables -A P2PARTISAN-OUT -o $wanif -p tcp -s $wanip --sport $transmissionport -g P2PARTISAN-LISTS-OUT
-iptables -A P2PARTISAN-OUT -o $wanif -p tcp -s $wanip --sport 49152:65535 -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
+                echo "iptables -A P2PARTISAN-IN -i ${wanif} -p tcp -d ${wanip} --dport ${transmissionport} -g P2PARTISAN-LISTS-IN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p tcp -s ${wanip} --sport ${transmissionport} -g P2PARTISAN-LISTS-OUT
+iptables -A P2PARTISAN-OUT -o ${wanif} -p tcp -s ${wanip} --sport 49152:65535 -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
             fi
             if [[ $p4 -eq 0 ]]; then
-                echo "iptables -A P2PARTISAN-IN -i $wanif -p udp -d $wanip --dport $transmissionport -g P2PARTISAN-LISTS-IN
-iptables -A P2PARTISAN-OUT -o $wanif -p udp -s $wanip --sport $transmissionport -g P2PARTISAN-LISTS-OUT
-iptables -A P2PARTISAN-OUT -o $wanif -p udp -s $wanip --sport 49152:65535 -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
+                echo "iptables -A P2PARTISAN-IN -i ${wanif} -p udp -d ${wanip} --dport ${transmissionport} -g P2PARTISAN-LISTS-IN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p udp -s ${wanip} --sport ${transmissionport} -g P2PARTISAN-LISTS-OUT
+iptables -A P2PARTISAN-OUT -o ${wanif} -p udp -s ${wanip} --sport 49152:65535 -g P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
             fi
         fi
 
         echo "+--------- WHITEPORTs ---------"
         echo "${whiteports_tcp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-            echo -e "| Loading white TCP ports \033[1;37m$w\033[0;40m"
-            echo "iptables -A P2PARTISAN-IN -i $wanif -p tcp --match multiport --sports $w -j RETURN
-iptables -A P2PARTISAN-IN -i $wanif -p tcp --match multiport --dports $w -j RETURN
-iptables -A P2PARTISAN-OUT -o $wanif -p tcp --match multiport --sports $w -j RETURN
-iptables -A P2PARTISAN-OUT -o $wanif -p tcp --match multiport --dports $w -j RETURN" >>/tmp/iptables-add.tmp
+            echo -e "| Loading white TCP ports ${CBOLDWHITE}${w}${CBBLACK}"
+            echo "iptables -A P2PARTISAN-IN -i ${wanif} -p tcp --match multiport --sports ${w} -j RETURN
+iptables -A P2PARTISAN-IN -i ${wanif} -p tcp --match multiport --dports ${w} -j RETURN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p tcp --match multiport --sports ${w} -j RETURN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p tcp --match multiport --dports ${w} -j RETURN" >>/tmp/iptables-add.tmp
         done
         echo "${whiteports_udp}" | awk -v RS=',' -F : '{ gsub(/\n$/, "") } NF > 1 { r=(r ? r "," : "") $0; if (r ~ /([^,]*,){6}/) { print r; r=""; } next } { s=(s ? s "," : "") $0; if (s ~ /([^,]*,){14}/) { print s; s=""; } }  END { if (r && s) { p = r "," s; if (p !~ /([^,:]*[:,]){15}/) { print p; r=s="" } } if (r) print r ; if (s) print s }' | while read -r w; do
-            echo -e "| Loading white UDP ports \033[1;37m$w\033[0;40m"
-            echo "iptables -A P2PARTISAN-IN -i $wanif -p udp --match multiport --sports $w -j RETURN
-iptables -A P2PARTISAN-IN -i $wanif -p udp --match multiport --dports $w -j RETURN
-iptables -A P2PARTISAN-OUT -o $wanif -p udp --match multiport --sports $w -j RETURN
-iptables -A P2PARTISAN-OUT -o $wanif -p udp --match multiport --dports $w -j RETURN" >>/tmp/iptables-add.tmp
+            echo -e "| Loading white UDP ports ${CBOLDWHITE}${w}${CBBLACK}"
+            echo "iptables -A P2PARTISAN-IN -i ${wanif} -p udp --match multiport --sports ${w} -j RETURN
+iptables -A P2PARTISAN-IN -i ${wanif} -p udp --match multiport --dports ${w} -j RETURN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p udp --match multiport --sports ${w} -j RETURN
+iptables -A P2PARTISAN-OUT -o ${wanif} -p udp --match multiport --dports ${w} -j RETURN" >>/tmp/iptables-add.tmp
         done
         echo "iptables -A P2PARTISAN-IN -j P2PARTISAN-LISTS-IN
 iptables -A P2PARTISAN-OUT -j P2PARTISAN-LISTS-OUT" >>/tmp/iptables-add.tmp
 
-        echo "# $now
+        echo "# ${now}
 iptables -N P2PARTISAN-IN
 iptables -N P2PARTISAN-OUT
 iptables -N P2PARTISAN-LISTS-IN
@@ -1384,20 +1392,20 @@ iptables -A P2PARTISAN-OUT -m set  --match-set blacklist-custom dst -j P2PARTISA
         #Add winin/wanout for RMerlin compatibility only
         if [ $rm -eq 1 ]; then
             echo "iptables -N wanin
-iptables -I FORWARD 1 -i $wanif -j wanin
+iptables -I FORWARD 1 -i ${wanif} -j wanin
 iptables -N wanout
-iptables -I FORWARD 2 -o $wanif -j wanout" >>./iptables-add
+iptables -I FORWARD 2 -o ${wanif} -j wanout" >>./iptables-add
         fi
         #
         echo "# $now" >>iptables-del
         [ -f ./custom-script-del ] && cat ./custom-script-add >>iptables-del
-        [ -n "$vpnif" ] && echo "iptables -D INPUT -o $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-del
-        [ -n "$vpnif" ] && echo "iptables -D OUTPUT -i $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
-        [ -n "$vpnif" ] && echo "iptables -D FORWARD -o $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-del
-        echo "iptables -D wanin -i $wanif -m state --state NEW -j P2PARTISAN-IN
-iptables -D wanout -o $wanif -m state --state NEW -j P2PARTISAN-OUT
-iptables -D INPUT -i $wanif -m state --state NEW -j P2PARTISAN-IN
-iptables -D OUTPUT -o $wanif -m state --state NEW -j P2PARTISAN-OUT
+        [ -n "${vpnif}" ] && echo "iptables -D INPUT -o ${vpnif} -m state --state NEW -j P2PARTISAN-IN" >>iptables-del
+        [ -n "${vpnif}" ] && echo "iptables -D OUTPUT -i ${vpnif} -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
+        [ -n "${vpnif}" ] && echo "iptables -D FORWARD -o ${vpnif} -m state --state NEW -j P2PARTISAN-IN" >>iptables-del
+        echo "iptables -D wanin -i ${wanif} -m state --state NEW -j P2PARTISAN-IN
+iptables -D wanout -o ${wanif} -m state --state NEW -j P2PARTISAN-OUT
+iptables -D INPUT -i ${wanif} -m state --state NEW -j P2PARTISAN-IN
+iptables -D OUTPUT -o ${wanif} -m state --state NEW -j P2PARTISAN-OUT
 iptables -F P2PARTISAN-DROP-IN
 iptables -F P2PARTISAN-DROP-OUT
 iptables -F P2PARTISAN-LISTS-IN
@@ -1418,7 +1426,7 @@ iptables -X P2PARTISAN-DROP-OUT" >>iptables-del
             ipset --create greylist hash:net hashsize 16 --resize 5 maxelem 255 >/dev/null 2>&1
         fi
         pgreylist
-        echo -e "| Loading IP greylist data ---> \033[1;37m***IP greylist***\033[0;40m"
+        echo -e "| Loading IP greylist data ---> ${CBOLDWHITE}***IP greylist***${CBBLACK}"
         echo "iptables -A P2PARTISAN-IN -m set  --match-set greylist src -g P2PARTISAN-LISTS-IN
 iptables -A P2PARTISAN-IN -m set  --match-set greylist dst -g P2PARTISAN-LISTS-IN
 iptables -A P2PARTISAN-OUT -m set  --match-set greylist src -g P2PARTISAN-LISTS-OUT
@@ -1432,13 +1440,13 @@ iptables -A P2PARTISAN-OUT -m set  --match-set greylist dst -g P2PARTISAN-LISTS-
         fi
         pwhitelist
 
-        echo "# $now
+        echo "# ${now}
 ipset -F
 ipset -X blacklist-custom
 ipset -X greylist
 ipset -X whitelist" >ipset-del
 
-        echo -e "| Loading IP whitelist data ---> \033[1;37m***IP Whitelist***\033[0;40m"
+        echo -e "| Loading IP whitelist data ---> ${CBOLDWHITE}***IP Whitelist***${CBBLACK}"
         echo "iptables -A P2PARTISAN-IN -m set  --match-set whitelist src -j RETURN
 iptables -A P2PARTISAN-IN -m set  --match-set whitelist dst -j RETURN
 iptables -A P2PARTISAN-OUT -m set  --match-set whitelist src -j RETURN
@@ -1447,9 +1455,9 @@ iptables -A P2PARTISAN-OUT -m set  --match-set whitelist dst -j RETURN" >>iptabl
         cat /tmp/iptables-add.tmp >>./iptables-add
         rm /tmp/iptables-add.tmp >/dev/null 2>&1
 
-        if [ $syslogs -eq 1 ]; then
-            echo "iptables -A P2PARTISAN-DROP-IN -m limit --limit $maxloghour/hour --limit-burst 1 -j LOG --log-prefix 'P2Partisan Dropped IN - ' --log-level 1
-iptables -A P2PARTISAN-DROP-OUT -m limit --limit $maxloghour/hour  --limit-burst 1 -j LOG --log-prefix 'P2Partisan Rejected OUT - ' --log-level 1" >>iptables-add
+        if [ ${syslogs} -eq 1 ]; then
+            echo "iptables -A P2PARTISAN-DROP-IN -m limit --limit ${maxloghour}/hour --limit-burst 1 -j LOG --log-prefix 'P2Partisan Dropped IN - ' --log-level 1
+iptables -A P2PARTISAN-DROP-OUT -m limit --limit ${maxloghour}/hour  --limit-burst 1 -j LOG --log-prefix 'P2Partisan Rejected OUT - ' --log-level 1" >>iptables-add
         fi
         echo "iptables -A P2PARTISAN-DROP-IN -j DROP
 iptables -A P2PARTISAN-DROP-OUT -j REJECT --reject-with icmp-admin-prohibited" >>iptables-add
@@ -1469,21 +1477,21 @@ iptables -A P2PARTISAN-DROP-OUT -j REJECT --reject-with icmp-admin-prohibited" >
                     fi
                     if [ "$(ipset swap "${name}" "${name}" 2>&1 | grep 'does not exist')" != "" ]; then
                         [ -f ./cidr/"${name}".cidr ] && cat ./cidr/"${name}".cidr | cut -d" " -f3 | grep -E "^${sDNS}$" >/dev/null && complete=1 || complete=0
-                        if [ $complete -eq 1 ]; then #.cidr exists and populated, using it
-                            echo -e "| Async loading [cached] Blacklist_${counter} --> \033[1;37m***${name}***\033[0;40m"
+                        if [ ${complete} -eq 1 ]; then #.cidr exists and populated, using it
+                            echo -e "| Async loading [cached] Blacklist_${counter} --> ${CBOLDWHITE}***${name}***${CBBLACK}"
                             {
                                 ipset -F "${name}"
                                 ipset -X "${name}"
                                 ipset --create "${name}" hash:net hashsize 1024 --resize 5 maxelem 4096000
-                                deaggregate "${name}" "" 2 "$pre" "" $maxconcurrentlistload ${P2Partisandir} &
+                                deaggregate "${name}" "" 2 "${pre}" "" ${maxconcurrentlistload} ${P2Partisandir} &
                             } 2>/dev/null
                         else #fresh load/first run
-                            echo -e "| Async loading [convert] Blacklist_${counter} --> \033[1;37m***${name}***\033[0;40m"
+                            echo -e "| Async loading [convert] Blacklist_${counter} --> ${CBOLDWHITE}***${name}***${CBBLACK}"
                             {
                                 ipset -F "${name}"
                                 ipset -X "${name}"
                                 ipset --create "${name}" hash:net hashsize 1024 --resize 5 maxelem 4096000
-                                deaggregate "${name}" "$url" 0 "$pre" "" $maxconcurrentlistload ${P2Partisandir} &
+                                deaggregate "${name}" "${url}" 0 "${pre}" "" ${maxconcurrentlistload} ${P2Partisandir} &
                                 # 4 = On the fly record by record STOUT output
                                 # 3 = add from public whitelist sIP-dIP to ipset only
                                 # 2 = add from .cidr to ipset only
@@ -1500,23 +1508,23 @@ iptables -A P2PARTISAN-LISTS-OUT -m set  --match-set ${name} dst -j P2PARTISAN-D
                 done
             )
 
-        echo "iptables -I INPUT $pos -i $wanif -m state --state NEW -j P2PARTISAN-IN
-iptables -I OUTPUT $pos -o $wanif -m state --state NEW -j P2PARTISAN-OUT
-iptables -I wanin $pos -i $wanif -m state --state NEW -j P2PARTISAN-IN
-iptables -I wanout $pos -o $wanif -m state --state NEW -j P2PARTISAN-OUT" >>iptables-add
+        echo "iptables -I INPUT ${pos} -i ${wanif} -m state --state NEW -j P2PARTISAN-IN
+iptables -I OUTPUT ${pos} -o ${wanif} -m state --state NEW -j P2PARTISAN-OUT
+iptables -I wanin ${pos} -i ${wanif} -m state --state NEW -j P2PARTISAN-IN
+iptables -I wanout ${pos} -o ${wanif} -m state --state NEW -j P2PARTISAN-OUT" >>iptables-add
 
-        [ -n "$vpnif" ] && echo "iptables -I INPUT $pos -o $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
-        [ -n "$vpnif" ] && echo "iptables -I OUTPUT $pos -i $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
-        [ -n "$vpnif" ] && echo "iptables -I FORWARD $pos -o $vpnif -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
+        [ -n "${vpnif}" ] && echo "iptables -I INPUT ${pos} -o ${vpnif} -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
+        [ -n "${vpnif}" ] && echo "iptables -I OUTPUT ${pos} -i ${vpnif} -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
+        [ -n "${vpnif}" ] && echo "iptables -I FORWARD ${pos} -o ${vpnif} -m state --state NEW -j P2PARTISAN-IN" >>iptables-add
 
         #Add winin/wanout for RMerlin compatibility only
         if [ $rm -eq 1 ]; then
             echo "iptables -F wanin
 iptables -X wanin
-iptables -D FORWARD -i $wanif -j wanin
+iptables -D FORWARD -i ${wanif} -j wanin
 iptables -F wanout
 iptables -X wanout
-iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
+iptables -D FORWARD -o ${wanif} -j wanout" >>iptables-del
         fi
         #
 
@@ -1531,7 +1539,7 @@ iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
         echo "+------------------------- Controls ----------------------------+"
 
         p=$(nvram get dnsmasq_custom | grep -c 'log-async')
-        if [[ $p -eq 1 ]]; then
+        if [[ ${p} -eq 1 ]]; then
             plog "log-async found under dnsmasq -> OK"
             echo "+---------------------------------------------------------------+"
         else
@@ -1543,16 +1551,16 @@ iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
 |
 | log-async=20
 |
-+---------------------------------------------------------------+\033[0;39m"
++---------------------------------------------------------------+${CDEFAULT}"
         fi
         p=$(nvram get script_fire | grep -c "cru a P2Partisan-tutor")
-        if [[ $p -eq 0 ]]; then
+        if [[ ${p} -eq 0 ]]; then
             ptutorset
         fi
 
         [ -f /tmp/p2partisan.loading ] && rm -r "/tmp/p2partisan.loading" >/dev/null 2>&1
     else
-        echo -e "\033[0;40m
+        echo -e "${CBBLACK}
 +------------------------- P2Partisan --------------------------+
 |                 _______ __               __
 |                |     __|  |_.---.-.----.|  |_
@@ -1563,9 +1571,9 @@ iptables -D FORWARD -o $wanif -j wanout" >>iptables-del
 | It appears like P2Partisan is already running. Skipping...
 |
 | Is this is not what you expected? Try:
-| \033[1;33m./p2partisan.sh update\033[0;40m
+| ${CYELLOW}./p2partisan.sh update${CBBLACK}
 +---------------------------------------------------------------+
-				\033[0;39m"
+				${CDEFAULT}"
     fi
 }
 
@@ -1615,8 +1623,9 @@ FS="[-]"
 }
 
 for p in $1; do
-    case "$p" in
+    case "${p}" in
         "start")
+            connection_check
             pstart
             exit
             ;;
@@ -1656,36 +1665,35 @@ for p in $1; do
             exit
             ;;
         "help")
-
-            echo -e "\033[48;5;89m
+            echo -e "${CBACKCYAN}
       ______ ______ ______              __   __
      |   __ \__    |   __ \.---.-.----.|  |_|__|.-----.---.-.-----.
      |    __/    __|    __/|  _  |   _||   _|  ||__ --|  _  |     |
-     |___|  |______|___|   |___._|__|  |____|__||_____|___._|__|__| $version
-\e[39m\e[49m\033[0;40m
+     |___|  |______|___|   |___._|__|  |____|__||_____|___._|__|__| ${version}
+\e[39m\e[49m${CBBLACK}
 
-	   help					Display this text
-	   \e[97mstart				   Starts the process (this runs also if no option is provided)
-	   stop					Stops P2Partisan
-	   restart				 Soft restart, updates whiteports & whitelist only
-	   pause				   Soft stop P2Partisan allowing for quick start
-	   update				  Hard restart, slow removes p2partisan, updates
-							   the lists and does a fresh start
-	   update <list|fix>	   Updated the selected list only | remove cidr a start from scratch\e[39m
-	   status				  Display P2Partisan running status + extra information
-	   status <list>		   Display P2Partisan detailed list information
-	   \e[93mtest <IP>			   Verify existence of the given IP against lists
-	   debug				   Shows a guide on how to operate debug
-	   debug-display <in|out>  Shows all the logs relevant to the last debug only
-	   detective			   Determines highest impact IPs:ports (number of sessions)
-\033[0;39m"
+	   help                     Display this text
+	   \e[97mstart                    Starts the process (this runs also if no option is provided)
+	   stop                     Stops P2Partisan
+	   restart                  Soft restart, updates whiteports & whitelist only
+	   pause                    Soft stop P2Partisan allowing for quick start
+	   update                   Hard restart, slow removes p2partisan, updates
+                                    the lists and does a fresh start
+	   update <list|fix>        Updated the selected list only | remove cidr a start from scratch\e[39m
+	   status                   Display P2Partisan running status + extra information
+	   status <list>            Display P2Partisan detailed list information
+	   \e[93mtest <IP>                Verify existence of the given IP against lists
+	   debug                    Shows a guide on how to operate debug
+	   debug-display <in|out>   Shows all the logs relevant to the last debug only
+	   detective                Determines highest impact IPs:ports (number of sessions)
+${CDEFAULT}"
             exit
             ;;
         *)
-            echo -e "\033[0;40mparameter not valid. please run:
+            echo -e "${CBBLACK}parameter not valid. please run:
 
 	   p2partisan.sh help
-	   \033[0;39m"
+	   ${CDEFAULT}"
             exit
             ;;
 
