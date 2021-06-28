@@ -340,7 +340,7 @@ function pforcestop() {
         [ -f iptables-del ] && rm iptables-del
         [ -f ipset-del ] && rm ipset-del
         [ -f ${pidfile} ] && rm -f "${pidfile}"
-        [ -f runtime ] && rm -f "runtime"
+        [ -f ./cidr/runtime ] && rm -f ./cidr/runtime
         [ -f /tmp/p2partisan.loading ] && rm -r /tmp/p2partisan.loading
         plog "Unloading ipset modules"
         lsmod | grep "xt_set" && sleep 2
@@ -511,7 +511,7 @@ $(iptables -L | grep "${name}")
     runningB=$(wc -l /tmp/tutor.temp 2>/dev/null | awk '{print $1}')
     [ -f /tmp/tutor.tmp ] && rm /tmp/tutor.tmp
     [ -f /tmp/tutor.temp ] && rm /tmp/tutor.temp || runningB=0
-    runningD=$([ -f ./runtime ] && cat ./runtime)
+    runningD=$([ -f ./cidr/runtime ] && cat ./cidr/runtime)
     runningF=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
     from=$([ -f ./iptables-add ] && head -1 ./iptables-add 2>/dev/null | awk '{print $2}' || echo "${now}")
     runtime=$((now - from))
