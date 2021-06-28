@@ -62,7 +62,7 @@ gfnNvramUpdate() {
                     # WAN 1 DNS
                     sWan1Dns="$(nvram get wan_dns)"
                     if [ -n "${sWan1Dns}" ] && [ "${sWan1Dns}" != "${gsWan1_DNS}" ]; then
-                        # Backup custo vers file
+                        # Backup custom vars file
                         [ -f "${gsDirOverLoad}/vars" ] && cp "${gsDirOverLoad}/vars" "${gsDirBackups}/vars.${gdDateTime}"
                         # Replace value in vars file
                         logger -p user.notice "| ${gsScriptName} | Replace gsWan1_DNS FROM \"${gsWan1_DNS}\" to \"${sWan1Dns}\" in \"${gsDirOverLoad}/vars\""

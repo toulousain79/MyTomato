@@ -214,6 +214,13 @@ gfnSwitchDNS() {
                 nvram commit
             fi
 
+            # /etc/dnsmasq-custom.conf
+            # if [ -n "${gsExternalDns}" ]; then
+            #     {
+            #         echo "dhcp-option=6,${gsExternalDns}"
+            #     } >>/etc/dnsmasq-custom.conf
+            # fi
+
             service dnsmasq stop >/dev/null
             sleep 1
             service dnsmasq start >/dev/null
