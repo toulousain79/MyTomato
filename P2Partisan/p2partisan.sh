@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1091,SC2002,SC2003,SC2009,SC2012,SC2126
+# shellcheck disable=SC1091,SC2002,SC2003,SC2009,SC2012,SC2126,SC2086
 #
 # p2partisan v6.10 (2021/06/27)
 #
@@ -629,7 +629,7 @@ $(iptables -L | grep "${name}")
     grep -Ev "^#|^$" ./blacklists | tr -d "\r" |
         (
             while read -r line; do
-                counter=$(expr ${counter} + 1)
+                counter=$(expr "${counter}" + 1)
                 counter=$(printf "%02d" "${counter}")
                 name=$(echo "${line}" | awk '{print $1}')
                 statusa=$(cat /tmp/p2partisan."${name}".LOAD 2>/dev/null || echo 5)
@@ -1232,7 +1232,7 @@ function pgreylist() {
                         done
                     }
                 elif [[ ${q} -eq 1 ]]; then
-                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                    nslookup "${IP}" "${sDNS}" | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A greylist "${IPO%*/32}" 2>/dev/null
                         done
@@ -1266,7 +1266,7 @@ function pblacklistcustom() {
                         done
                     }
                 elif [[ ${q} -eq 1 ]]; then
-                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                    nslookup "${IP}" "${sDNS}" | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A blacklist-custom "${IPO%*/32}" 2>/dev/null
                         done
