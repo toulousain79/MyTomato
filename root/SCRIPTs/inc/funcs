@@ -161,7 +161,7 @@ gfnStartStopSyslogd() {
             ;;
         'stop')
             if [ -n "$(pidof syslogd)" ]; then
-                killall syslogd >/dev/null | echo "$(/bin/date '+%a %b %d %T %Y') $(nvram get lan_hostname) user.notice | Stop SysLog process" >>/opt/var/log/messages
+                killall syslogd >/dev/null 2>&1 | echo "$(/bin/date '+%a %b %d %T %Y') $(nvram get lan_hostname) user.notice | Stop SysLog process" >>/opt/var/log/messages
             fi
             ;;
         *) return 1 ;;
