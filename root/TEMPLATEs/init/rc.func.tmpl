@@ -33,27 +33,45 @@ start() {
         *)
             $PRECMD >/dev/null 2>&1
             eval "$PREARGS $PROC $ARGS"
+            local RES=$?
             ;;
     esac
 
-    COUNTER=0
-    LIMIT=20
-
-    while [[ -z $(pidof "$PROC") && $COUNTER -le "$LIMIT" ]]; do
-        sleep 1
-        COUNTER=$((COUNTER + 1))
-    done
+    case "$PROC" in
+        'ntpdate') ;;
+        *)
+            COUNTER=0
+            LIMIT=20
+            while [[ -z $(pidof "$PROC") && $COUNTER -le "$LIMIT" ]]; do
+                sleep 1
+                COUNTER=$((COUNTER + 1))
+            done
+            ;;
+    esac
     $POSTCMD >/dev/null 2>&1
 
-    if [[ -z $(pidof "$PROC") ]]; then
-        echo -e "$ansi_red failed. $ansi_std"
-        logger "Failed to start $DESC from $CALLER."
-        return 255
-    else
-        echo -e "$ansi_green done. $ansi_std"
-        logger "Started $DESC from $CALLER."
-        return 0
-    fi
+    case "$PROC" in
+        'ntpdate')
+            if [[ ${RES} -ne 0 ]]; then
+                echo -e "$ansi_red failed. $ansi_std"
+                return 255
+            else
+                echo -e "$ansi_green done. $ansi_std"
+                return 0
+            fi
+            ;;
+        *)
+            if [[ -z $(pidof "$PROC") ]]; then
+                echo -e "$ansi_red failed. $ansi_std"
+                logger "Failed to start $DESC from $CALLER."
+                return 255
+            else
+                echo -e "$ansi_green done. $ansi_std"
+                logger "Started $DESC from $CALLER."
+                return 0
+            fi
+            ;;
+    esac
 }
 
 stop() {
