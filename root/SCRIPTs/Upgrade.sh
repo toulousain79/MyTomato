@@ -31,9 +31,9 @@ if [[ ${gbRepoUpgrade_Enable:-0} -eq 1 ]]; then
     [[ -d /opt/MyTomato ]] && cd "/opt/MyTomato" || exit 1
     logger -p user.notice "| ${gsScriptName} | Update /opt/MyTomato via GitHub"
     git fetch origin
-    git reset --hard origin/master
+    git reset --hard origin/"${gsMyTomatoBranch}"
     git config pull.rebase false
-    git pull origin master
+    git pull origin "${gsMyTomatoBranch}"
 fi
 
 #### DNScrypt-proxy v2

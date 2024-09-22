@@ -16,6 +16,9 @@ gsUrlArmExtras="https://exotic.se/freshtomato-arm/${gsFirmwareYear}/${gsFirmware
 gsLocales="en_US"
 gsTimezone="Europe/Paris"
 
+## MyTomato
+gsMyTomatoBranch="master"
+
 ## Colors
 export CEND="\033[0m"
 export CDEFAULT='\033[0;39m'
@@ -84,7 +87,7 @@ gsExternalDns=""                       # External DNS server like PiHole instead
 gbRepoUpgrade_Enable=1 # Off = 0 / On = 1
 
 #### Export
-export binCurl gsDirArmExtras gsUrlArmExtras gsLocales gsTimezone
+export binCurl gsDirArmExtras gsUrlArmExtras gsLocales gsTimezone gsMyTomatoBranch
 export gsScriptName gsDirRoot gsDirScripts gsDirOpenVpn gsDirBackups gsDirLogs gsDirTemplates gsDirOverLoad gsDirDnscrypt gsDirDnscryptGen
 export gsUsbFileSystem gsUsbOptUuid gsWan1_DNS gsExternalDns gsP2Partisan_UdpPorts gsP2Partisan_TcpPorts
 export gdDateTime
