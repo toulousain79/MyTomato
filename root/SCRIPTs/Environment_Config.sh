@@ -90,7 +90,7 @@ if [ -d /opt/bin/ ]; then
     (! grep -q 'vi=' "${gsDirOverLoad}/.bash_aliases") &&
         {
             echo "alias vi='/opt/bin/vim'"
-        } >"${gsDirOverLoad}/.bash_aliases"
+        } >>"${gsDirOverLoad}/.bash_aliases"
 
     # Generate aliases list
     for bin in $(/opt/bin/find /opt/bin/ /opt/sbin/ -type f ! -type d -perm '-u+x' | grep -v '[0-9*]\.' | sort); do
