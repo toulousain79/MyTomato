@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/usr/bin/env bash
 ########################################
 #### Global
 ## Binaries
@@ -17,20 +17,20 @@ gsLocales="en_US"
 gsTimezone="Europe/Paris"
 
 ## Colors
-CEND="\033[0m"
-CDEFAULT='\033[0;39m'
-CBBLACK='\033[0;40m'
-CRED="\033[1;31m"
-CGREEN="\033[1;32m"
-CYELLOW="\033[1;33m"
-CBLUE="\033[1;34m"
-CYAN='\033[00;36m'
-CBACKCYAN='\033[48;5;89m'
-CBOLDCYAN='\033[1;36m'
-CWHITE='\033[01;37m'
-CBOLDWHITE='\033[1;37m'
-CPURPLE='\033[00;35m'
-CBOLDPURPLE='\033[1;35m'
+export CEND="\033[0m"
+export CDEFAULT='\033[0;39m'
+export CBBLACK='\033[0;40m'
+export CRED="\033[1;31m"
+export CGREEN="\033[1;32m"
+export CYELLOW="\033[1;33m"
+export CBLUE="\033[1;34m"
+export CYAN='\033[00;36m'
+export CBACKCYAN='\033[48;5;89m'
+export CBOLDCYAN='\033[1;36m'
+export CWHITE='\033[01;37m'
+export CBOLDWHITE='\033[1;37m'
+export CPURPLE='\033[00;35m'
+export CBOLDPURPLE='\033[1;35m'
 
 ########################################
 ## Files & directories
@@ -70,18 +70,18 @@ gdDateTime="$(date +%Y%m%d_%H%M)"
 # - Edit the blacklists file if needed
 # - Edit the blacklist-custom if needed
 # - Edit the whitelist file if needed
-gbP2Partisan_Enable=1                       # Off = 0 / On = 1
+gbP2Partisan_Enable=1 # Off = 0 / On = 1
 # All system services ports are already added to whitelist (nvram show 2>/dev/null | grep 'port=')
-gsP2Partisan_UdpPorts=""                    # Whitelist UDP ports separated by commas
-gsP2Partisan_TcpPorts=""                    # Whitelist TCP ports separated by commas
+gsP2Partisan_UdpPorts="" # Whitelist UDP ports separated by commas
+gsP2Partisan_TcpPorts="" # Whitelist TCP ports separated by commas
 
 # DNScrypt-proxy
-gbDNScrypt_Enable=1                         # Off = 0 / On = 1
-gsWan1_DNS="84.200.69.80 84.200.70.40"      # Quad 9 DNS; Add 1 or 2 IP address comma seperated.
-gsExternalDns=""                            # External DNS server like PiHole instead of local DNScrypt
+gbDNScrypt_Enable=1                    # Off = 0 / On = 1
+gsWan1_DNS="84.200.69.80 84.200.70.40" # Quad 9 DNS; Add 1 or 2 IP address comma seperated.
+gsExternalDns=""                       # External DNS server like PiHole instead of local DNScrypt
 
 # Upgrade MyTomato from GitHub repository
-gbRepoUpgrade_Enable=1                      # Off = 0 / On = 1
+gbRepoUpgrade_Enable=1 # Off = 0 / On = 1
 
 #### Export
 export binCurl gsDirArmExtras gsUrlArmExtras gsLocales gsTimezone

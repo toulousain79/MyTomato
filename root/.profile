@@ -8,7 +8,7 @@ export BASH_VERSION
 export TERM=xterm-color
 
 if [ -n "$BASH_VERSION" ]; then
-	bash
+    bash
 fi
 
 exit

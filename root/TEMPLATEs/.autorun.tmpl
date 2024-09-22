@@ -4,14 +4,14 @@ gdDateTime="$(date +%Y%m%d_%H%M)"
 
 #### Restore config if needed
 if [ -z "$(nvram get mytomato_config_save)" ]; then
-	sLastConfig="$(find /mnt/ -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
-	if [ -n "${sLastConfig}" ] && [ -f "${sLastConfig}" ]; then
-		nvram restore "${sLastConfig}"
-		sleep 2
-		nvram set mytomato_config_save="${gdDateTime:?}"
-		nvram commit
-		reboot
-	fi
+    sLastConfig="$(find /mnt/ -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
+    if [ -n "${sLastConfig}" ] && [ -f "${sLastConfig}" ]; then
+        nvram restore "${sLastConfig}"
+        sleep 2
+        nvram set mytomato_config_save="${gdDateTime:?}"
+        nvram commit
+        reboot
+    fi
 fi
 
 exit 0

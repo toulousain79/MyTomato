@@ -910,15 +910,15 @@ function pdebug() {
 | Debug allows to fully log the P2Partisan interventions given a LAN IP
 | Maximum 1 debug at the time / Debug automatically times out or can be forced off manually
 +---------------------------------------------------------------+
-| p2partisan.sh debug <LAN IP> <minutes>	Syntax
-| p2partisan.sh debug					   Displays debug status and this help text
+| p2partisan.sh debug <LAN IP> <minutes>    Syntax
+| p2partisan.sh debug                       Displays debug status and this help text
 | p2partisan.sh debug 192.168.0.3 <1-120>   Enables debug for the given LAN IP for N min (15 default)
-| p2partisan.sh debug 192.168.0.3 9		 Enables debug for the given LAN IP for 9 min
-| p2partisan.sh debug reverse <1-120>	   Enables debug for all the LAN IPs excluding greyports_tcp/udp
-| p2partisan.sh debug off				   Disable debug without waiting for the timer to timeout
-| p2partisan.sh debug-display <in|out>	  Display logs Syntax
-| p2partisan.sh debug-display			   Displays in&out debug logs + guide
-| p2partisan.sh debug-display out		   Same as above but displays outbound records only
+| p2partisan.sh debug 192.168.0.3 9         Enables debug for the given LAN IP for 9 min
+| p2partisan.sh debug reverse <1-120>       Enables debug for all the LAN IPs excluding greyports_tcp/udp
+| p2partisan.sh debug off                   Disable debug without waiting for the timer to timeout
+| p2partisan.sh debug-display <in|out>      Display logs Syntax
+| p2partisan.sh debug-display               Displays in&out debug logs + guide
+| p2partisan.sh debug-display out           Same as above but displays outbound records only
 +-------------------------- Activity ---------------------------+"
     echo "$1" | grep -Eo "([2][5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5].|[2][0-4][0-9].|[1][0-9][0-9].|[0-9][0-9].|[0-9].)([2][0-5][0-5]|[2][0-4][0-9]|[1][0-9][0-9]|[0-9][0-9]|[0-9])" >/dev/null 2>&1 && q=0 || q=1
     echo "$1" | grep "reverse" >/dev/null 2>&1 && q=2
@@ -1079,9 +1079,9 @@ _____         __                          __ __               __
                          |_____|                      |__|             |_____|
 
 +---------------------------------------------------------------+
-| p2partisan.sh debug-display			   Displays in & outbound debug logs
-| p2partisan.sh debug-display in			Displays inbound debug logs only
-| p2partisan.sh debug-display out		   Displays outbound debug logs only
+| p2partisan.sh debug-display           Displays in & outbound debug logs
+| p2partisan.sh debug-display in        Displays inbound debug logs only
+| p2partisan.sh debug-display out       Displays outbound debug logs only
 +-------------------------- Drop Logs --------------------------+"
 
     if [ -e ./iptables-debug ] && [ -e ./iptables-debug-del ]; then
