@@ -1,4 +1,4 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
 
 ENABLED="$(nvram get vpn_client_eas | grep -q '1' && echo yes || echo no)"
 PROCS=vpnclient1

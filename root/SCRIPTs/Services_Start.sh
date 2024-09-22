@@ -1,4 +1,4 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
 
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars

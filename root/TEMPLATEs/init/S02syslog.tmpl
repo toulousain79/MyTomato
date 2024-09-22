@@ -1,4 +1,4 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
 
 ENABLED="$(nvram get log_file | sed 's/0/no/g;s/1/yes/g;')"
 PROCS=syslogd

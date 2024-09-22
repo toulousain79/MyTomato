@@ -1,4 +1,4 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
 
 #### Restore last date time
 fake-hwclock load force

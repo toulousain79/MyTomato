@@ -1,4 +1,4 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
 
 ENABLED="$(nvram get vpn_server_eas | grep -q '3' && echo yes || echo no)"
 PROCS=vpnserver3

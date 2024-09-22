@@ -1,4 +1,4 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
 
 ENABLED="$(nvram get smbd_enable | sed 's/0/no/g;s/1/yes/g;s/2/yes/g;')"
 PROCS=smbd
