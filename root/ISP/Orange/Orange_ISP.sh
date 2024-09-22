@@ -16,7 +16,7 @@
     exit 1
 }
 
-(! df -h | grep -q '/opt') && {
+! df -h | grep -q '/opt' && {
     echo "ERROR: '/opt' not mounting"
     exit 1
 }
@@ -26,7 +26,7 @@
 
 ## Install neeeded tools
 # convert string to hexa
-if (opkg list-installed | grep -q 'xxd'); then
+if opkg list-installed | grep -q 'xxd'; then
     opkg update
     opkg install xxd
     HEXA="$(xxd -p -u <<<"$(echo "${gsOrange_FTI}" | cut -d '/' -f 2)" | sed 's/0A$//')"

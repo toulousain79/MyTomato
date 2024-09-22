@@ -11,20 +11,20 @@ gsWan1_DNS=""
 [ -n "${1}" ] && FILESYSTEM="${1}" || FILESYSTEM="ext4"
 
 #### Check if OPKG already exist
-(type opkg >/dev/null) && echo "ERROR: 'opkg' already exist" && exit 1
+type opkg >/dev/null && echo "ERROR: 'opkg' already exist" && exit 1
 
 #### Mount /opt
-(df -h | grep -q '/tmp/mnt/ENTWARE') && umount /tmp/mnt/ENTWARE
+df -h | grep -q '/tmp/mnt/ENTWARE' && umount /tmp/mnt/ENTWARE
 echo "LABEL=ENTWARE /opt ${FILESYSTEM} defaults,data=writeback,noatime,nodiratime 0 0" >/etc/fstab
 mount -a
-(! df -h | grep -q '/opt') && echo "ERROR: '/opt' not mounting" && exit 1
+! df -h | grep -q '/opt' && echo "ERROR: '/opt' not mounting" && exit 1
 
 #### Install ENTWARE
 wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
 
 ### Export
-(! echo "$PATH" | grep -q '/opt/bin') && PATH=$PATH:/opt/bin
-(! echo "$PATH" | grep -q '/opt/sbin') && PATH=$PATH:/opt/sbin
+! echo "$PATH" | grep -q '/opt/bin' && PATH=$PATH:/opt/bin
+! echo "$PATH" | grep -q '/opt/sbin' && PATH=$PATH:/opt/sbin
 export PATH
 
 wget -O - http://pkg.entware.net/sources/i18n_glib223.tar.gz | tar zx -C /tmp/
@@ -99,7 +99,7 @@ else
 fi
 
 #### DNScrypt-proxy v2
-if (! nvram get os_version | grep -q 'AIO'); then
+if ! nvram get os_version | grep -q 'AIO'; then
     if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
         git clone git@github.com:DNSCrypt/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
     else
@@ -178,7 +178,7 @@ fi
 
 #### Prepare some files and directories ####
 # /opt/tmp
-if (! mount -l | grep -q '/tmp'); then
+if ! mount -l | grep -q '/tmp'; then
     mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
     cp -af /tmp/* /opt/tmp/
     rm -rRf /tmp/* && rm -rRf /tmp/.??*
@@ -186,7 +186,7 @@ if (! mount -l | grep -q '/tmp'); then
 fi
 
 # /opt/var/log
-if (! mount -l | grep -q '/tmp/var/log'); then
+if ! mount -l | grep -q '/tmp/var/log'; then
     if [ -f /tmp/var/log/messages ]; then
         cat /tmp/var/log/messages >>/opt/var/log/messages
         if [ ! -f /tmp/var/log/.uuid ]; then
@@ -197,7 +197,7 @@ if (! mount -l | grep -q '/tmp/var/log'); then
 fi
 
 # /opt/root
-if (! mount -l | grep -q '/tmp/home/root'); then
+if ! mount -l | grep -q '/tmp/home/root'; then
     if [ ! -f /tmp/home/root/.uuid ]; then
         rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
         rm -rf /opt/root
@@ -297,7 +297,7 @@ rm -fv /tmp/script_usbumount
 rm -fv /tmp/openvpn_client1
 rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
-if (nvram get os_version | grep -q 'AIO'); then
+if nvram get os_version | grep -q 'AIO'; then
     rm -fv /opt/etc/dnscrypt-proxy.toml
     rm -fv ${gsDirBackups}/dnscrypt-proxy*
     rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
@@ -329,7 +329,7 @@ cp -v /opt/MyTomato/root/TEMPLATEs/.autorun.tmpl /opt/.autorun
 chmod +x /opt/.autorun
 
 #### MLocate
-[ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
+[ -f /opt/etc/group ] && ! grep -q 'mlocate' /opt/etc/group && echo "mlocate:x:111:" >>/opt/etc/group
 cat /opt/etc/group
 updatedb
 

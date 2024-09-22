@@ -24,15 +24,15 @@ gfnNvramUpdate() {
     case "${sValue}" in
         'fstab')
             nvram get script_init >/tmp/script_init
-            (! grep -q 'LABEL=ENTWARE' /tmp/script_init) && {
+            ! grep -q 'LABEL=ENTWARE' /tmp/script_init && {
                 echo "echo \"LABEL=ENTWARE /opt ${FILESYSTEM} defaults,data=writeback,noatime,nodiratime 0 0\" >> /etc/fstab" >>/tmp/script_init
                 nCommit=1
             }
-            (! grep -q 'LABEL=SWAP' /tmp/script_init) && {
+            ! grep -q 'LABEL=SWAP' /tmp/script_init && {
                 echo 'echo "LABEL=SWAP none swap sw 0 0" > /etc/fstab' >>/tmp/script_init
                 nCommit=1
             }
-            (! grep -q 'dnsmasq-custom.conf' /tmp/script_init) && {
+            ! grep -q 'dnsmasq-custom.conf' /tmp/script_init && {
                 echo "touch /etc/dnsmasq-custom.conf" >>/tmp/script_init
                 nCommit=1
             }
@@ -41,11 +41,11 @@ gfnNvramUpdate() {
             ;;
         'dnsmasq')
             nvram get dnsmasq_custom >/tmp/dnsmasq_custom
-            (! grep -q 'log-async' /tmp/dnsmasq_custom) && {
+            ! grep -q 'log-async' /tmp/dnsmasq_custom && {
                 echo "log-async=20" >>/tmp/dnsmasq_custom
                 nCommit=1
             }
-            (! grep -q '/etc/dnsmasq-custom.conf' /tmp/dnsmasq_custom) && {
+            ! grep -q '/etc/dnsmasq-custom.conf' /tmp/dnsmasq_custom && {
                 echo "conf-file=/etc/dnsmasq-custom.conf" >>/tmp/dnsmasq_custom
                 nCommit=1
             }
@@ -127,7 +127,7 @@ gfnLoadModules() (
         for sKoFile in ${1}; do
             sModuleName="${sKoFile//-/_}"
             sMessage="Load module '${sKoFile}': "
-            if (lsmod | awk '{ print $1 }' | grep "${sModuleName}"); then
+            if lsmod | awk '{ print $1 }' | grep "${sModuleName}"; then
                 if insmod "${gsDirArmExtras}/${sKoFile}"; then
                     sMessage="${sMessage} OK"
                 else
@@ -171,7 +171,7 @@ gfnStartStopSyslogd() {
 #### Install DNScrypt-proxy
 gfnInstallDnscryptProxy() {
     #### AIO version
-    if (nvram get os_version | grep -q 'AIO'); then
+    if nvram get os_version | grep -q 'AIO'; then
         nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 <"${gsDirOverLoad}/vars" | cut -d ':' -f 1)
         sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ "${gsDirOverLoad}/vars"
         if [[ -f /opt/etc/init.d/S09dnscrypt-proxy2 ]]; then
@@ -189,8 +189,8 @@ gfnInstallDnscryptProxy() {
 
     #### Install
     if [[ ${gbDNScrypt_Enable:-0} -eq 1 ]]; then
-        if (! opkg list-installed | grep -q 'dnscrypt-proxy'); then
-            if (opkg list | grep -q 'dnscrypt-proxy2_nohf'); then
+        if ! opkg list-installed | grep -q 'dnscrypt-proxy'; then
+            if opkg list | grep -q 'dnscrypt-proxy2_nohf'; then
                 logger -p user.notice "| ${gsScriptName} | Start DNScrypt-proxy installation"
                 opkg install fake-hwclock whereis
                 opkg install dnscrypt-proxy2_nohf
@@ -218,7 +218,7 @@ gfnInstallDnscryptProxy() {
     # 	# Download latest release
     # 	sUrl="https://api.github.com/repos/jedisct1/dnscrypt-proxy/releases/latest"
     # 	for sFile in $(${binCurl} ${sUrl} |jq -r ".assets[] | select(.name | contains(\"linux_arm-\")) | .browser_download_url"); do
-    # 		if (! grep -q 'minisig' <<< "${sFile}"); then
+    # 		if ! grep -q 'minisig' <<< "${sFile}"; then
     # 			sTarGz="$(basename "${gsDirBackups}/${sFile##*/}")"
     # 			${binCurl} "${sFile}" -o "${gsDirBackups}/${sTarGz}"
     # 		fi
@@ -265,23 +265,23 @@ gfnInstallDnscryptProxy() {
     [[ -f ${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml ]] && cp "${gsDirOverLoad}/dnscrypt/dnscrypt-proxy.toml" /opt/etc/dnscrypt-proxy.toml
 
     # Blocklists
-    if (! find "${gsDirOverLoad}/dnscrypt/"*.txt &>/dev/null); then
+    if ! find "${gsDirOverLoad}/dnscrypt/"*.txt &>/dev/null; then
         find "${gsDirTemplates}/dnscrypt/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; mv "$i" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
     # Blocklists - generate-domains-blocklist
     mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist
-    if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.txt &>/dev/null); then
+    if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.txt &>/dev/null; then
         find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; mv "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
-    if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.conf &>/dev/null); then
+    if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.conf &>/dev/null; then
         find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.conf.tmpl" -exec bash -c 'i="$1"; mv "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
     # Blocklists - generate-domains-blocklist
     mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist
-    if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.txt &>/dev/null); then
+    if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.txt &>/dev/null; then
         find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
-    if (! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.conf &>/dev/null); then
+    if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.conf &>/dev/null; then
         find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.conf.tmpl" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
 }
@@ -334,8 +334,8 @@ gfnP2pArtisanStartStop() {
 #### Install NFS server
 gfnInstallNfsServer() {
     #### Install
-    if (! opkg list-installed | grep -q 'nfs-kernel-server'); then
-        if (opkg list | grep -q 'nfs-kernel-server'); then
+    if ! opkg list-installed | grep -q 'nfs-kernel-server'; then
+        if opkg list | grep -q 'nfs-kernel-server'; then
             logger -p user.notice "| ${gsScriptName} | Start NFS Server installation"
             opkg install nfs-kernel-server nfs-kernel-server-utils
             logger -p user.notice "| ${gsScriptName} | End of NFS Server installation"
@@ -351,11 +351,11 @@ gfnInstallNfsServer() {
 
     # /etc/services
     sed -i '/nfsd/d' /etc/services
-    if (! grep -q 'nfs 2049/tcp' /etc/services); then
+    if ! grep -q 'nfs 2049/tcp' /etc/services; then
         nNumLine=$(grep 'upnp 1900/udp' -n -m 1 </etc/services | cut -d ':' -f 1)
         sed -i "${nNumLine}a\nfs 2049/tcp" /etc/services
     fi
-    if (! grep -q 'nfs 2049/udp' /etc/services); then
+    if ! grep -q 'nfs 2049/udp' /etc/services; then
         nNumLine=$(grep 'nfs 2049/tcp' -n -m 1 </etc/services | cut -d ':' -f 1)
         sed -i "${nNumLine}a\nfs 2049/udp" /etc/services
     fi

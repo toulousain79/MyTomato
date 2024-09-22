@@ -167,7 +167,7 @@ gfnSwitchDNS() {
         'dnscrypt')
             NvramCommit="NO"
 
-            if (! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'); then
+            if ! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'; then
                 gfnNvramUpdate 'dnsmasq'
                 NvramCommit="YES"
             fi
@@ -201,7 +201,7 @@ gfnSwitchDNS() {
         'standard')
             NvramCommit="NO"
 
-            if (! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'); then
+            if ! nvram get dnsmasq_custom | grep -q 'conf-file=/etc/dnsmasq-custom.conf'; then
                 gfnNvramUpdate 'dnsmasq'
                 NvramCommit="YES"
             fi

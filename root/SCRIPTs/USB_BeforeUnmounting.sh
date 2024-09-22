@@ -27,15 +27,15 @@ gfnNvramSave
 
 #### Umount if possible
 # /tmp/var/log
-(/opt/bin/mount -l | grep -q '/tmp/var/log') && /opt/bin/umount -v /tmp/var/log
-(/opt/bin/mount -l | grep -q '/tmp/var/log') && /opt/bin/umount -vf /tmp/var/log
-(/opt/bin/mount -l | grep -q '/tmp/var/log') && /opt/bin/umount -vl /tmp/var/log
+/opt/bin/mount -l | grep -q '/tmp/var/log' && /opt/bin/umount -v /tmp/var/log
+/opt/bin/mount -l | grep -q '/tmp/var/log' && /opt/bin/umount -vf /tmp/var/log
+/opt/bin/mount -l | grep -q '/tmp/var/log' && /opt/bin/umount -vl /tmp/var/log
 # /tmp/home/root
-(/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -v /tmp/home/root
-(/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -vf /tmp/home/root
-(/opt/bin/mount -l | grep -q '/tmp/home/root') && /opt/bin/umount -vl /tmp/home/root
+/opt/bin/mount -l | grep -q '/tmp/home/root' && /opt/bin/umount -v /tmp/home/root
+/opt/bin/mount -l | grep -q '/tmp/home/root' && /opt/bin/umount -vf /tmp/home/root
+/opt/bin/mount -l | grep -q '/tmp/home/root' && /opt/bin/umount -vl /tmp/home/root
 # /opt/tmp
-if (/opt/bin/mount -l | grep -q '/opt/tmp'); then
+if /opt/bin/mount -l | grep -q '/opt/tmp'; then
     [[ ! -d /opt/temp ]] && mkdir /opt/temp
     cp -af /tmp/* /opt/temp/
     /opt/bin/umount -v /tmp
@@ -45,9 +45,9 @@ if (/opt/bin/mount -l | grep -q '/opt/tmp'); then
     [[ -d /opt/temp ]] && rm -rf /opt/temp
 fi
 # /opt
-(/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -v /opt
-(/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vf /opt
-(/opt/bin/mount -l | grep -q '/opt') && /opt/bin/umount -vl /opt
+/opt/bin/mount -l | grep -q '/opt' && /opt/bin/umount -v /opt
+/opt/bin/mount -l | grep -q '/opt' && /opt/bin/umount -vf /opt
+/opt/bin/mount -l | grep -q '/opt' && /opt/bin/umount -vl /opt
 
 #### Lock file
 [[ -f /tmp/${gsScriptName}.lock ]] && rm "${gsScriptName}".lock

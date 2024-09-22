@@ -85,19 +85,19 @@ for result in $(nvram show 2>/dev/null | grep 'port='); do
     port=$(echo "${result}" | cut -f2 -d '=')
     [[ -z ${port} || ${port} -eq 0 ]] && continue
 
-    if (echo "${service}" | grep -q -e 'radius' -e 'snmp' -e 'log' -e 'udpxy'); then
+    if echo "${service}" | grep -q -e 'radius' -e 'snmp' -e 'log' -e 'udpxy'; then
         whiteports_udp=${whiteports_udp},${port}
-    elif (echo "${service}" | grep -q -e 'wan' -e 'lan' -e 'ssh' -e 'ftp' -e 'telnet'); then
+    elif echo "${service}" | grep -q -e 'wan' -e 'lan' -e 'ssh' -e 'ftp' -e 'telnet'; then
         whiteports_tcp=${whiteports_tcp},${port}
-    elif (echo "${service}" | grep -q 'vpn_client'); then
-        if (nvram get vpn_client_eas | grep -q "${service//[^0-9]/}"); then
+    elif echo "${service}" | grep -q 'vpn_client'; then
+        if nvram get vpn_client_eas | grep -q "${service//[^0-9]/}"; then
             case "$(nvram get "${service//_port/_proto}")" in
                 'udp') whiteports_udp=${whiteports_udp},${port} ;;
                 'tcp') whiteports_tcp=${whiteports_tcp},${port} ;;
             esac
         fi
-    elif (echo "${service}" | grep -q 'vpn_server'); then
-        if (nvram get vpn_server_eas | grep -q "${service//[^0-9]/}"); then
+    elif echo "${service}" | grep -q 'vpn_server'; then
+        if nvram get vpn_server_eas | grep -q "${service//[^0-9]/}"; then
             case "$(nvram get "${service//_port/_proto}")" in
                 'udp') whiteports_udp=${whiteports_udp},${port} ;;
                 'tcp') whiteports_tcp=${whiteports_tcp},${port} ;;
@@ -190,7 +190,7 @@ function connection_check() {
             echo -e "${CRED}Can not resolve ${testip} with DNS ${sDNS}, exiting...${CBBLACK}"
             exit
         fi
-        if (nslookup ${testip} "${sDNS}" >/dev/null 2>&1); then
+        if nslookup ${testip} "${sDNS}" >/dev/null 2>&1; then
             break
         fi
         sleep 5

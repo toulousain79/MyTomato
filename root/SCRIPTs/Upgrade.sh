@@ -21,7 +21,7 @@ opkg list-installed | awk '{ print $1 }' >"${gsOpkgPackagesList}"
 if [[ -f ${gsOpkgPackagesList} ]]; then
     while read -r line; do
         sPackage="$(echo "${line}" | awk '{ print $1 }')"
-        (! opkg list-installed | grep -q "${sPackage}") && opkg install "${sPackage}" \
+        ! opkg list-installed | grep -q "${sPackage}" && opkg install "${sPackage}" \
             logger -p user.notice "| ${gsScriptName} | EntWare install package '${sPackage}'"
     done <"${gsOpkgPackagesList}"
 fi

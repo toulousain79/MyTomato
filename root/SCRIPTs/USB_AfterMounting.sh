@@ -31,7 +31,7 @@ chmod +x "${gsDirScripts}"/*
 if [[ -z $(nvram get mytomato_config_save) ]]; then
     sLastConfig="$(find "${gsDirBackups}"/ -type f -name "MyTomato_*.cfg" -exec ls -A1t {} + | head -1)"
     if [[ -n ${sLastConfig} && -f ${sLastConfig} ]]; then
-        (nvram restore "${sLastConfig}") && reboot
+        nvram restore "${sLastConfig}" && reboot
     fi
 fi
 

@@ -25,7 +25,7 @@ fi
 
 #### Prepare some files and directories ####
 # /opt/tmp
-if (! /opt/bin/mount -l | grep -q '/opt/tmp'); then
+if ! /opt/bin/mount -l | grep -q '/opt/tmp'; then
     mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
     cp -af /tmp/* /opt/tmp/
     rm -rRf /tmp/* && rm -rRf /tmp/.??*
@@ -33,7 +33,7 @@ if (! /opt/bin/mount -l | grep -q '/opt/tmp'); then
 fi
 
 # /opt/var/log
-if (! /opt/bin/mount -l | grep -q '/tmp/var/log'); then
+if ! /opt/bin/mount -l | grep -q '/tmp/var/log'; then
     if [[ -f /tmp/var/log/messages ]]; then
         gfnStartStopSyslogd 'stop'
         echo "$(/bin/date '+%a %b %d %T %Y') $(nvram get lan_hostname) user.notice | ${gsScriptName} | Copy /tmp/var/log/messages to /opt/var/log/messages" >>/opt/var/log/messages
@@ -49,7 +49,7 @@ if (! /opt/bin/mount -l | grep -q '/tmp/var/log'); then
 fi
 
 # /opt/root
-if (! /opt/bin/mount -l | grep -q '/tmp/home/root'); then
+if ! /opt/bin/mount -l | grep -q '/tmp/home/root'; then
     if [[ ! -f /tmp/home/root/.uuid ]]; then
         logger -p user.notice "| ${gsScriptName} | Clean /tmp/home/root/"
         rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
@@ -87,7 +87,7 @@ if [[ -d /opt/bin/ ]]; then
     [[ ! -f ${gsDirOverLoad}/.bash_aliases ]] && touch "${gsDirOverLoad}/.bash_aliases"
 
     # Add some aliases manualy
-    (! grep -q 'vi=' "${gsDirOverLoad}/.bash_aliases") &&
+    ! grep -q 'vi=' "${gsDirOverLoad}/.bash_aliases" &&
         {
             echo "alias vi='/opt/bin/vim'"
         } >>"${gsDirOverLoad}/.bash_aliases"
@@ -98,15 +98,15 @@ if [[ -d /opt/bin/ ]]; then
         [[ -L ${bin} ]] && continue
         [[ $(whereis "${bin}" | awk '{ print $2 }') == "${bin}" ]] || continue
 
-        (! grep -q "${bin}" "${gsDirOverLoad}/.bash_aliases") &&
+        ! grep -q "${bin}" "${gsDirOverLoad}/.bash_aliases" &&
             echo "alias $(echo "${bin}" | cut -d '/' -f 4)='${bin}'" >>"${gsDirOverLoad}/.bash_aliases"
     done
     cat "${gsDirOverLoad}/.bash_aliases" >>/tmp/to_syslog
 fi
 
 #### Add bash to shells
-(! grep -q '/bin/bash' /opt/etc/shells) && echo "/bin/bash" >>/opt/etc/shells
-(! grep -q '/opt/bin/bash' /opt/etc/shells) && echo "/opt/bin/bash" >>/opt/etc/shells
+! grep -q '/bin/bash' /opt/etc/shells && echo "/bin/bash" >>/opt/etc/shells
+! grep -q '/opt/bin/bash' /opt/etc/shells && echo "/opt/bin/bash" >>/opt/etc/shells
 cat /opt/etc/shells >>/tmp/to_syslog
 
 #### /etc/group
