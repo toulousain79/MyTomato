@@ -271,14 +271,6 @@ gfnInstallDnscryptProxy() {
     # Blocklists - generate-domains-blocklist
     mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist
     if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.txt &>/dev/null; then
-        find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; mv "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
-    fi
-    if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.conf &>/dev/null; then
-        find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.conf.tmpl" -exec bash -c 'i="$1"; mv "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
-    fi
-    # Blocklists - generate-domains-blocklist
-    mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist
-    if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.txt &>/dev/null; then
         find "${gsDirTemplates}/dnscrypt/generate-domains-blocklist/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; mv -v "$i" ${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
     fi
     if ! find "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/*.conf &>/dev/null; then
