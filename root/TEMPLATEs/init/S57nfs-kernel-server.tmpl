@@ -9,11 +9,11 @@ DESC="NFS Server"
 export ENABLED PROCS ARGS PREARGS DESC
 
 # shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
-[ -n "$LOOP" ] && . /opt/etc/init.d/rc.func
+[[ -n $LOOP ]] && . /opt/etc/init.d/rc.func
 
 PATH=/opt/bin:/opt/sbin:/sbin:/bin:/usr/sbin:/usr/bin
 
-if [ -z "$(pidof rpcbind)" ]; then
+if [[ -z $(pidof rpcbind) ]]; then
     #echo 'Error: portmap not started'
     exit 1
 fi
@@ -46,7 +46,7 @@ stop() {
 }
 
 status() {
-    if [ -n "$(pidof nfsd)" ] && [ -n "$(pidof rpc.mountd)" ]; then
+    if [[ -n $(pidof nfsd) && -n $(pidof rpc.mountd) ]]; then
         echo 'NFS server is running'
     else
         echo 'NFS server is stopped'

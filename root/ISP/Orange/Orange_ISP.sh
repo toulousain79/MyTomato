@@ -4,13 +4,13 @@
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
 # shellcheck source=root/SCRIPTs/inc/vars
-[ -f "${gsDirOverLoad}/vars" ] && . "${gsDirOverLoad}/vars"
+[[ -f ${gsDirOverLoad}/vars ]] && . "${gsDirOverLoad}/vars"
 # shellcheck source=root/SCRIPTs/inc/funcs
 . /opt/MyTomato/root/SCRIPTs/inc/funcs
 
 ##############################
 
-[ -z "${gsOrange_FTI}" ] && {
+[[ -z ${gsOrange_FTI} ]] && {
     echo
     echo "'gsOrange_FTI' variable is not defined in '\"${gsDirOverLoad}/vars\"', aborting !"
     exit 1

@@ -9,13 +9,13 @@ DESC="DNScrypt-proxy"
 export ENABLED PROCS ARGS PREARGS DESC
 
 # shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
-[ -n "$LOOP" ] && . /opt/etc/init.d/rc.func
+[[ -n $LOOP ]] && . /opt/etc/init.d/rc.func
 
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
 # shellcheck source=root/SCRIPTs/inc/vars
-[ -f "${gsDirOverLoad}/vars" ] && . "${gsDirOverLoad}/vars"
+[[ -f ${gsDirOverLoad}/vars ]] && . "${gsDirOverLoad}/vars"
 # shellcheck source=root/SCRIPTs/inc/funcs
 . /opt/MyTomato/root/SCRIPTs/inc/funcs
 
@@ -43,7 +43,7 @@ gfnCheckPrerequisites() {
         nExit=1
     fi
 
-    if [ $nExit -eq 1 ]; then
+    if [[ $nExit -eq 1 ]]; then
         gfnMessage 'ERROR' 'con' "$gsMess"
         exit $nExit
     else
@@ -56,7 +56,7 @@ gfnStart() {
     local sType nReturn
 
     # Stop others processes
-    if [ -n "$(pidof $PROCS)" ]; then
+    if [[ -n $(pidof $PROCS) ]]; then
         gfnMessage 'INFO' 'log' "$DESC is already running !"
         nReturn=0
     else
@@ -65,7 +65,7 @@ gfnStart() {
         ${PROCS} -config /opt/etc/dnscrypt-proxy.toml >/dev/null 2>&1 &
         sleep 1
 
-        if [ -n "$(pidof $PROCS)" ]; then
+        if [[ -n $(pidof $PROCS) ]]; then
             # Start OK
             sType='INFO'
             gsMess="'$DESC' is started completly"
@@ -94,7 +94,7 @@ gfnStop() {
     local sType
     sType='INFO'
 
-    if [ -z "$(pidof $PROCS)" ]; then
+    if [[ -z $(pidof $PROCS) ]]; then
         gsMess="$DESC is not running !"
     else
         # Force kill
@@ -147,7 +147,7 @@ gfnMessage() {
 
 # Check if a command exist
 gfnCheckCommand() {
-    if [ -z "$(whereis "$1" | awk '{ print $2 }')" ]; then
+    if [[ -z $(whereis "$1" | awk '{ print $2 }') ]]; then
         return 1
     else
         return 0
@@ -171,16 +171,16 @@ gfnSwitchDNS() {
                 gfnNvramUpdate 'dnsmasq'
                 NvramCommit="YES"
             fi
-            if [ "$(nvram get dnssec_enable)" == "0" ]; then
+            if [[ $(nvram get dnssec_enable) == "0" ]]; then
                 nvram set dnssec_enable=1
                 NvramCommit="YES"
             fi
-            # if [ -n "$(nvram get wan_dns)" ]; then
+            # if [[ -n $(nvram get wan_dns) ]]; then
             #     nvram set wan_dns=
             #     NvramCommit="YES"
             # fi
             # Commit ?
-            if [ "$NvramCommit" == "YES" ]; then
+            if [[ $NvramCommit == "YES" ]]; then
                 nvram commit
             fi
 
@@ -189,7 +189,7 @@ gfnSwitchDNS() {
                 echo "server=127.0.0.1#52"
                 echo "server=::1#52"
                 echo "listen-address=::1,127.0.0.1"
-                if [ -n "${gsExternalDns}" ]; then
+                if [[ -n ${gsExternalDns} ]]; then
                     echo "dhcp-option=6,${gsExternalDns}"
                 fi
             } >>/etc/dnsmasq-custom.conf
@@ -205,17 +205,17 @@ gfnSwitchDNS() {
                 gfnNvramUpdate 'dnsmasq'
                 NvramCommit="YES"
             fi
-            if [ "$(nvram get wan_dns)" != "${gsWan1_DNS}" ]; then
+            if [[ $(nvram get wan_dns) != "${gsWan1_DNS}" ]]; then
                 nvram set wan_dns="${gsWan1_DNS}"
                 NvramCommit="YES"
             fi
             # Commit ?
-            if [ "$NvramCommit" == "YES" ]; then
+            if [[ $NvramCommit == "YES" ]]; then
                 nvram commit
             fi
 
             # /etc/dnsmasq-custom.conf
-            # if [ -n "${gsExternalDns}" ]; then
+            # if [[ -n ${gsExternalDns} ]]; then
             #     {
             #         echo "dhcp-option=6,${gsExternalDns}"
             #     } >>/etc/dnsmasq-custom.conf
@@ -248,7 +248,7 @@ gfnSwitchDNS() {
 gfnCheckPrerequisites
 
 # Options
-if [ $# -ge 1 ]; then
+if [[ $# -ge 1 ]]; then
     for Arg in "$@"; do
         case "$Arg" in
             'start') gfnStart ;;
@@ -259,7 +259,7 @@ if [ $# -ge 1 ]; then
                 ;;
             'status')
                 sProcess="$(pidof $PROCS)"
-                if [ -n "$sProcess" ]; then
+                if [[ -n $sProcess ]]; then
                     gfnMessage 'NOTICE' 'con' "$DESC is running !"
                 else
                     gfnMessage 'NOTICE' 'con' "$DESC is not running !"
@@ -276,7 +276,7 @@ fi
 #
 ######################################################################
 
-if [ $# -lt 1 ]; then
+if [[ $# -lt 1 ]]; then
     printf "Usage: %s {start|stop|restart|status}\n" "$0" >&2
     exit 1
 fi

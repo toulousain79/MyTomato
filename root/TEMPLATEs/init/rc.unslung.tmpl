@@ -10,9 +10,9 @@ PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:
 unset LD_LIBRARY_PATH
 unset LD_PRELOAD
 ACTION="${1}"
-[ -n "${2}" ] && CALLER="${2}" || CALLER="$(basename "$0")"
+[[ -n ${2} ]] && CALLER="${2}" || CALLER="$(basename "$0")"
 
-if [ $# -lt 1 ]; then
+if [[ $# -lt 1 ]]; then
     printf "Usage: %s {start|stop|restart|reconfigure|check|kill}\n" "$0" >&2
     exit 1
 fi
