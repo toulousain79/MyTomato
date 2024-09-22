@@ -38,8 +38,8 @@ fi
 
 #### DNScrypt-proxy v2
 if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
-    logger -p user.notice "| ${gsScriptName} | Git clone https://github.com/jedisct1/dnscrypt-proxy.git"
-    git clone git://github.com/jedisct1/dnscrypt-proxy.git "${gsDirDnscrypt:?}"
+    logger -p user.notice "| ${gsScriptName} | Git clone git@github.com:DNSCrypt/dnscrypt-proxy.git"
+    git clone git@github.com:DNSCrypt/dnscrypt-proxy.git "${gsDirDnscrypt:?}"
 else
     cd "${gsDirDnscrypt:?}" || exit 1
     logger -p user.notice "| ${gsScriptName} | Update ${gsDirDnscrypt} via GitHub"
