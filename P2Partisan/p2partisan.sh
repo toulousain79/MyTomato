@@ -1578,6 +1578,7 @@ iptables -D FORWARD -o ${wanif} -j wanout" >>iptables-del
 }
 
 function b64() {
+    # shellcheck disable=SC2317
     awk 'BEGIN{b64="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"}
 {for(i=1;i<=length($0);i++){c=index(b64,substr($0,i,1));if(c--)
 for(b=0;b<6;b++){o=o*2+int(c/32);c=(c*2)%64;if(++obc==8){if(o)
