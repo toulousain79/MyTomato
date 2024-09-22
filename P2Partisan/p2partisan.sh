@@ -942,16 +942,16 @@ function pdebug() {
     fi
 
     if [[ ${off} -eq 1 ]]; then
-        f=$(iptables -L P2PARTISAN-DROP-IN | grep DEBUG)
-        fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+        f=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG)
+        fc=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
         if [[ ${fc} -ge 1 ]]; then
             kill "$(ps | grep -E "sleep ${dendtime}$" | awk '{print $1}')" >/dev/null
             plog "All DEBUG activities have stopped"
             {
-                while iptables -L P2PARTISAN-DROP-IN | grep DEBUG; do
+                while iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG; do
                     iptables -D P2PARTISAN-DROP-IN 1
                 done
-                while iptables -L P2PARTISAN-DROP-OUT | grep DEBUG; do
+                while iptables -L P2PARTISAN-DROP-OUT 2>/dev/null | grep DEBUG; do
                     iptables -D P2PARTISAN-DROP-OUT 1
                 done
             } >/dev/null 2>&1
@@ -967,8 +967,8 @@ function pdebug() {
     fi
 
     if [[ -z $1 ]]; then
-        f=$(iptables -L P2PARTISAN-DROP-IN | grep DEBUG | awk '{print $5}' | head -1)
-        fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+        f=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG | awk '{print $5}' | head -1)
+        fc=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
         if [[ ${fc} -gt 1 ]]; then
             echo -e "| P2partisan is currently debugging IP ${CYELLOW}${f}${CBBLACK} for ${CYELLOW}${druntime}${CBBLACK} /${CYELLOW}${zzztime}${CBBLACK} min (${CYELLOW}${leftime}${CBBLACK} left)
 | Use ${CYELLOW}./p2partisan.sh debug-display${CBBLACK} to show debug information
@@ -986,8 +986,8 @@ function pdebug() {
         exit
     fi
 
-    f=$(iptables -L P2PARTISAN-DROP-IN | grep DEBUG | awk '{print $5}' | head -1)
-    fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+    f=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep DEBUG | awk '{print $5}' | head -1)
+    fc=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
     if [[ ${fc} -gt 1 ]]; then
         echo -e "| P2partisan is currently debugging IP ${CYELLOW}${f}${CBBLACK} for ${CYELLOW}${druntime}${CBBLACK} /${CYELLOW}${zzztime}${CBBLACK} min (${CYELLOW}${leftime}${CBBLACK} left)
 | NOTE: Only one debug at the time is possible! Command ignored.
@@ -1127,7 +1127,7 @@ _____         __                          __ __               __
                 c=$((c + 1))
             done < <(grep "DEBUG-" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
 
-            fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+            fc=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
             if [[ ${fc} -ge 1 ]]; then
                 echo -e "\e[93mNOTE: debugging is active for ${druntime} /${zzztime} min (${leftime} left). Run this command again to update the report${CEND}"
             fi
@@ -1140,7 +1140,7 @@ _____         __                          __ __               __
                 printf "%s${CEND}\n" "${line}"
                 c=$((c + 1))
             done < <(grep "DEBUG-IN" ./debug.log | awk '{printf "%s %s %s ",$1,$2,$3;for (i=4;i<=NF;i++) if ($i~/(IN|OUT|SRC|DST|PROTO|SPT|DPT)=/) printf "%s ",$i;print ""}' | sed -e 's/PROTO=//g' -e 's/IN=/I=/g' -e 's/OUT=/O=/g' -e 's/SPT=/S=/g' -e 's/DPT=/D=/g' -e 's/SRC=/S=/g' -e 's/DST=/D=/g')
-            fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+            fc=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
             if [[ ${fc} -ge 1 ]]; then
                 echo -e "\e[93mNOTE: debugging is active for ${druntime} /${zzztime} min (${leftime} left). Run this command again to update the report${CEND}"
             fi
@@ -1153,7 +1153,7 @@ _____         __                          __ __               __
                 printf "%s${CEND}\n" "${line}"
                 c=$((c + 1))
             done
-            fc=$(iptables -L P2PARTISAN-DROP-IN | grep -c DEBUG)
+            fc=$(iptables -L P2PARTISAN-DROP-IN 2>/dev/null | grep -c DEBUG)
             if [[ ${fc} -ge 1 ]]; then
                 echo -e "\e[93mNOTE: debugging is active for ${druntime} /${zzztime} min (${leftime} left). Run this command again to update the report${CEND}"
             fi
