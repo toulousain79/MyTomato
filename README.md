@@ -167,7 +167,7 @@ Editable files are:
 
 - DNScrypt-proxy v2 _(default files)_
   - /opt/MyTomato/root/ConfigOverload/dnscrypt/dnscrypt-proxy.toml _(DNScrypt config file)_
-  - /opt/MyTomato/root/ConfigOverload/dnscrypt/blacklists.txt
+  - /opt/MyTomato/root/ConfigOverload/dnscrypt/blocked-names.txt
   - /opt/MyTomato/root/ConfigOverload/dnscrypt/ip_blacklist.txt
   - /opt/MyTomato/root/ConfigOverload/dnscrypt/whitelist.txt
   - /opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt
@@ -234,7 +234,7 @@ And, simply execute this:
 ```bash
 Upgrade.sh
 . /opt/MyTomato/root/SCRIPTs/inc/vars
-cp -f "${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/blacklists.txt" "${gsDirOverLoad}/dnscrypt/blacklists.txt"
+cp -f "${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/blocked-names.txt" "${gsDirOverLoad}/dnscrypt/blocked-names.txt"
 /opt/etc/init.d/S09dnscrypt-proxy2 restart
 ```
 

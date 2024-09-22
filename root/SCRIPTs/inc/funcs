@@ -287,8 +287,8 @@ gfnP2pArtisanStartStop() {
         [[ ! -d ${gsDirOverLoad}/p2partisan/ ]] && mkdir -p "${gsDirOverLoad}/p2partisan/"
 
         # Copy templates
-        [[ -f ${gsDirTemplates}/p2partisan/blacklists.txt.tmpl && ! -f /opt/MyTomato/P2Partisan/blacklists ]] &&
-            cp "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" /opt/MyTomato/P2Partisan/blacklists
+        [[ -f ${gsDirTemplates}/p2partisan/blocked-names.txt.tmpl && ! -f /opt/MyTomato/P2Partisan/blacklists ]] &&
+            cp "${gsDirTemplates}/p2partisan/blocked-names.txt.tmpl" /opt/MyTomato/P2Partisan/blacklists
         [[ -f ${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl && ! -f /opt/MyTomato/P2Partisan/blacklist-custom ]] &&
             cp "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" /opt/MyTomato/P2Partisan/blacklist-custom
         [[ -f ${gsDirTemplates}/p2partisan/greylist.txt.tmpl && ! -f /opt/MyTomato/P2Partisan/greylist ]] &&
@@ -297,8 +297,8 @@ gfnP2pArtisanStartStop() {
             cp "${gsDirTemplates}/p2partisan/whitelist.txt.tmpl" /opt/MyTomato/P2Partisan/whitelist
 
         # Create custom lists
-        [[ -f ${gsDirTemplates}/p2partisan/blacklists.txt.tmpl && ! -f "${gsDirOverLoad}/p2partisan/blacklists" ]] &&
-            cp "${gsDirTemplates}/p2partisan/blacklists.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklists"
+        [[ -f ${gsDirTemplates}/p2partisan/blocked-names.txt.tmpl && ! -f "${gsDirOverLoad}/p2partisan/blacklists" ]] &&
+            cp "${gsDirTemplates}/p2partisan/blocked-names.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklists"
         [[ -f ${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl && ! -f ${gsDirOverLoad}/p2partisan/blacklist-custom ]] &&
             cp "${gsDirTemplates}/p2partisan/blacklist-custom.txt.tmpl" "${gsDirOverLoad}/p2partisan/blacklist-custom"
         [[ -f ${gsDirTemplates}/p2partisan/greylist.txt.tmpl && ! -f ${gsDirOverLoad}/p2partisan/greylist ]] &&

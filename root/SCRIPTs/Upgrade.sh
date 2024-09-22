@@ -59,11 +59,12 @@ else
 fi
 if [[ -f ${sGenerateDomainsBlacklistScript} && -f ${sDomainsBlacklistConfigFile} ]]; then
     cd "${sGenerateDomainsBlacklistDir%/}"/ || exit 1
-    logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with '${sDomainsBlacklistScriptname}'"
-    python "${sDomainsBlacklistScriptname}" --output-file list.txt.tmp --config "${sDomainsBlacklistConfigname}" \
+    logger -p user.notice "| ${gsScriptName} | Generate 'blocked-names.txt' with '${sDomainsBlacklistScriptname}'"
+    python "${sDomainsBlacklistScriptname}" --output-file ${sGenerateDomainsBlacklistDir%/}/list.txt.tmp \
+        --config "${sDomainsBlacklistConfigname}" \
         --time-restricted ${sGenerateDomainsBlacklistDir%/}/domains-time-restricted.txt \
         --allowlist ${sGenerateDomainsBlacklistDir%/}/domains-allowlist.txt &&
-        mv -f list.txt.tmp blacklists.txt
+        mv -f ${sGenerateDomainsBlacklistDir%/}/list.txt.tmp "${gsDirOverLoad}"/dnscrypt/blocked-names.txt
 fi
 
 #### SCRIPTs
