@@ -173,11 +173,11 @@ Editable files are:
   - /opt/MyTomato/root/ConfigOverload/dnscrypt/cloaking-rules.txt
   - /opt/MyTomato/root/ConfigOverload/dnscrypt/forwarding-rules.txt
 
-- DNScrypt-proxy v2 _(generate-domains-blacklists)_
-  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/domains-blacklist.conf
-  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/domains-blacklist-local-additions.txt
-  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/domains-time-restricted.txt
-  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/domains-whitelist.txt
+- DNScrypt-proxy v2 _(generate-domains-blocklist)_
+  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/domains-blocklist.conf
+  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/domains-blocklist-local-additions.txt
+  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/domains-time-restricted.txt
+  - /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/domains-allowlist.txt
 
 - P2Partisan
   - /opt/MyTomato/root/ConfigOverload/p2partisan/blacklists
@@ -218,23 +218,23 @@ _**NB:** Default values are acceptable_
 vim /opt/MyTomato/root/ConfigOverload/dnscrypt/dnscrypt-proxy.toml
 ```
 
-You can generate your own **blacklist.txt** with in **/opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/**.
+You can generate your own **blacklist.txt** with in **/opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/**.
 
 Please, check [Public Blacklists](https://github.com/jedisct1/dnscrypt-proxy/wiki/Public-blacklists)
 
 Edit following files like you want to generate your final **blocklist.txt**:
 
-- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/**domains-blacklist.conf**
-- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/**domains-whitelist.txt**
-- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/**domains-time-restricted.txt**
-- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blacklists/**domains-blacklist-local-additions.txt**
+- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/**domains-blocklist.conf**
+- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/**domains-allowlist.txt**
+- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/**domains-time-restricted.txt**
+- /opt/MyTomato/root/ConfigOverload/dnscrypt/generate-domains-blocklist/**domains-blocklist-local-additions.txt**
 
 And, simply execute this:
 
 ```bash
 Upgrade.sh
 . /opt/MyTomato/root/SCRIPTs/inc/vars
-cp -f "${gsDirOverLoad}/dnscrypt/generate-domains-blacklists/blacklists.txt" "${gsDirOverLoad}/dnscrypt/blacklists.txt"
+cp -f "${gsDirOverLoad}/dnscrypt/generate-domains-blocklist/blacklists.txt" "${gsDirOverLoad}/dnscrypt/blacklists.txt"
 /opt/etc/init.d/S09dnscrypt-proxy2 restart
 ```
 

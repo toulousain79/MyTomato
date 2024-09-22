@@ -46,16 +46,20 @@ else
     git fetch origin
     git reset --hard origin/master
     # git pull origin master
-    [ -f "${gsDirDnscryptGen}"/generate-domains-blacklist.py ] && {
-        mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists
-        cp -v "${gsDirDnscryptGen}"/generate-domains-blacklist.py "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py
-        chmod +x "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py
+    [ -f "${gsDirDnscryptGen}"/generate-domains-blocklist.py ] && {
+        mkdir -p "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist
+        cp -v "${gsDirDnscryptGen}"/generate-domains-blocklist.py "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/generate-domains-blocklist.py
+        chmod +x "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/generate-domains-blocklist.py
     }
 fi
-if [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/generate-domains-blacklist.py ] && [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/domains-blacklist.conf ]; then
-    cd "${gsDirOverLoad}"/dnscrypt/generate-domains-blacklists/ || exit 1
-    logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blacklist.py'"
-    python generate-domains-blacklist.py -c domains-blacklist.conf >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+if [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/generate-domains-blocklist.py ] && [ -f "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/domains-blocklist.conf ]; then
+    cd "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/ || exit 1
+    logger -p user.notice "| ${gsScriptName} | Generate 'blacklists.txt' with 'generate-domains-blocklist.py'"
+    python generate-domains-blocklist.py --output-file list.txt.tmp \
+        --config "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklist/domains-blocklist.conf \
+        --time-restricted "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklis/domains-time-restricted.txt \
+        --allowlist "${gsDirOverLoad}"/dnscrypt/generate-domains-blocklis/domains-allowlist.txt &&
+        mv -f list.txt.tmp blacklists.txt
 fi
 
 #### SCRIPTs

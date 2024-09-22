@@ -108,10 +108,10 @@ if (! nvram get os_version | grep -q 'AIO'); then
         git reset --hard origin/master
         git pull origin master
     fi
-    if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/generate-domains-blacklist.py ]; then
-        cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/ || exit
-        chmod +x generate-domains-blacklist.py
-        # python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+    if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blocklist/generate-domains-blocklist.py ]; then
+        cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blocklist/ || exit
+        chmod +x generate-domains-blocklist.py
+        # python generate-domains-blocklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
     fi
 fi
 
