@@ -55,6 +55,7 @@ opkg install \
     whereis \
     mlocate \
     git \
+    git-http \
     jq \
     xxd \
     logrotate \

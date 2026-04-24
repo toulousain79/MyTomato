@@ -13,6 +13,7 @@
 #### OPKG
 opkg update
 opkg upgrade
+opkg install git-http
 
 logger -p user.notice "| ${gsScriptName} | EntWare generate pakages installed list"
 gsOpkgPackagesList="${gsDirLogs}/opkg_list-installed_${gdDateTime}.txt"

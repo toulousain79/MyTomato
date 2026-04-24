@@ -3,6 +3,7 @@
 #### Global
 ## Binaries
 binCurl="curl --retry 3 --silent --insecure --location --show-error"
+export GIT_EXEC_PATH=/opt/lib/git-core
 
 ## Firmware
 gsFirmwareVersion="$(nvram get os_version | sed 's/ -/-/g;' | awk '{ print $1 }')"
