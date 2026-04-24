@@ -90,9 +90,10 @@ ntpdate -4 -p 1 -u 0.fr.pool.ntp.org
 
 #### Clone GitHub repoistory
 if [ ! -d /opt/MyTomato ]; then
-    git clone git@github.com:toulousain79/MyTomato.git /opt/MyTomato
+    git clone https://github.com/toulousain79/MyTomato.git /opt/MyTomato
 else
     cd /opt/MyTomato || exit 1
+    git remote set-url origin https://github.com/toulousain79/MyTomato.git
     git fetch origin
     git reset --hard origin/master
     git pull origin master
@@ -101,9 +102,10 @@ fi
 #### DNScrypt-proxy v2
 if ! nvram get os_version | grep -q 'AIO'; then
     if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
-        git clone git@github.com:DNSCrypt/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
+        git clone https://github.com/DNSCrypt/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
     else
         cd /opt/usr/local/dnscrypt-proxy || exit 1
+        git remote set-url origin https://github.com/DNSCrypt/dnscrypt-proxy.git
         git fetch origin
         git reset --hard origin/master
         git pull origin master
