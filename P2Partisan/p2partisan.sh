@@ -1690,8 +1690,13 @@ for p in $1; do
 	   status <list>            Display P2Partisan detailed list information
 	   \e[93mtest <IP>                Verify existence of the given IP against lists
 	   debug                    Shows a guide on how to operate debug
-	   debug-display <in|out>   Shows all the logs relevant to the last debug only
+	   debug <IP> <min>         Enable full debug logging for the given LAN IP (default 15 min)
+	   debug reverse <min>      Enable debug for all LAN IPs excluding greyports (default 15 min)
+	   debug off                Disable debug without waiting for the timer to expire
+	   debug-display            Display in & outbound debug logs
+	   debug-display <in|out>   Display inbound or outbound debug logs only
 	   detective                Determines highest impact IPs:ports (number of sessions)
+	   tutor                    Run the scheduler: reload iptables/lists if needed, trigger updates
 ${CDEFAULT}"
             exit
             ;;
