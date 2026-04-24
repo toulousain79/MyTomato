@@ -1664,6 +1664,12 @@ for p in $1; do
             ptutor
             exit
             ;;
+        "update")
+            pforcestop "$2"
+            connection_check
+            pstart
+            exit
+            ;;
         "help")
             echo -e "${CBACKCYAN}
       ______ ______ ______              __   __
