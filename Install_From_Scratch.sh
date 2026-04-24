@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1091,SC2292
 
 # https://github.com/toulousain79/MyTomato
 
@@ -23,8 +24,8 @@ mount -a
 wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
 
 ### Export
-! echo "$PATH" | grep -q '/opt/bin' && PATH=$PATH:/opt/bin
-! echo "$PATH" | grep -q '/opt/sbin' && PATH=$PATH:/opt/sbin
+! echo "${PATH}" | grep -q '/opt/bin' && PATH=${PATH}:/opt/bin
+! echo "${PATH}" | grep -q '/opt/sbin' && PATH=${PATH}:/opt/sbin
 export PATH
 
 wget -O - http://pkg.entware.net/sources/i18n_glib223.tar.gz | tar zx -C /tmp/
@@ -163,7 +164,7 @@ cat /opt/etc/shells
 
 #### Locales
 [ -n "${gsLocales}" ] && /opt/bin/localedef.new -c -f UTF-8 -i "${gsLocales}" "${gsLocales}.UTF-8"
-[ -n "${gsTimezone}" ] && ln -sfv /opt/share/zoneinfo/${gsTimezone} /opt/etc/localtime
+[ -n "${gsTimezone}" ] && ln -sfv /opt/share/zoneinfo/"${gsTimezone}" /opt/etc/localtime
 
 #### TAG '/opt' and '/opt/var/log' with UUID to avoid deleting
 if [ -n "${gsUsbOptUuid}" ]; then
@@ -209,7 +210,7 @@ fi
 [ ! -h /opt/root ] && ln -s /opt/MyTomato/root/ /opt/root
 
 # Rights
-chmod +x ${gsDirScripts}/*
+chmod +x "${gsDirScripts%/}"/*
 
 # Creating directories
 mkdir -pv "${gsDirBackups}"
@@ -226,7 +227,7 @@ chmod +x /opt/etc/init.d/*
 
 # Create empty file
 touch /etc/dnsmasq-custom.conf
-touch ${gsDirOverLoad}/.bash_aliases
+touch "${gsDirOverLoad%/}"/.bash_aliases
 /opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/p2partisan.//g;s/.txt.tmpl//g;"))' _ {} \;
 /opt/bin/find "${gsDirTemplates}/dnscrypt/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
 
@@ -301,11 +302,11 @@ rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
 if nvram get os_version | grep -q 'AIO'; then
     rm -fv /opt/etc/dnscrypt-proxy.toml
-    rm -fv ${gsDirBackups}/dnscrypt-proxy*
+    rm -fv "${gsDirBackups%/}"/dnscrypt-proxy*
     rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
-    rm -fv ${gsDirOverLoad}/dnscrypt*
-    rm -fv ${gsDirOverLoad}/*.md
-    rm -fv ${gsDirOverLoad}/*.minisig
+    rm -fv "${gsDirOverLoad%/}"/dnscrypt*
+    rm -fv "${gsDirOverLoad%/}"/*.md
+    rm -fv "${gsDirOverLoad%/}"/*.minisig
 
     nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
     sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/ConfigOverload/vars

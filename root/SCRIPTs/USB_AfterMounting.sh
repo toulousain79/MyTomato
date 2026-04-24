@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 #### Restore last date time
 fake-hwclock load force
@@ -21,7 +22,7 @@ gfnNtpUpdate
 
 #### Creating directories
 [[ ! -d ${gsDirLogs} ]] && mkdir -pv "${gsDirLogs}"
-[[ ! -d ${gsDirBackups} ]] && mkdir -pv "$gsDirBackups"
+[[ ! -d ${gsDirBackups} ]] && mkdir -pv "${gsDirBackups}"
 [[ ! -d ${gsDirArmExtras} ]] && mkdir -pv "${gsDirArmExtras}"
 
 #### SCRIPTs

@@ -37,7 +37,7 @@ export CBOLDPURPLE='\033[1;35m'
 
 ########################################
 ## Files & directories
-[ "$0" != "-bash" ] && gsScriptName="$(basename "$0")" || gsScriptName="vars"
+[[ ${0} != "-bash" ]] && gsScriptName="$(basename "$0")" || gsScriptName="vars"
 # OpenVPN
 gsDirOpenVpn="/opt/MyTomato/root/OpenVPN"
 # Scripts
@@ -94,4 +94,4 @@ export gdDateTime
 export gbP2Partisan_Enable gbDNScrypt_Enable gbRepoUpgrade_Enable gbSyslog_Enable
 
 # shellcheck disable=SC1091
-[ -f "${gsDirOverLoad}"/vars ] && . "${gsDirOverLoad}"/vars
+[[ -f ${gsDirOverLoad}/vars ]] && . "${gsDirOverLoad}/vars"
