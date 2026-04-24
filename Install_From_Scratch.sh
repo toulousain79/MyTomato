@@ -28,7 +28,7 @@ wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
 ! echo "${PATH}" | grep -q '/opt/sbin' && PATH=${PATH}:/opt/sbin
 export PATH
 
-wget -O - http://pkg.entware.net/sources/i18n_glib223.tar.gz | tar zx -C /tmp/
+wget -O - https://entware.diversion.ch/other/i18n_glib223.tar.gz | tar zx -C /tmp/
 mv -v /tmp/i18n/locales/* /opt/usr/share/i18n/locales/
 mv -v /tmp/i18n/charmaps/* /opt/usr/share/i18n/charmaps/
 rm -rf /tmp/i18n
