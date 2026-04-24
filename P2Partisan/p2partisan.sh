@@ -1171,7 +1171,7 @@ function pwhitelist() {
     # VPN - Tinc hosts are IP whitelisted
     if [ "$(nvram get tinc_wanup)" == "1" ]; then
         for IP in $(nvram get tinc_hosts | grep -Eo '\w*[a-z]\w*(\.\w*[a-z]\w*)+'); do
-            echo "${IP}" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" | {
+            echo "${IP}" | grep -E "(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" >/dev/null 2>&1 && nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "::" | grep -Eo "([0-9\.]{7,15})" | {
                 while read -r IPO; do
                     ipset -A whitelist "${IPO%*/32}" 2>/dev/null
                 done
@@ -1197,7 +1197,7 @@ function pwhitelist() {
                         done
                     }
                 elif [[ ${q} -eq 1 ]]; then
-                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "::" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A whitelist "${IPO%*/32}" 2>/dev/null
                         done
@@ -1232,7 +1232,7 @@ function pgreylist() {
                         done
                     }
                 elif [[ ${q} -eq 1 ]]; then
-                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "::" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A greylist "${IPO%*/32}" 2>/dev/null
                         done
@@ -1266,7 +1266,7 @@ function pblacklistcustom() {
                         done
                     }
                 elif [[ ${q} -eq 1 ]]; then
-                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "\:\:" | grep -Eo "([0-9\.]{7,15})" |
+                    nslookup "${IP}" ${sDNS} | grep "Address [0-9]*:" | grep -v 127.0.0.1 | grep -v "::" | grep -Eo "([0-9\.]{7,15})" |
                         while read -r IPO; do
                             ipset -A blacklist-custom "${IPO%*/32}" 2>/dev/null
                         done
@@ -1586,15 +1586,15 @@ for(b=0;b<6;b++){o=o*2+int(c/32);c=(c*2)%64;if(++obc==8){if(o)
 
 function pdeaggregate() {
     awk '
-function ip2int(ip) {
- for (ret=0,n=split(ip,a,"\."),x=1;x<=n;x++) ret=or(lshift(ret,8),a[x])
+function ip2int(ip,    ret,n,x,a) {
+ ret=0; n=split(ip,a,"."); for (x=1;x<=n;x++) ret=or(lshift(ret,8),a[x])
  return ret
 }
 
-function int2ip(ip,ret,x) {
+function int2ip(ip,    ret,x) {
  ret=and(ip,255)
  ip=rshift(ip,8)
- for(;x<3;ret=and(ip,255)"."ret,ip=rshift(ip,8),x++);
+ for(x=0;x<3;x++) { ret=and(ip,255)"."ret; ip=rshift(ip,8) }
  return ret
 }
 
@@ -1609,7 +1609,7 @@ FS="[-]"
  while (base <= end) {
  step = 0
  while ( or(base, lshift(1, step)) != base) {
- if ( or(base, rshift((bits, (31-step)))) > end ) {
+ if ( or(base, rshift(bits, (31-step))) > end ) {
  break;
  }
  step++
