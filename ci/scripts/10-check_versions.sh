@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo && echo -e "${CBLUE}*** Current branch ***${CEND}"
-if [ -n "${CI_COMMIT_REF_NAME}" ]; then
+if [[ -n ${CI_COMMIT_REF_NAME} ]]; then
     echo "${CI_COMMIT_REF_NAME}"
 else
     git branch | grep "^* "

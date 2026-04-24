@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 
-ENABLED="$(nvram get vpn_client_eas | grep -q '1' && echo yes || echo no)"
-PROCS=vpnclient1
-ARGS=""
+ENABLED=yes
+PROCS=ntpdate
+ARGS="-s -b -u -t 2 1.europe.pool.ntp.org"
 PREARGS=""
-DESC="OpenVPN Client 1"
+DESC=${PROCS}
 PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export ENABLED PROCS ARGS PREARGS DESC PATH
 # shellcheck source=root/TEMPLATEs/init/rc.func.tmpl

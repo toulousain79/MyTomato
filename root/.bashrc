@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# shellcheck disable=SC1091
 
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
@@ -34,7 +35,7 @@ case "$TERM" in
     xterm-color) color_prompt=yes ;;
 esac
 
-if [ "$color_prompt" = yes ]; then
+if [[ ${color_prompt} = yes ]]; then
     PS1='\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]'
 else
     PS1='\u@\h:\w\$ '
@@ -42,9 +43,9 @@ fi
 unset color_prompt
 
 # If this is an xterm set the title to user@host:dir
-case "$TERM" in
+case "${TERM}" in
     xterm* | rxvt*)
-        PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+        PS1="\[\e]0;\u@\h: \w\a\]${PS1}"
         ;;
     *) ;;
 
@@ -55,7 +56,7 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 #### MyTomato
 # shellcheck source=root/SCRIPTs/inc/vars
-[ -f /opt/MyTomato/root/SCRIPTs/inc/vars ] && . /opt/MyTomato/root/SCRIPTs/inc/vars
+[[ -f /opt/MyTomato/root/SCRIPTs/inc/vars ]] && . /opt/MyTomato/root/SCRIPTs/inc/vars
 
 # PATH
 export PATH=/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:/bin:/sbin:/mmc/bin:/mmc/sbin:/mmc/usr/bin:/mmc/usr/sbin:/usr/bin:/usr/sbin:/home/root:/opt/etc/init.d/:${gsDirScripts}
@@ -65,7 +66,7 @@ export PATH=/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin:/bin:/sbin:/mmc/bin:/m
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 # shellcheck source=root/.bash_aliases
-[ -f ~/.bash_aliases ] && . ~/.bash_aliases
+[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
 
 # Define localization
 export LANG="${gsLocales}.UTF-8"
@@ -73,10 +74,10 @@ export LC_ALL="${gsLocales}.UTF-8"
 
 # .bash_aliases custom
 # shellcheck source=root/.bash_aliases
-[ -f "${gsDirOverLoad}/.bash_aliases" ] && . "${gsDirOverLoad}/.bash_aliases"
+[[ -f ${gsDirOverLoad}/.bash_aliases ]] && . "${gsDirOverLoad}/.bash_aliases"
 
 # .bashrc custom
-# shellcheck source=root/.bash_aliases
-[ -f "${gsDirOverLoad}/.bashrc" ] && . "${gsDirOverLoad}/.bashrc"
+# shellcheck source=root/.bashrc
+[[ -f ${gsDirOverLoad}/.bashrc ]] && . "${gsDirOverLoad}/.bashrc"
 
 /usr/sbin/mymotd

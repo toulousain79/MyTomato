@@ -3,7 +3,7 @@
 #### 0 - Base
 sPwd=$(pwd)
 nReturn=0
-[ -n "${CI_PROJECT_PATH}" ] && sProjectDir="/builds/${CI_PROJECT_PATH}" || sProjectDir="$(pwd)"
+[[ -n ${CI_PROJECT_PATH} ]] && sProjectDir="/builds/${CI_PROJECT_PATH}" || sProjectDir="$(pwd)"
 sDirToScan="/tmp/shellcheck_scan"
 
 #### 1 - Colors
@@ -15,9 +15,9 @@ CBLUE="\033[1;34m"
 
 #### 2 - Functions
 function gfnCopyProject() {
-    [ -d "${sDirToScan}" ] && rm -rf "${sDirToScan}"
+    [[ -d ${sDirToScan} ]] && rm -rf "${sDirToScan}"
 
-    if [ -n "${sProjectDir}" ] && [ -d "${sProjectDir}" ]; then
+    if [[ -n ${sProjectDir} && -d ${sProjectDir} ]]; then
         rsync -a --exclude '.git' "${sProjectDir}/" "${sDirToScan}/"
     else
         echo -e "${CYELLOW}You are not in 'project_validation' images:${CEND} ${CRED}Failed${CEND}"

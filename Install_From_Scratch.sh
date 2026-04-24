@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC1091,SC2292
 
 # https://github.com/toulousain79/MyTomato
 
@@ -11,7 +12,7 @@ gsWan1_DNS=""
 [ -n "${1}" ] && FILESYSTEM="${1}" || FILESYSTEM="ext4"
 
 #### Check if OPKG already exist
-(type opkg >/dev/null) && echo "ERROR: 'opkg' already exist" && exit 1
+type opkg >/dev/null && echo "ERROR: 'opkg' already exist" && exit 1
 
 #### Mount /opt
 (df -h | grep -q '/tmp/mnt/ENTWARE') && umount /tmp/mnt/ENTWARE
@@ -23,8 +24,8 @@ mount -a
 wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
 
 ### Export
-(! echo "$PATH" | grep -q '/opt/bin') && PATH=$PATH:/opt/bin
-(! echo "$PATH" | grep -q '/opt/sbin') && PATH=$PATH:/opt/sbin
+(! echo "${PATH}" | grep -q '/opt/bin') && PATH=${PATH}:/opt/bin
+(! echo "${PATH}" | grep -q '/opt/sbin') && PATH=${PATH}:/opt/sbin
 export PATH
 
 wget -O - https://entware.diversion.ch/other/i18n_glib223.tar.gz | tar zx -C /tmp/
@@ -101,7 +102,7 @@ else
 fi
 
 #### DNScrypt-proxy v2
-if (! nvram get os_version | grep -q 'AIO'); then
+if ! nvram get os_version | grep -q 'AIO'; then
     if [ ! -d /opt/usr/local/dnscrypt-proxy ]; then
         git clone https://github.com/DNSCrypt/dnscrypt-proxy.git /opt/usr/local/dnscrypt-proxy
     else
@@ -111,10 +112,10 @@ if (! nvram get os_version | grep -q 'AIO'); then
         git reset --hard origin/master
         git pull origin master
     fi
-    if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/generate-domains-blacklist.py ]; then
-        cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blacklists/ || exit
-        chmod +x generate-domains-blacklist.py
-        # python generate-domains-blacklist.py >list.txt.tmp && mv -f list.txt.tmp blacklists.txt
+    if [ -f /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blocklist/generate-domains-blocklist.py ]; then
+        cd /opt/usr/local/dnscrypt-proxy/utils/generate-domains-blocklist/ || exit
+        chmod +x generate-domains-blocklist.py
+        # python generate-domains-blocklist.py >list.txt.tmp && mv -f list.txt.tmp blocked-names.txt
     fi
 fi
 
@@ -164,7 +165,7 @@ cat /opt/etc/shells
 
 #### Locales
 [ -n "${gsLocales}" ] && /opt/bin/localedef.new -c -f UTF-8 -i "${gsLocales}" "${gsLocales}.UTF-8"
-[ -n "${gsTimezone}" ] && ln -sfv /opt/share/zoneinfo/${gsTimezone} /opt/etc/localtime
+[ -n "${gsTimezone}" ] && ln -sfv /opt/share/zoneinfo/"${gsTimezone}" /opt/etc/localtime
 
 #### TAG '/opt' and '/opt/var/log' with UUID to avoid deleting
 if [ -n "${gsUsbOptUuid}" ]; then
@@ -181,7 +182,7 @@ fi
 
 #### Prepare some files and directories ####
 # /opt/tmp
-if (! mount -l | grep -q '/tmp'); then
+if ! mount -l | grep -q '/tmp'; then
     mount -t tmpfs -o size=256M,mode=0755 tmpfs /opt/tmp/
     cp -af /tmp/* /opt/tmp/
     rm -rRf /tmp/* && rm -rRf /tmp/.??*
@@ -189,7 +190,7 @@ if (! mount -l | grep -q '/tmp'); then
 fi
 
 # /opt/var/log
-if (! mount -l | grep -q '/tmp/var/log'); then
+if ! mount -l | grep -q '/tmp/var/log'; then
     if [ -f /tmp/var/log/messages ]; then
         cat /tmp/var/log/messages >>/opt/var/log/messages
         if [ ! -f /tmp/var/log/.uuid ]; then
@@ -200,7 +201,7 @@ if (! mount -l | grep -q '/tmp/var/log'); then
 fi
 
 # /opt/root
-if (! mount -l | grep -q '/tmp/home/root'); then
+if ! mount -l | grep -q '/tmp/home/root'; then
     if [ ! -f /tmp/home/root/.uuid ]; then
         rm -rRf /tmp/home/root/* && rm -rRf /tmp/home/root/.??*
         rm -rf /opt/root
@@ -210,7 +211,7 @@ fi
 [ ! -h /opt/root ] && ln -s /opt/MyTomato/root/ /opt/root
 
 # Rights
-chmod +x ${gsDirScripts}/*
+chmod +x "${gsDirScripts%/}"/*
 
 # Creating directories
 mkdir -pv "${gsDirBackups}"
@@ -227,7 +228,7 @@ chmod +x /opt/etc/init.d/*
 
 # Create empty file
 touch /etc/dnsmasq-custom.conf
-touch ${gsDirOverLoad}/.bash_aliases
+touch "${gsDirOverLoad%/}"/.bash_aliases
 /opt/bin/find "${gsDirTemplates}/p2partisan/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/p2partisan/$(basename $(echo "$1" | sed "s/p2partisan.//g;s/.txt.tmpl//g;"))' _ {} \;
 /opt/bin/find "${gsDirTemplates}/dnscrypt/" -name "*.txt.tmpl" -exec bash -c 'i="$1"; cp -v "${i}" ${gsDirOverLoad}/dnscrypt/$(basename $(echo "$1" | sed "s/.tmpl//g;"))' _ {} \;
 
@@ -300,13 +301,13 @@ rm -fv /tmp/script_usbumount
 rm -fv /tmp/openvpn_client1
 rm -fv /opt/etc/init.d/S77ntpdate
 rm -fv /opt/etc/*.1
-if (nvram get os_version | grep -q 'AIO'); then
+if nvram get os_version | grep -q 'AIO'; then
     rm -fv /opt/etc/dnscrypt-proxy.toml
-    rm -fv ${gsDirBackups}/dnscrypt-proxy*
+    rm -fv "${gsDirBackups%/}"/dnscrypt-proxy*
     rm -fv /opt/etc/init.d/S09dnscrypt-proxy2
-    rm -fv ${gsDirOverLoad}/dnscrypt*
-    rm -fv ${gsDirOverLoad}/*.md
-    rm -fv ${gsDirOverLoad}/*.minisig
+    rm -fv "${gsDirOverLoad%/}"/dnscrypt*
+    rm -fv "${gsDirOverLoad%/}"/*.md
+    rm -fv "${gsDirOverLoad%/}"/*.minisig
 
     nNumLine=$(grep 'gbDNScrypt_Enable' -n -m 1 </opt/MyTomato/root/ConfigOverload/vars | cut -d ':' -f 1)
     sed -i "${nNumLine}"s/.*/gbDNScrypt_Enable=0/ /opt/MyTomato/root/ConfigOverload/vars
@@ -332,7 +333,7 @@ cp -v /opt/MyTomato/root/TEMPLATEs/.autorun.tmpl /opt/.autorun
 chmod +x /opt/.autorun
 
 #### MLocate
-[ -f /opt/etc/group ] && (! grep -q 'mlocate' /opt/etc/group) && echo "mlocate:x:111:" >>/opt/etc/group
+[ -f /opt/etc/group ] && ! grep -q 'mlocate' /opt/etc/group && echo "mlocate:x:111:" >>/opt/etc/group
 cat /opt/etc/group
 updatedb
 
