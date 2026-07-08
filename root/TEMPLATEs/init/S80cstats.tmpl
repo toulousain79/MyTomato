@@ -1,4 +1,5 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 ENABLED="$(nvram get cstats_enable | sed 's/0/no/g;s/1/yes/g;')"
 PROCS=cstats
@@ -6,6 +7,6 @@ ARGS=""
 PREARGS=""
 DESC="IP Traffic Monitoring"
 PATH=/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export ENABLED PROCS ARGS PREARGS DESC
+export ENABLED PROCS ARGS PREARGS DESC PATH
 # shellcheck source=root/TEMPLATEs/init/rc.func.tmpl
 . /opt/etc/init.d/rc.func

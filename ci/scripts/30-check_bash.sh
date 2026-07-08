@@ -3,7 +3,7 @@
 # https://github.com/koalaman/shellcheck/wiki/Recursiveness
 ##################### FIRST LINE #####################################
 
-if [ -z "${vars}" ] || [ "${vars}" -eq 0 ]; then
+if [[ -z ${vars} || ${vars} -eq 0 ]]; then
     # shellcheck source=/dev/null
     . "/builds/${CI_PROJECT_PATH}/ci/scripts/00-libs.sh"
 else
@@ -13,7 +13,7 @@ fi
 gfnCopyProject
 
 sFilesListSh="$(grep -IRl "\(#\!/bin/\|shell\=\)sh" --exclude-dir ".git" --exclude-dir ".vscode" --exclude "funcs_*" "${sDirToScan}/")"
-if [ -n "${sFilesListSh}" ]; then
+if [[ -n ${sFilesListSh} ]]; then
     echo && echo -e "${CBLUE}*** Check Syntax with Shellcheck (sh) ***${CEND}"
     for sFile in ${sFilesListSh}; do
         if ! shellcheck -s sh -f tty -S error -S warning -e SC2154 "${sFile}"; then
@@ -26,7 +26,7 @@ if [ -n "${sFilesListSh}" ]; then
 fi
 
 sFilesListBash="$(grep -IRl "\(#\!/bin/\|shell\=\)bash" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir ".vscode" "${sDirToScan}/")"
-if [ -n "${sFilesListBash}" ]; then
+if [[ -n ${sFilesListBash} ]]; then
     echo && echo -e "${CBLUE}*** Check Syntax with Shellcheck (bash) ***${CEND}"
     for sFile in ${sFilesListBash}; do
         if ! shellcheck -s bash -f tty -S error -S warning -e SC2154 "${sFile}"; then
@@ -39,7 +39,7 @@ if [ -n "${sFilesListBash}" ]; then
 fi
 
 sFuncsList="$(grep -R -h -E "^[A-Za-z]+[A-Za-z0-9]*(\(\)\ \{)" "${sDirToScan}/root/SCRIPTs/inc/" | cut -d '(' -f 1 | sort)"
-if [ -n "${sFuncsList}" ]; then
+if [[ -n ${sFuncsList} ]]; then
     echo && echo -e "${CBLUE}*** Check for orphan functions ***${CEND}"
     for func in ${sFuncsList}; do
         nCount=$(grep -R "${func}" "${sDirToScan}/" | wc -l)
@@ -58,7 +58,7 @@ fi
 sFilesListSh="$(grep -IRl "\(#\!/bin/\|shell\=\)sh" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "ci" "${sDirToScan}/")"
 sFilesListBash="$(grep -IRl "\(#\!/bin/\|shell\=\)bash" --exclude-dir ".git" --exclude-dir ".vscode" --exclude-dir "ci" "${sDirToScan}/")"
 sFilesList="${sFilesListSh} ${sFilesListBash}"
-if [ -n "${sFilesList}" ]; then
+if [[ -n ${sFilesList} ]]; then
     echo && echo -e "${CBLUE}*** Check scripts with 'set -n' ***${CEND}"
     for file in ${sFilesList}; do
         sed -i '/includes_before/d' "${file}"

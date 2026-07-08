@@ -1,10 +1,11 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
 # shellcheck source=root/SCRIPTs/inc/vars
-[ -f "${gsDirOverLoad}/vars" ] && . "${gsDirOverLoad}/vars"
+[[ -f ${gsDirOverLoad}/vars ]] && . "${gsDirOverLoad}/vars"
 # shellcheck source=root/SCRIPTs/inc/funcs
 . /opt/MyTomato/root/SCRIPTs/inc/funcs
 

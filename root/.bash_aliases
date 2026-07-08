@@ -2,11 +2,11 @@
 
 #### MyTomato
 # shellcheck source=root/SCRIPTs/inc/vars
-[ -f /opt/MyTomato/root/SCRIPTs/inc/vars ] && . /opt/MyTomato/root/SCRIPTs/inc/vars
+[[ -f /opt/MyTomato/root/SCRIPTs/inc/vars ]] && . /opt/MyTomato/root/SCRIPTs/inc/vars
 
 # enable color support of ls and also add handy aliases
-if [ -x /opt/bin/dircolors ]; then
-    if test -r ~/.dircolors; then
+if [[ -x /opt/bin/dircolors ]]; then
+    if [[ -r ~/.dircolors ]]; then
         eval "$(dircolors -b ~/.dircolors)"
     else
         eval "$(dircolors -b)"
@@ -30,6 +30,6 @@ alias s='ssh -l root'
 
 # P2Partisan
 {
-    [ "${gbP2Partisan_Enable}" -eq 1 ]
-    [ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]
+    [[ ${gbP2Partisan_Enable} -eq 1 ]]
+    [[ -f /opt/MyTomato/P2Partisan/p2partisan.sh ]]
 } && alias p2partisan='bash /opt/MyTomato/P2Partisan/p2partisan.sh'

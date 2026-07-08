@@ -1,4 +1,5 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 ENABLED="$(nvram get vpn_client_eas | grep -q '2' && echo yes || echo no)"
 PROCS=vpnclient2

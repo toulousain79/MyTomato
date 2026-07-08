@@ -1,24 +1,25 @@
-#!/opt/bin/bash
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 #### Includes
 # shellcheck source=root/SCRIPTs/inc/vars
 . /opt/MyTomato/root/SCRIPTs/inc/vars
 # shellcheck source=root/SCRIPTs/inc/vars
-[ -f "${gsDirOverLoad}/vars" ] && . "${gsDirOverLoad}/vars"
+[[ -f ${gsDirOverLoad}/vars ]] && . "${gsDirOverLoad}/vars"
 # shellcheck source=root/SCRIPTs/inc/funcs
 . /opt/MyTomato/root/SCRIPTs/inc/funcs
 
 ##############################
 
-[ -z "${gsOrange_FTI}" ] && {
-	echo
-	echo "'gsOrange_FTI' variable is not defined in '\"${gsDirOverLoad}/vars\"', aborting !"
-	exit 1
+[[ -z ${gsOrange_FTI} ]] && {
+    echo
+    echo "'gsOrange_FTI' variable is not defined in '\"${gsDirOverLoad}/vars\"', aborting !"
+    exit 1
 }
 
-(! df -h | grep -q '/opt') && {
-	echo "ERROR: '/opt' not mounting"
-	exit 1
+! df -h | grep -q '/opt' && {
+    echo "ERROR: '/opt' not mounting"
+    exit 1
 }
 
 #### Orange - DHCP Mode
@@ -26,14 +27,14 @@
 
 ## Install neeeded tools
 # convert string to hexa
-if (opkg list-installed | grep -q 'xxd'); then
-	opkg update
-	opkg install xxd
-	HEXA="$(xxd -p -u <<<"$(echo "${gsOrange_FTI}" | cut -d '/' -f 2)" | sed 's/0A$//')"
+if opkg list-installed | grep -q 'xxd'; then
+    opkg update
+    opkg install xxd
+    HEXA="$(xxd -p -u <<<"$(echo "${gsOrange_FTI}" | cut -d '/' -f 2)" | sed 's/0A$//')"
 else
-	echo
-	echo "'xxd' package is missing, aborting !"
-	exit 1
+    echo
+    echo "'xxd' package is missing, aborting !"
+    exit 1
 fi
 
 ## Basic > Network > WAN Settings
@@ -58,12 +59,12 @@ sed -i '/# Orange DHCP Mode/d' /tmp/script_init
 sed -i '/\/tmp\/sbin/d' /tmp/script_init
 sed -i '/udhcpc/d' /tmp/script_init
 {
-	echo "# Orange DHCP Mode"
-	echo "cp -R /sbin/ /tmp/sbin"
-	echo "rm /tmp/sbin/udhcpc"
-	echo "echo 'exec busybox udhcpc -O 0x4d -O 0x5a -x 0x4d:2b46535644534c5f6c697665626f782e496e7465726e65742e736f66746174686f6d652e4c697665626f7834 -x 0x5a:00000000000000000000001a0900000558010341010d6674692f${HEXA} \"\$*\"' >/tmp/sbin/udhcpc"
-	echo "chmod +x /tmp/sbin/udhcpc"
-	echo "mount --bind /tmp/sbin/ /sbin"
+    echo "# Orange DHCP Mode"
+    echo "cp -R /sbin/ /tmp/sbin"
+    echo "rm /tmp/sbin/udhcpc"
+    echo "echo 'exec busybox udhcpc -O 0x4d -O 0x5a -x 0x4d:2b46535644534c5f6c697665626f782e496e7465726e65742e736f66746174686f6d652e4c697665626f7834 -x 0x5a:00000000000000000000001a0900000558010341010d6674692f${HEXA} \"\$*\"' >/tmp/sbin/udhcpc"
+    echo "chmod +x /tmp/sbin/udhcpc"
+    echo "mount --bind /tmp/sbin/ /sbin"
 } >>/tmp/script_init
 nvram set script_init="$(cat /tmp/script_init)"
 rm -f /tmp/script_init
